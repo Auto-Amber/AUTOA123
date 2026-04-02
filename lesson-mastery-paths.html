@@ -1,0 +1,197 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<style>
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body { font-family: Arial, sans-serif; background: #f5f5f5; color: #1a1a1a; }
+  .header { background: #1a1a1a; border-top: 5px solid #2a9d8f; border-bottom: 5px solid #2a9d8f; padding: 16px 24px; display: flex; align-items: center; gap: 16px; margin-bottom: 24px; }
+  .header-text .course { color: #2a9d8f; font-size: 11px; font-weight: bold; letter-spacing: 3px; text-transform: uppercase; }
+  .header-text .title { color: #fff; font-size: 20px; font-weight: bold; }
+  .header-text .sub { color: #ccc; font-size: 12px; letter-spacing: 2px; text-transform: uppercase; }
+  .lesson-wrap { max-width: 860px; margin: 0 auto; padding: 0 20px 40px; }
+  .lesson-title { background: #1a1a1a; color: #fff; padding: 14px 20px; border-radius: 8px 8px 0 0; font-size: 18px; font-weight: bold; letter-spacing: 1px; border-top: 4px solid #2a9d8f; }
+  .lesson-title span { color: #2a9d8f; }
+  .progress-bar-wrap { background: #ddd; height: 6px; }
+  .progress-bar { background: #2a9d8f; height: 6px; transition: width 0.4s; }
+  .slide { display: none; background: #fff; border: 1px solid #ddd; border-top: none; border-radius: 0 0 8px 8px; padding: 28px; }
+  .slide.active { display: block; }
+  .slide h2 { color: #1a1a1a; font-size: 17px; margin-bottom: 16px; border-left: 4px solid #2a9d8f; padding-left: 12px; }
+  .slide p { font-size: 0.95em; line-height: 1.75; margin-bottom: 14px; color: #333; }
+  .slide ul { padding-left: 20px; margin-bottom: 14px; }
+  .slide ul li { font-size: 0.95em; line-height: 1.8; color: #333; }
+  .key-term { background: #f0faf8; border-left: 4px solid #2a9d8f; padding: 10px 14px; border-radius: 4px; margin: 14px 0; font-size: 0.9em; }
+  .key-term strong { color: #2a9d8f; }
+  .info-box { background: #f5f5f5; border-left: 4px solid #1a1a1a; padding: 10px 14px; border-radius: 4px; margin: 14px 0; font-size: 0.9em; }
+  .diagram { text-align: center; margin: 20px 0; }
+  .path-diagram { display: table; width: 100%; border-collapse: separate; border-spacing: 8px; margin: 16px 0; }
+  .path-row { display: table-row; }
+  .path-cell { display: table-cell; padding: 12px; border-radius: 8px; text-align: center; vertical-align: middle; font-size: 0.88em; font-weight: bold; }
+  .path-cell.trigger { background: #1a1a1a; color: #fff; width: 25%; }
+  .path-cell.arrow { background: none; color: #2a9d8f; font-size: 20px; width: 8%; text-align: center; }
+  .path-cell.remedial { background: #fff5f5; border: 2px solid #c0392b; color: #c0392b; width: 25%; }
+  .path-cell.advanced { background: #f0faf8; border: 2px solid #2a9d8f; color: #2a9d8f; width: 25%; }
+  .quiz-section h2 { color: #1a1a1a; font-size: 17px; margin-bottom: 20px; border-left: 4px solid #e9a825; padding-left: 12px; }
+  .question { margin-bottom: 24px; }
+  .question p { font-weight: bold; margin-bottom: 10px; font-size: 0.95em; }
+  .option { display: block; padding: 10px 14px; margin-bottom: 8px; border: 2px solid #ddd; border-radius: 6px; cursor: pointer; font-size: 0.9em; transition: all 0.2s; background: #fff; width: 100%; text-align: left; }
+  .option:hover { border-color: #2a9d8f; background: #f0faf8; }
+  .option.correct { border-color: #2a9d8f; background: #f0faf8; font-weight: bold; }
+  .option.incorrect { border-color: #c0392b; background: #fff5f5; color: #c0392b; }
+  .feedback { margin-top: 8px; font-size: 0.88em; padding: 8px 12px; border-radius: 4px; display: none; }
+  .feedback.correct { background: #f0faf8; color: #2a9d8f; display: block; }
+  .feedback.incorrect { background: #fff5f5; color: #c0392b; display: block; }
+  .nav { display: flex; justify-content: space-between; align-items: center; margin-top: 24px; }
+  .nav button { background: #2a9d8f; color: #fff; border: none; padding: 10px 22px; border-radius: 6px; font-size: 0.9em; font-weight: bold; cursor: pointer; letter-spacing: 1px; }
+  .nav button:disabled { background: #ccc; cursor: default; }
+  .nav button.secondary { background: #fff; color: #2a9d8f; border: 2px solid #2a9d8f; }
+  .slide-counter { font-size: 0.85em; color: #888; }
+  .complete-box { text-align: center; padding: 30px; background: #f0faf8; border-radius: 8px; border: 2px solid #2a9d8f; }
+  .complete-box h3 { color: #2a9d8f; font-size: 20px; margin-bottom: 10px; }
+  .complete-box p { color: #555; font-size: 0.95em; }
+</style>
+</head>
+<body>
+
+<div class="header">
+  <img src="https://shoreline.instructure.com/courses/2709270/files/304648187/preview" alt="AST Logo" width="64" height="64" />
+  <div class="header-text">
+    <div class="course">Automotive Technology</div>
+    <div class="title">AUTOA 123</div>
+    <div class="sub">Electrical Theory</div>
+  </div>
+</div>
+
+<div class="lesson-wrap">
+  <div class="lesson-title">🎓 Micro Lesson: <span>Canvas Mastery Paths</span></div>
+  <div class="progress-bar-wrap"><div class="progress-bar" id="progress"></div></div>
+
+  <!-- SLIDE 1 -->
+  <div class="slide active" id="slide-1">
+    <h2>What Are Mastery Paths?</h2>
+    <p>Mastery Paths is a Canvas feature that <strong>automatically routes students to different content based on how they perform</strong> on an assignment or quiz. Instead of every student doing the same next thing, Canvas sends them to what they actually need.</p>
+    <div class="key-term"><strong>Simple version:</strong> You score below 70% on the quiz → Canvas automatically assigns you the review materials. You score above 70% → Canvas sends you to the extension activity. It happens automatically.</div>
+    <p>This is especially useful in our class because students come in with very different preparation levels. Mastery Paths lets the course adapt to each student without extra work from you or the instructor.</p>
+    <div class="info-box">📌 <strong>In AUTOA 123:</strong> Mastery Paths are being set up so that students who need more practice get targeted review, and students who are ready move forward. You may see different assignments than your classmates — that is intentional and normal.</div>
+    <div class="nav">
+      <button disabled>← Back</button>
+      <span class="slide-counter">1 / 4</span>
+      <button onclick="nextSlide()">Next →</button>
+    </div>
+  </div>
+
+  <!-- SLIDE 2 -->
+  <div class="slide" id="slide-2">
+    <h2>How Does It Work?</h2>
+    <p>Mastery Paths work in three steps:</p>
+    <ul>
+      <li><strong>Step 1 — Trigger assignment:</strong> You complete a quiz or assignment (the trigger). Canvas scores it.</li>
+      <li><strong>Step 2 — Canvas evaluates your score:</strong> Your score falls into a range the instructor set up (e.g., 0–69%, 70–84%, 85–100%).</li>
+      <li><strong>Step 3 — New content unlocks:</strong> Canvas automatically makes the right follow-up content available to you based on your score range.</li>
+    </ul>
+    <div class="diagram">
+      <svg width="420" height="130" viewBox="0 0 420 130" xmlns="http://www.w3.org/2000/svg">
+        <rect x="10" y="45" width="90" height="40" rx="6" fill="#1a1a1a"/>
+        <text x="55" y="70" font-family="Arial" font-size="11" fill="#fff" text-anchor="middle">Quiz Score</text>
+        <text x="115" y="50" font-family="Arial" font-size="18" fill="#2a9d8f" text-anchor="middle">→</text>
+        <rect x="130" y="10" width="90" height="35" rx="6" fill="#fff5f5" stroke="#c0392b" stroke-width="2"/>
+        <text x="175" y="32" font-family="Arial" font-size="10" fill="#c0392b" text-anchor="middle">Below 70%</text>
+        <rect x="130" y="57" width="90" height="35" rx="6" fill="#fffbf0" stroke="#e9a825" stroke-width="2"/>
+        <text x="175" y="79" font-family="Arial" font-size="10" fill="#b07d00" text-anchor="middle">70% – 84%</text>
+        <rect x="130" y="104" width="90" height="35" rx="6" fill="#f0faf8" stroke="#2a9d8f" stroke-width="2"/>
+        <text x="175" y="126" font-family="Arial" font-size="10" fill="#2a9d8f" text-anchor="middle">85%+</text>
+        <text x="240" y="32" font-family="Arial" font-size="18" fill="#c0392b" text-anchor="middle">→</text>
+        <text x="240" y="79" font-family="Arial" font-size="18" fill="#e9a825" text-anchor="middle">→</text>
+        <text x="240" y="126" font-family="Arial" font-size="18" fill="#2a9d8f" text-anchor="middle">→</text>
+        <rect x="260" y="10" width="110" height="35" rx="6" fill="#fff5f5" stroke="#c0392b" stroke-width="2"/>
+        <text x="315" y="28" font-family="Arial" font-size="10" fill="#c0392b" text-anchor="middle">Review materials</text>
+        <text x="315" y="40" font-family="Arial" font-size="10" fill="#c0392b" text-anchor="middle">assigned</text>
+        <rect x="260" y="57" width="110" height="35" rx="6" fill="#fffbf0" stroke="#e9a825" stroke-width="2"/>
+        <text x="315" y="75" font-family="Arial" font-size="10" fill="#b07d00" text-anchor="middle">Standard next</text>
+        <text x="315" y="87" font-family="Arial" font-size="10" fill="#b07d00" text-anchor="middle">assignment</text>
+        <rect x="260" y="104" width="110" height="35" rx="6" fill="#f0faf8" stroke="#2a9d8f" stroke-width="2"/>
+        <text x="315" y="122" font-family="Arial" font-size="10" fill="#2a9d8f" text-anchor="middle">Extension activity</text>
+        <text x="315" y="134" font-family="Arial" font-size="10" fill="#2a9d8f" text-anchor="middle">unlocked</text>
+      </svg>
+    </div>
+    <div class="nav">
+      <button class="secondary" onclick="prevSlide()">← Back</button>
+      <span class="slide-counter">2 / 4</span>
+      <button onclick="nextSlide()">Next →</button>
+    </div>
+  </div>
+
+  <!-- SLIDE 3 -->
+  <div class="slide" id="slide-3">
+    <h2>What This Means for You as a Student</h2>
+    <p>Here is what to expect when Mastery Paths are active in your course:</p>
+    <ul>
+      <li><strong>Some assignments may be locked</strong> until you complete the trigger assignment — this is normal</li>
+      <li><strong>Your Modules page may look different</strong> from a classmate's — you are seeing your personalized path</li>
+      <li><strong>If you get review materials,</strong> it is not a punishment — it means the system identified a gap and is helping you fill it before moving on</li>
+      <li><strong>If you unlock an extension,</strong> it means you demonstrated mastery — take advantage of it</li>
+      <li><strong>You can always ask your instructor</strong> which path you are on and why</li>
+    </ul>
+    <div class="key-term"><strong>Bottom line:</strong> Mastery Paths exist to make sure no student gets left behind AND no student is held back. Your path is based on your performance — not a judgment about your ability.</div>
+    <div class="nav">
+      <button class="secondary" onclick="prevSlide()">← Back</button>
+      <span class="slide-counter">3 / 4</span>
+      <button onclick="nextSlide()">Next →</button>
+    </div>
+  </div>
+
+  <!-- SLIDE 4: QUIZ -->
+  <div class="slide" id="slide-4">
+    <div class="quiz-section">
+      <h2>🧠 Knowledge Check</h2>
+
+      <div class="question" id="q1">
+        <p>1. What triggers the Mastery Path system to assign you specific content?</p>
+        <button class="option" onclick="answer(this, false, 'q1', 'The instructor does not manually assign paths — Canvas does it automatically based on your score.')">Your instructor manually assigns your path</button>
+        <button class="option" onclick="answer(this, true, 'q1', 'Correct! Your score on the trigger assignment determines which path Canvas automatically routes you to.')">Your score on a trigger assignment</button>
+        <button class="option" onclick="answer(this, false, 'q1', 'Attendance does not control Mastery Paths — performance on assignments does.')">How many days you have attended class</button>
+        <div class="feedback" id="q1-feedback"></div>
+      </div>
+
+      <div class="question" id="q2">
+        <p>2. You notice your Modules page looks different from your classmate's. This means:</p>
+        <button class="option" onclick="answer(this, false, 'q2', 'Different content in Mastery Paths is intentional and expected — not an error.')">There is a Canvas error that needs to be reported</button>
+        <button class="option" onclick="answer(this, false, 'q2', 'Mastery Paths applies to all students — not just those who are struggling.')">Only struggling students see different content</button>
+        <button class="option" onclick="answer(this, true, 'q2', 'Correct! Mastery Paths personalizes content based on each student\'s performance. Different paths are normal and intentional.')">You are on a personalized learning path based on your performance</button>
+        <div class="feedback" id="q2-feedback"></div>
+      </div>
+
+      <div class="question" id="q3">
+        <p>3. You scored below the mastery threshold and were assigned review materials. What should you do?</p>
+        <button class="option" onclick="answer(this, false, 'q3', 'The review materials exist specifically to help you — skipping them means moving forward with a gap.')">Skip the review and move on anyway</button>
+        <button class="option" onclick="answer(this, false, 'q3', 'The system working as designed is not an error — the review materials are intentional.')">Report a Canvas error to your instructor</button>
+        <button class="option" onclick="answer(this, true, 'q3', 'Correct! The review materials are there to help fill the gap before you move on. Completing them sets you up for success on the next assignment.')">Complete the review materials — they are there to help you succeed</button>
+        <div class="feedback" id="q3-feedback"></div>
+      </div>
+
+      <div class="complete-box" id="complete-box" style="display:none;">
+        <h3>✅ Lesson Complete!</h3>
+        <p>You now understand how Canvas Mastery Paths work and what to expect when you encounter them in this course.</p>
+      </div>
+    </div>
+    <div class="nav">
+      <button class="secondary" onclick="prevSlide()">← Back</button>
+      <span class="slide-counter">4 / 4</span>
+      <button disabled>Done</button>
+    </div>
+  </div>
+</div>
+
+<script>
+  let current = 1;
+  const total = 4;
+  const answered = {};
+  function updateProgress() { document.getElementById('progress').style.width = ((current / total) * 100) + '%'; }
+  function nextSlide() { if (current < total) { document.getElementById('slide-' + current).classList.remove('active'); current++; document.getElementById('slide-' + current).classList.add('active'); updateProgress(); } }
+  function prevSlide() { if (current > 1) { document.getElementById('slide-' + current).classList.remove('active'); current--; document.getElementById('slide-' + current).classList.add('active'); updateProgress(); } }
+  function answer(btn, correct, qid, feedback) { if (answered[qid]) return; answered[qid] = true; btn.classList.add(correct ? 'correct' : 'incorrect'); const fb = document.getElementById(qid + '-feedback'); fb.textContent = feedback; fb.className = 'feedback ' + (correct ? 'correct' : 'incorrect'); if (Object.keys(answered).length === 3) document.getElementById('complete-box').style.display = 'block'; }
+  updateProgress();
+</script>
+</body>
+</html>

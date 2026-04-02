@@ -1,0 +1,183 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<style>
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body { font-family: Arial, sans-serif; background: #f5f5f5; color: #1a1a1a; }
+  .header { background: #1a1a1a; border-top: 5px solid #2a9d8f; border-bottom: 5px solid #2a9d8f; padding: 16px 24px; display: flex; align-items: center; gap: 16px; margin-bottom: 24px; }
+  .header-text .course { color: #2a9d8f; font-size: 11px; font-weight: bold; letter-spacing: 3px; text-transform: uppercase; }
+  .header-text .title { color: #fff; font-size: 20px; font-weight: bold; }
+  .header-text .sub { color: #ccc; font-size: 12px; letter-spacing: 2px; text-transform: uppercase; }
+  .lesson-wrap { max-width: 860px; margin: 0 auto; padding: 0 20px 40px; }
+  .lesson-title { background: #2a9d8f; color: #fff; padding: 14px 20px; border-radius: 8px 8px 0 0; font-size: 18px; font-weight: bold; letter-spacing: 1px; }
+  .progress-bar-wrap { background: #ddd; height: 6px; }
+  .progress-bar { background: #e9a825; height: 6px; transition: width 0.4s; }
+  .slide { display: none; background: #fff; border: 1px solid #ddd; border-top: none; border-radius: 0 0 8px 8px; padding: 28px; }
+  .slide.active { display: block; }
+  .slide h2 { color: #1a1a1a; font-size: 17px; margin-bottom: 16px; border-left: 4px solid #2a9d8f; padding-left: 12px; }
+  .slide p { font-size: 0.95em; line-height: 1.75; margin-bottom: 14px; color: #333; }
+  .slide ul { padding-left: 20px; margin-bottom: 14px; }
+  .slide ul li { font-size: 0.95em; line-height: 1.8; color: #333; }
+  .key-term { background: #f0faf8; border-left: 4px solid #2a9d8f; padding: 10px 14px; border-radius: 4px; margin: 14px 0; font-size: 0.9em; }
+  .key-term strong { color: #2a9d8f; }
+  .warning-box { background: #fffbf0; border-left: 4px solid #e9a825; padding: 10px 14px; border-radius: 4px; margin: 14px 0; font-size: 0.9em; }
+  .diagram { text-align: center; margin: 20px 0; }
+  .analogy-box { background: #1a1a1a; color: #fff; border-radius: 8px; padding: 16px 20px; margin: 16px 0; font-size: 0.9em; line-height: 1.7; }
+  .analogy-box strong { color: #2a9d8f; }
+  .quiz-section h2 { color: #1a1a1a; font-size: 17px; margin-bottom: 20px; border-left: 4px solid #e9a825; padding-left: 12px; }
+  .question { margin-bottom: 24px; }
+  .question p { font-weight: bold; margin-bottom: 10px; font-size: 0.95em; }
+  .option { display: block; padding: 10px 14px; margin-bottom: 8px; border: 2px solid #ddd; border-radius: 6px; cursor: pointer; font-size: 0.9em; transition: all 0.2s; background: #fff; width: 100%; text-align: left; }
+  .option:hover { border-color: #2a9d8f; background: #f0faf8; }
+  .option.correct { border-color: #2a9d8f; background: #f0faf8; font-weight: bold; }
+  .option.incorrect { border-color: #c0392b; background: #fff5f5; color: #c0392b; }
+  .feedback { margin-top: 8px; font-size: 0.88em; padding: 8px 12px; border-radius: 4px; display: none; }
+  .feedback.correct { background: #f0faf8; color: #2a9d8f; display: block; }
+  .feedback.incorrect { background: #fff5f5; color: #c0392b; display: block; }
+  .nav { display: flex; justify-content: space-between; align-items: center; margin-top: 24px; }
+  .nav button { background: #2a9d8f; color: #fff; border: none; padding: 10px 22px; border-radius: 6px; font-size: 0.9em; font-weight: bold; cursor: pointer; letter-spacing: 1px; }
+  .nav button:disabled { background: #ccc; cursor: default; }
+  .nav button.secondary { background: #fff; color: #2a9d8f; border: 2px solid #2a9d8f; }
+  .slide-counter { font-size: 0.85em; color: #888; }
+  .complete-box { text-align: center; padding: 30px; background: #f0faf8; border-radius: 8px; border: 2px solid #2a9d8f; }
+  .complete-box h3 { color: #2a9d8f; font-size: 20px; margin-bottom: 10px; }
+  .complete-box p { color: #555; font-size: 0.95em; }
+</style>
+</head>
+<body>
+
+<div class="header">
+  <img src="https://shoreline.instructure.com/courses/2709270/files/304648187/preview" alt="AST Logo" width="64" height="64" />
+  <div class="header-text">
+    <div class="course">Automotive Technology</div>
+    <div class="title">AUTOA 123</div>
+    <div class="sub">Electrical Theory</div>
+  </div>
+</div>
+
+<div class="lesson-wrap">
+  <div class="lesson-title">⚡ Micro Lesson: Amperage</div>
+  <div class="progress-bar-wrap"><div class="progress-bar" id="progress"></div></div>
+
+  <!-- SLIDE 1 -->
+  <div class="slide active" id="slide-1">
+    <h2>What is Amperage?</h2>
+    <p>Amperage (amps) is the measurement of <strong>how much current is flowing</strong> through a circuit. If voltage is the pressure pushing electrons, amperage is the <strong>volume of electrons</strong> actually moving.</p>
+    <div class="analogy-box">
+      <strong>Garden hose analogy:</strong><br>
+      Voltage = water pressure at the spigot<br>
+      Amperage = how much water is actually flowing through the hose<br>
+      Resistance = how kinked or narrow the hose is
+    </div>
+    <div class="key-term"><strong>Key Term:</strong> Ampere (A) — the unit of electrical current. One amp = 6.24 billion billion electrons passing a point per second.</div>
+    <p>In automotive work, you'll see everything from <strong>milliamps (mA)</strong> for parasitic draw tests all the way to <strong>hundreds of amps</strong> for starter motor circuits.</p>
+    <div class="nav">
+      <button disabled>← Back</button>
+      <span class="slide-counter">1 / 4</span>
+      <button onclick="nextSlide()">Next →</button>
+    </div>
+  </div>
+
+  <!-- SLIDE 2 -->
+  <div class="slide" id="slide-2">
+    <h2>Ohm's Law and Amperage</h2>
+    <p>Amperage is directly tied to voltage and resistance through <strong>Ohm's Law</strong>:</p>
+    <div class="diagram">
+      <svg width="300" height="120" viewBox="0 0 300 120" xmlns="http://www.w3.org/2000/svg">
+        <rect x="50" y="10" width="200" height="50" rx="8" fill="#1a1a1a"/>
+        <text x="150" y="42" font-family="Arial" font-size="22" fill="#2a9d8f" text-anchor="middle" font-weight="bold">I = V ÷ R</text>
+        <text x="60" y="85" font-family="Arial" font-size="12" fill="#555">I = Current (Amps)</text>
+        <text x="60" y="105" font-family="Arial" font-size="12" fill="#555">V = Voltage (Volts)   R = Resistance (Ohms)</text>
+      </svg>
+    </div>
+    <p>This means:</p>
+    <ul>
+      <li>If voltage goes <strong>up</strong> and resistance stays the same → current <strong>increases</strong></li>
+      <li>If resistance goes <strong>up</strong> and voltage stays the same → current <strong>decreases</strong></li>
+      <li>A <strong>short circuit</strong> (near zero resistance) causes extremely high current flow</li>
+    </ul>
+    <div class="warning-box">⚠ <strong>Shop tip:</strong> High resistance in a circuit (corroded connector, bad ground) causes low amperage — and the component won't work correctly. This is why voltage drop testing matters.</div>
+    <div class="nav">
+      <button class="secondary" onclick="prevSlide()">← Back</button>
+      <span class="slide-counter">2 / 4</span>
+      <button onclick="nextSlide()">Next →</button>
+    </div>
+  </div>
+
+  <!-- SLIDE 3 -->
+  <div class="slide" id="slide-3">
+    <h2>Amperage in the Shop</h2>
+    <p>Knowing typical amperage values helps you quickly identify problems. Here are common reference points:</p>
+    <ul>
+      <li><strong>Parasitic draw (normal):</strong> 20–50 mA (milliamps)</li>
+      <li><strong>Parasitic draw (concern):</strong> over 50 mA</li>
+      <li><strong>Headlight circuit:</strong> 8–15 A per lamp</li>
+      <li><strong>Cooling fan motor:</strong> 15–30 A</li>
+      <li><strong>Fuel pump:</strong> 4–8 A</li>
+      <li><strong>Starter motor:</strong> 100–250 A (cranking)</li>
+      <li><strong>Alternator output:</strong> 60–200 A depending on load</li>
+    </ul>
+    <div class="key-term"><strong>Testing amperage:</strong> Your DVOM measures amps in <strong>series</strong> — the meter must be part of the circuit path. Never connect an ammeter in parallel — it will blow the fuse in your meter or damage the circuit.</div>
+    <div class="nav">
+      <button class="secondary" onclick="prevSlide()">← Back</button>
+      <span class="slide-counter">3 / 4</span>
+      <button onclick="nextSlide()">Next →</button>
+    </div>
+  </div>
+
+  <!-- SLIDE 4: QUIZ -->
+  <div class="slide" id="slide-4">
+    <div class="quiz-section">
+      <h2>🧠 Knowledge Check</h2>
+
+      <div class="question" id="q1">
+        <p>1. Using Ohm's Law, if a circuit has 12V and 4 ohms of resistance, what is the current?</p>
+        <button class="option" onclick="answer(this, false, 'q1', 'Not quite — divide voltage by resistance: 12 ÷ 4 = 3A.')">48 amps</button>
+        <button class="option" onclick="answer(this, true, 'q1', 'Correct! 12V ÷ 4Ω = 3 amps.')">3 amps</button>
+        <button class="option" onclick="answer(this, false, 'q1', 'Close — but that would be 12 ÷ 6. Here it is 12 ÷ 4.')">2 amps</button>
+        <div class="feedback" id="q1-feedback"></div>
+      </div>
+
+      <div class="question" id="q2">
+        <p>2. A parasitic draw test shows 350 mA with the car off. This is:</p>
+        <button class="option" onclick="answer(this, false, 'q2', 'Normal draw is 20–50 mA. 350 mA is way above normal.')">Normal</button>
+        <button class="option" onclick="answer(this, true, 'q2', 'Correct! Anything over 50 mA is a concern. 350 mA would drain the battery overnight.')">A concern — too high</button>
+        <button class="option" onclick="answer(this, false, 'q2', 'It is not dangerously high but it is definitely a problem worth diagnosing.')">Only a concern if over 1 amp</button>
+        <div class="feedback" id="q2-feedback"></div>
+      </div>
+
+      <div class="question" id="q3">
+        <p>3. How must an ammeter be connected to measure current?</p>
+        <button class="option" onclick="answer(this, false, 'q3', 'Parallel connection is for voltage measurement. An ammeter in parallel can blow the meter fuse or damage the circuit.')">In parallel with the load</button>
+        <button class="option" onclick="answer(this, true, 'q3', 'Correct! The ammeter must be in series so all current flows through it.')">In series with the circuit</button>
+        <button class="option" onclick="answer(this, false, 'q3', 'The meter leads always matter — connection method is critical for amperage testing.')">Either way — it does not matter</button>
+        <div class="feedback" id="q3-feedback"></div>
+      </div>
+
+      <div class="complete-box" id="complete-box" style="display:none;">
+        <h3>✅ Lesson Complete!</h3>
+        <p>Nice work. You now understand amperage, Ohm's Law, typical vehicle current values, and how to safely measure current.</p>
+      </div>
+    </div>
+    <div class="nav">
+      <button class="secondary" onclick="prevSlide()">← Back</button>
+      <span class="slide-counter">4 / 4</span>
+      <button disabled>Done</button>
+    </div>
+  </div>
+</div>
+
+<script>
+  let current = 1;
+  const total = 4;
+  const answered = {};
+  function updateProgress() { document.getElementById('progress').style.width = ((current / total) * 100) + '%'; }
+  function nextSlide() { if (current < total) { document.getElementById('slide-' + current).classList.remove('active'); current++; document.getElementById('slide-' + current).classList.add('active'); updateProgress(); } }
+  function prevSlide() { if (current > 1) { document.getElementById('slide-' + current).classList.remove('active'); current--; document.getElementById('slide-' + current).classList.add('active'); updateProgress(); } }
+  function answer(btn, correct, qid, feedback) { if (answered[qid]) return; answered[qid] = true; btn.classList.add(correct ? 'correct' : 'incorrect'); const fb = document.getElementById(qid + '-feedback'); fb.textContent = feedback; fb.className = 'feedback ' + (correct ? 'correct' : 'incorrect'); if (Object.keys(answered).length === 3) document.getElementById('complete-box').style.display = 'block'; }
+  updateProgress();
+</script>
+</body>
+</html>
