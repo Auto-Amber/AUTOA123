@@ -1,0 +1,182 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<style>
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body { font-family: Arial, sans-serif; background: #f5f5f5; color: #1a1a1a; }
+  .header { background: #1a1a1a; border-top: 5px solid #2a9d8f; border-bottom: 5px solid #2a9d8f; padding: 16px 24px; display: flex; align-items: center; gap: 16px; margin-bottom: 24px; }
+  .header-text .course { color: #2a9d8f; font-size: 11px; font-weight: bold; letter-spacing: 3px; text-transform: uppercase; }
+  .header-text .title { color: #fff; font-size: 20px; font-weight: bold; }
+  .header-text .sub { color: #ccc; font-size: 12px; letter-spacing: 2px; text-transform: uppercase; }
+  .lesson-wrap { max-width: 860px; margin: 0 auto; padding: 0 20px 40px; }
+  .lesson-title { background: #2a9d8f; color: #fff; padding: 14px 20px; border-radius: 8px 8px 0 0; font-size: 18px; font-weight: bold; letter-spacing: 1px; }
+  .progress-bar-wrap { background: #ddd; height: 6px; }
+  .progress-bar { background: #e9a825; height: 6px; transition: width 0.4s; }
+  .slide { display: none; background: #fff; border: 1px solid #ddd; border-top: none; border-radius: 0 0 8px 8px; padding: 28px; }
+  .slide.active { display: block; }
+  .slide h2 { color: #1a1a1a; font-size: 17px; margin-bottom: 16px; border-left: 4px solid #2a9d8f; padding-left: 12px; }
+  .slide p { font-size: 0.95em; line-height: 1.75; margin-bottom: 14px; color: #333; }
+  .slide ul { padding-left: 20px; margin-bottom: 14px; }
+  .slide ul li { font-size: 0.95em; line-height: 1.8; color: #333; }
+  .key-term { background: #f0faf8; border-left: 4px solid #2a9d8f; padding: 10px 14px; border-radius: 4px; margin: 14px 0; font-size: 0.9em; }
+  .key-term strong { color: #2a9d8f; }
+  .warning-box { background: #fffbf0; border-left: 4px solid #e9a825; padding: 10px 14px; border-radius: 4px; margin: 14px 0; font-size: 0.9em; }
+  .diagram { text-align: center; margin: 20px 0; }
+  .analogy-box { background: #1a1a1a; color: #fff; border-radius: 8px; padding: 16px 20px; margin: 16px 0; font-size: 0.9em; line-height: 1.7; }
+  .analogy-box strong { color: #2a9d8f; }
+  .quiz-section h2 { color: #1a1a1a; font-size: 17px; margin-bottom: 20px; border-left: 4px solid #e9a825; padding-left: 12px; }
+  .question { margin-bottom: 24px; }
+  .question p { font-weight: bold; margin-bottom: 10px; font-size: 0.95em; }
+  .option { display: block; padding: 10px 14px; margin-bottom: 8px; border: 2px solid #ddd; border-radius: 6px; cursor: pointer; font-size: 0.9em; transition: all 0.2s; background: #fff; width: 100%; text-align: left; }
+  .option:hover { border-color: #2a9d8f; background: #f0faf8; }
+  .option.correct { border-color: #2a9d8f; background: #f0faf8; font-weight: bold; }
+  .option.incorrect { border-color: #c0392b; background: #fff5f5; color: #c0392b; }
+  .feedback { margin-top: 8px; font-size: 0.88em; padding: 8px 12px; border-radius: 4px; display: none; }
+  .feedback.correct { background: #f0faf8; color: #2a9d8f; display: block; }
+  .feedback.incorrect { background: #fff5f5; color: #c0392b; display: block; }
+  .nav { display: flex; justify-content: space-between; align-items: center; margin-top: 24px; }
+  .nav button { background: #2a9d8f; color: #fff; border: none; padding: 10px 22px; border-radius: 6px; font-size: 0.9em; font-weight: bold; cursor: pointer; letter-spacing: 1px; }
+  .nav button:disabled { background: #ccc; cursor: default; }
+  .nav button.secondary { background: #fff; color: #2a9d8f; border: 2px solid #2a9d8f; }
+  .slide-counter { font-size: 0.85em; color: #888; }
+  .complete-box { text-align: center; padding: 30px; background: #f0faf8; border-radius: 8px; border: 2px solid #2a9d8f; }
+  .complete-box h3 { color: #2a9d8f; font-size: 20px; margin-bottom: 10px; }
+  .complete-box p { color: #555; font-size: 0.95em; }
+</style>
+</head>
+<body>
+<div class="header">
+  <img src="https://shoreline.instructure.com/courses/2708475/files/305674716/preview" alt="AST Logo" width="64" height="64" />
+  <div class="header-text">
+    <div class="course">Automotive Service Technology</div>
+    <div class="title">AUTOA 123</div>
+    <div class="sub">Electrical Systems — Battery</div>
+  </div>
+</div>
+<div class="lesson-wrap">
+  <div class="lesson-title">🔋 Micro Lesson: Voltage Drop Testing</div>
+  <div class="progress-bar-wrap"><div class="progress-bar" id="progress"></div></div>
+
+  <!-- SLIDE 1 -->
+  <div class="slide active" id="slide-1">
+    <h2>What is Voltage Drop?</h2>
+    <p>Voltage drop is the <strong>loss of voltage across a resistance</strong> in a circuit. In a perfect world, a wire or connector has zero resistance — all the voltage gets delivered to the load with nothing wasted. In the real world, corrosion, loose connections, and damaged cables all add resistance that steals voltage from the circuit.</p>
+    <div class="analogy-box">
+      <strong>Garden hose analogy again:</strong><br>
+      Imagine a garden hose with a kink in it. Water pressure at the spigot is fine, but pressure at the nozzle is low. The kink is stealing the pressure. A corroded battery cable does the same thing — the battery voltage is fine, but less of it reaches the starter motor.
+    </div>
+    <div class="key-term"><strong>Key Rule:</strong> Voltage drop testing must be performed with the circuit <strong>under load</strong> — current must be flowing. At rest (no current), every connection looks perfect. The problem only shows up when electrons are actually trying to move through the resistance.</div>
+    <p>This is why Technician B in the quiz was wrong. Testing with the circuit at rest gives you near-zero readings on everything — you'll never find the problem.</p>
+    <div class="nav">
+      <button disabled>← Back</button>
+      <span class="slide-counter">1 / 4</span>
+      <button onclick="nextSlide()">Next →</button>
+    </div>
+  </div>
+
+  <!-- SLIDE 2 -->
+  <div class="slide" id="slide-2">
+    <h2>The 0.1V Rule and DVOM Setup</h2>
+    <p>The acceptable maximum voltage drop across any single connection or cable in a battery circuit is <strong>0.1V (100 millivolts)</strong>. More than that and you have excess resistance that needs attention.</p>
+    <div class="diagram">
+      <svg width="460" height="120" viewBox="0 0 460 120" xmlns="http://www.w3.org/2000/svg">
+        <rect x="0" y="0" width="460" height="120" rx="8" fill="#1a1a1a"/>
+        <text x="230" y="22" font-family="Arial" font-size="11" fill="#2a9d8f" text-anchor="middle" font-weight="bold" letter-spacing="1">VOLTAGE DROP — PASS / FAIL</text>
+        <rect x="16" y="32" width="200" height="36" rx="4" fill="#2a9d8f"/>
+        <text x="116" y="47" font-family="Arial" font-size="11" fill="#fff" text-anchor="middle" font-weight="bold">0.0 – 0.1V</text>
+        <text x="116" y="62" font-family="Arial" font-size="10" fill="#fff" text-anchor="middle">PASS — acceptable resistance</text>
+        <rect x="244" y="32" width="200" height="36" rx="4" fill="#c0392b"/>
+        <text x="344" y="47" font-family="Arial" font-size="11" fill="#fff" text-anchor="middle" font-weight="bold">Above 0.1V</text>
+        <text x="344" y="62" font-family="Arial" font-size="10" fill="#fff" text-anchor="middle">FAIL — excess resistance present</text>
+        <text x="230" y="100" font-family="Arial" font-size="10" fill="#888" text-anchor="middle">Measure across each connection individually — post to terminal, terminal to cable end</text>
+      </svg>
+    </div>
+    <p><strong>DVOM setup for voltage drop:</strong></p>
+    <ul>
+      <li>Set to DC Volts</li>
+      <li>Place the <strong>red lead at the power source side</strong> of the connection</li>
+      <li>Place the <strong>black lead at the load side</strong> of the connection</li>
+      <li>The reading tells you how much voltage is being lost at that connection</li>
+    </ul>
+    <div class="warning-box">⚠ <strong>For battery cables:</strong> Test while cranking (engine cranking, not running) for maximum load. Have a helper crank while you watch the meter — or use a remote starter switch.</div>
+    <div class="nav">
+      <button class="secondary" onclick="prevSlide()">← Back</button>
+      <span class="slide-counter">2 / 4</span>
+      <button onclick="nextSlide()">Next →</button>
+    </div>
+  </div>
+
+  <!-- SLIDE 3 -->
+  <div class="slide" id="slide-3">
+    <h2>What High Voltage Drop Tells You</h2>
+    <p>Finding high voltage drop on a battery cable tells you there is <strong>resistance somewhere in that cable or connection</strong>. Common causes:</p>
+    <ul>
+      <li>Corroded battery terminal or post</li>
+      <li>Loose battery clamp — not fully tightened</li>
+      <li>Damaged cable — internally corroded, frayed, or undersized for the circuit</li>
+      <li>Poor ground connection at the chassis or engine block</li>
+      <li>Aftermarket add-on devices spliced into the battery cables</li>
+    </ul>
+    <div class="key-term"><strong>Don't just clean the terminal:</strong> If you find 0.4V drop across the positive cable end, cleaning the visible corrosion off the terminal might fix it — or the cable itself might be corroded internally for its entire length. Test the full cable end to end, not just the connection point.</div>
+    <div class="analogy-box">
+      <strong>Think like a tech, not a parts changer:</strong><br>
+      High drop at the positive post-to-terminal = clean or replace the terminal clamp.<br>
+      High drop end-to-end on the cable = the cable has internal damage and needs replacement.<br>
+      High drop on the ground side = find the ground connection point at the chassis and inspect it. A bad ground affects everything on that circuit.
+    </div>
+    <div class="nav">
+      <button class="secondary" onclick="prevSlide()">← Back</button>
+      <span class="slide-counter">3 / 4</span>
+      <button onclick="nextSlide()">Next →</button>
+    </div>
+  </div>
+
+  <!-- SLIDE 4: QUIZ -->
+  <div class="slide" id="slide-4">
+    <div class="quiz-section">
+      <h2>🧠 Knowledge Check</h2>
+      <div class="question" id="q1">
+        <p>1. Why must voltage drop testing be performed with the circuit under load?</p>
+        <button class="option" onclick="answer(this,false,'q1','Voltage drop testing is safe under load — in fact that is the only way to find the problem. No load means no current, no current means no measurable drop.')">It is safer — testing under load can damage the DVOM</button>
+        <button class="option" onclick="answer(this,true,'q1','Correct! Resistance only causes a measurable voltage drop when current is flowing through it. At rest, everything looks fine even when a serious problem exists.')">Resistance only shows up as voltage drop when current is flowing through it</button>
+        <button class="option" onclick="answer(this,false,'q1','Voltage drop testing actually measures very small voltages (millivolts) — high voltage is not needed or helpful.')">Higher voltage makes the reading easier to see on the DVOM</button>
+        <div class="feedback" id="q1-feedback"></div>
+      </div>
+      <div class="question" id="q2">
+        <p>2. A voltage drop test on the negative battery cable reads 0.38V under load. What does this indicate?</p>
+        <button class="option" onclick="answer(this,true,'q2','Correct! The acceptable maximum is 0.1V per connection. A 0.38V reading is nearly four times that — there is significant resistance in the negative cable or its connections.')">Excessive resistance in the negative cable — inspect and repair</button>
+        <button class="option" onclick="answer(this,false,'q2','0.38V is well above the 0.1V maximum. This is a clear failure that needs attention.')">Normal — negative cables always show higher drop than positive</button>
+        <button class="option" onclick="answer(this,false,'q2','The battery itself is not directly indicated by voltage drop on the cable — the cable and its connections are the issue here.')">The battery needs to be replaced</button>
+        <div class="feedback" id="q2-feedback"></div>
+      </div>
+      <div class="question" id="q3">
+        <p>3. Voltage drop testing shows 0.05V at the positive post-to-terminal and 0.28V end-to-end across the positive cable. What is your most likely diagnosis?</p>
+        <button class="option" onclick="answer(this,false,'q3','The terminal connection is fine at 0.05V — within spec. The problem is elsewhere in the cable.')">The positive terminal clamp is corroded and needs cleaning</button>
+        <button class="option" onclick="answer(this,false,'q3','A bad ground would show up on the negative side, not in a positive cable end-to-end test.')">The chassis ground connection is loose</button>
+        <button class="option" onclick="answer(this,true,'q3','Correct! The terminal connection is fine (0.05V), but the cable itself shows high drop end-to-end (0.28V). The cable has internal resistance — likely corrosion inside the cable — and needs replacement.')">The positive cable has internal damage or corrosion and needs replacement</button>
+        <div class="feedback" id="q3-feedback"></div>
+      </div>
+      <div class="complete-box" id="complete-box" style="display:none;">
+        <h3>✅ Lesson Complete!</h3>
+        <p>You now understand why voltage drop testing must be done under load, the 0.1V specification, and how to interpret results to find the actual cause of the problem.</p>
+      </div>
+    </div>
+    <div class="nav">
+      <button class="secondary" onclick="prevSlide()">← Back</button>
+      <span class="slide-counter">4 / 4</span>
+      <button disabled>Done</button>
+    </div>
+  </div>
+</div>
+<script>
+  let current=1;const total=4;const answered={};
+  function updateProgress(){document.getElementById('progress').style.width=((current/total)*100)+'%';}
+  function nextSlide(){if(current<total){document.getElementById('slide-'+current).classList.remove('active');current++;document.getElementById('slide-'+current).classList.add('active');updateProgress();}}
+  function prevSlide(){if(current>1){document.getElementById('slide-'+current).classList.remove('active');current--;document.getElementById('slide-'+current).classList.add('active');updateProgress();}}
+  function answer(btn,correct,qid,feedback){if(answered[qid])return;answered[qid]=true;btn.classList.add(correct?'correct':'incorrect');const fb=document.getElementById(qid+'-feedback');fb.textContent=feedback;fb.className='feedback '+(correct?'correct':'incorrect');if(Object.keys(answered).length===3)document.getElementById('complete-box').style.display='block';}
+  updateProgress();
+</script>
+</body>
+</html>
