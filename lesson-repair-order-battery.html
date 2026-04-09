@@ -183,25 +183,25 @@
 
       <div class="question" id="q1">
         <p>1. A tech writes: "Checked battery — 12.4 — OK." What is missing from this entry?</p>
-        <button class="option" onclick="answer(this,false,&quot;q1&quot;,&quot;The test name is there — OCV is implied. The bigger problem is the missing unit and missing spec.&quot;)">The name of the test performed</button>
-        <button class="option" onclick="answer(this,true,&quot;q1&quot;,&quot;Correct! Writing 12.4 without a unit is meaningless. Without the spec there is no way to know if OK is correct. Professional entry: Checked battery OCV — 12.4V (spec: 12.4V min) OK&quot;)">The unit of measurement and the specification it was compared to</button>
-        <button class="option" onclick="answer(this,false,&quot;q1&quot;,&quot;The labor time belongs at the end of the RO with the recommendation — not on each individual test line.&quot;)">The labor time for the test</button>
+        <button class="option" data-qid="q1" data-correct="false" data-feedback="The test name is there — OCV is implied. The bigger problem is the missing unit and missing spec." onclick="handleAnswer(this)">The name of the test performed</button>
+        <button class="option" data-qid="q1" data-correct="true" data-feedback="Correct! Writing 12.4 without a unit is meaningless. Without the spec there is no way to know if OK is correct. Professional entry: Checked battery OCV — 12.4V (spec: 12.4V min) OK" onclick="handleAnswer(this)">The unit of measurement and the specification it was compared to</button>
+        <button class="option" data-qid="q1" data-correct="false" data-feedback="The labor time belongs at the end of the RO with the recommendation — not on each individual test line." onclick="handleAnswer(this)">The labor time for the test</button>
         <div class="feedback" id="q1-feedback"></div>
       </div>
 
       <div class="question" id="q2">
         <p>2. What is always the first step on a repair order, before any testing begins?</p>
-        <button class="option" onclick="answer(this,false,&quot;q2&quot;,&quot;Testing comes after verification — you need to confirm the concern is real before diagnosing.&quot;)">Perform a load test on the battery</button>
-        <button class="option" onclick="answer(this,false,&quot;q2&quot;,&quot;Checking for TSBs is part of the diagnostic process — but it comes after verifying the concern exists.&quot;)">Check for technical service bulletins</button>
-        <button class="option" onclick="answer(this,true,&quot;q2&quot;,&quot;Correct! Always verify the customer concern first. Document what you found — never skip this step.&quot;)">Verify and document the customer concern</button>
+        <button class="option" data-qid="q2" data-correct="false" data-feedback="Testing comes after verification — you need to confirm the concern is real and reproducible before you start diagnosing." onclick="handleAnswer(this)">Perform a load test on the battery</button>
+        <button class="option" data-qid="q2" data-correct="false" data-feedback="Checking for TSBs is part of the diagnostic process — but it comes after verifying the concern exists." onclick="handleAnswer(this)">Check for technical service bulletins</button>
+        <button class="option" data-qid="q2" data-correct="true" data-feedback="Correct! Always verify the customer concern first. Document exactly what you found — never skip this step." onclick="handleAnswer(this)">Verify and document the customer concern</button>
         <div class="feedback" id="q2-feedback"></div>
       </div>
 
       <div class="question" id="q3">
         <p>3. A load test shows 9.1V at 15 seconds. The spec is 9.6V minimum. Which entry is written correctly?</p>
-        <button class="option" onclick="answer(this,false,&quot;q3&quot;,&quot;This entry is missing the spec and the pass/fail judgment. Without those it is just a number with no context.&quot;)">Load test — 9.1V</button>
-        <button class="option" onclick="answer(this,false,&quot;q3&quot;,&quot;This entry has no measurement, no unit, no spec, and no pass/fail. It provides nothing useful and offers no protection.&quot;)">Battery tested — NG</button>
-        <button class="option" onclick="answer(this,true,&quot;q3&quot;,&quot;Correct! This entry has everything — what was done, the measurement, the unit, the spec, and a clear pass/fail conclusion. This is professional documentation.&quot;)">Performed load test 300A / 15 sec — 9.1V (spec: 9.6V min) ✗ NG — FAIL</button>
+        <button class="option" data-qid="q3" data-correct="false" data-feedback="This entry is missing the spec and the pass/fail judgment. Without those it is just a number with no context or conclusion." onclick="handleAnswer(this)">Load test — 9.1V</button>
+        <button class="option" data-qid="q3" data-correct="false" data-feedback="This entry has no measurement, no unit, no spec, and no pass/fail. It provides nothing useful and offers no protection." onclick="handleAnswer(this)">Battery tested — NG</button>
+        <button class="option" data-qid="q3" data-correct="true" data-feedback="Correct! This entry has everything — what was done, the measurement, the unit, the spec it was compared to, and a clear pass/fail conclusion. This is professional documentation." onclick="handleAnswer(this)">Performed load test 300A / 15 sec — 9.1V (spec: 9.6V min) ✗ NG — FAIL</button>
         <div class="feedback" id="q3-feedback"></div>
       </div>
 
@@ -223,7 +223,18 @@
   function updateProgress(){document.getElementById('progress').style.width=((current/total)*100)+'%';}
   function nextSlide(){if(current<total){document.getElementById('slide-'+current).classList.remove('active');current++;document.getElementById('slide-'+current).classList.add('active');updateProgress();}}
   function prevSlide(){if(current>1){document.getElementById('slide-'+current).classList.remove('active');current--;document.getElementById('slide-'+current).classList.add('active');updateProgress();}}
-  function answer(btn,correct,qid,feedback){if(answered[qid])return;answered[qid]=true;btn.classList.add(correct?'correct':'incorrect');const fb=document.getElementById(qid+'-feedback');fb.textContent=feedback;fb.className='feedback '+(correct?'correct':'incorrect');if(Object.keys(answered).length===3)document.getElementById('complete-box').style.display='block';}
+  function handleAnswer(btn){
+    var qid=btn.getAttribute('data-qid');
+    var correct=btn.getAttribute('data-correct')==='true';
+    var feedback=btn.getAttribute('data-feedback');
+    if(answered[qid])return;
+    answered[qid]=true;
+    btn.classList.add(correct?'correct':'incorrect');
+    var fb=document.getElementById(qid+'-feedback');
+    fb.textContent=feedback;
+    fb.className='feedback '+(correct?'correct':'incorrect');
+    if(Object.keys(answered).length===3)document.getElementById('complete-box').style.display='block';
+  }
   updateProgress();
 </script>
 </body>
