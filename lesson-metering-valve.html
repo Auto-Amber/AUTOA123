@@ -1,0 +1,323 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Metering Valve — AUTOA 123</title>
+<style>
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body { background: #1a1a1a; font-family: Arial, sans-serif; color: #cccccc; min-height: 100vh; }
+
+  .header { background: #1a1a1a; border-top: 4px solid #2a9d8f; border-bottom: 2px solid #2a9d8f; padding: 10px 16px; }
+  .header-top { display: flex; align-items: center; gap: 12px; }
+  .header-label { color: #2a9d8f; font-size: 10px; font-weight: bold; letter-spacing: 3px; text-transform: uppercase; }
+  .header-title { color: #ffffff; font-size: 15px; font-weight: bold; }
+  .header-sub { color: #888888; font-size: 10px; letter-spacing: 1px; text-transform: uppercase; margin-top: 2px; }
+  .outcome-badge { margin-top: 6px; display: inline-block; background: #2a2a2a; border: 1px solid #2a9d8f; border-radius: 3px; padding: 3px 10px; font-size: 10px; color: #2a9d8f; letter-spacing: 1px; }
+
+  .progress-wrap { padding: 10px 16px 6px 16px; }
+  .progress-label { font-size: 10px; color: #888888; margin-bottom: 4px; font-weight: bold; letter-spacing: 1px; }
+  .progress-track { background: #3a3a3a; border-radius: 3px; height: 6px; width: 100%; }
+  .progress-fill { background: #e9a825; height: 6px; border-radius: 3px; transition: width 0.4s ease; }
+
+  .content-area { padding: 0 16px 16px 16px; }
+
+  /* ── Slide styles ── */
+  .slide { display: none; }
+  .slide.active { display: block; }
+  .slide-header { background: #2a2a2a; border-left: 5px solid #2a9d8f; padding: 10px 14px; margin-bottom: 14px; border-radius: 0 4px 4px 0; }
+  .slide-num { font-size: 9px; color: #2a9d8f; font-weight: bold; letter-spacing: 2px; text-transform: uppercase; margin-bottom: 3px; }
+  .slide-title { font-size: 16px; font-weight: bold; color: #ffffff; }
+
+  .slide-body { font-size: 13px; line-height: 1.65; color: #cccccc; }
+  .slide-body p { margin-bottom: 10px; }
+  .slide-body ul { padding-left: 18px; margin-bottom: 10px; }
+  .slide-body li { margin-bottom: 6px; }
+  .slide-body strong { color: #ffffff; }
+  .slide-body .teal { color: #2a9d8f; font-weight: bold; }
+  .slide-body .amber { color: #e9a825; font-weight: bold; }
+  .slide-body .red { color: #cc0000; font-weight: bold; }
+
+  .info-box { background: #2a2a2a; border-left: 4px solid #2a9d8f; border-radius: 0 6px 6px 0; padding: 10px 14px; margin: 12px 0; font-size: 12px; }
+  .warn-box { background: #1e1800; border-left: 4px solid #e9a825; border-radius: 0 6px 6px 0; padding: 10px 14px; margin: 12px 0; font-size: 12px; color: #e0c060; }
+  .danger-box { background: #1a0000; border-left: 4px solid #cc0000; border-radius: 0 6px 6px 0; padding: 10px 14px; margin: 12px 0; font-size: 12px; color: #e08080; }
+
+  .spec-table { width: 100%; border-collapse: collapse; margin: 10px 0; font-size: 12px; }
+  .spec-table th { background: #2a9d8f; color: #ffffff; padding: 6px 10px; text-align: left; font-size: 11px; letter-spacing: 1px; text-transform: uppercase; }
+  .spec-table td { padding: 6px 10px; border-bottom: 1px solid #333; }
+  .spec-table tr:nth-child(even) td { background: #2a2a2a; }
+  .spec-table tr:nth-child(odd) td { background: #222222; }
+
+  .two-col { display: table; width: 100%; margin: 10px 0; }
+  .col-left { display: table-cell; width: 50%; padding-right: 10px; vertical-align: top; }
+  .col-right { display: table-cell; width: 50%; padding-left: 10px; vertical-align: top; border-left: 1px solid #333; }
+
+  /* ── Nav buttons ── */
+  .nav-row { display: flex; gap: 10px; margin-top: 16px; align-items: center; }
+  .btn { border: none; border-radius: 4px; padding: 9px 20px; font-size: 12px; font-weight: bold; letter-spacing: 1px; text-transform: uppercase; cursor: pointer; font-family: Arial, sans-serif; }
+  .btn-teal { background: #2a9d8f; color: #ffffff; }
+  .btn-teal:hover { background: #1a6b62; }
+  .btn-outline { background: transparent; color: #2a9d8f; border: 1px solid #2a9d8f; }
+  .btn-outline:hover { background: #2a2a2a; }
+  .btn-amber { background: #e9a825; color: #1a1a1a; }
+  .btn-amber:hover { background: #b07d00; color: #ffffff; }
+  .btn:disabled { opacity: 0.35; cursor: default; }
+  .slide-counter { font-size: 11px; color: #888888; margin-left: auto; }
+
+  /* ── Quiz styles ── */
+  .quiz-wrap { display: none; }
+  .quiz-wrap.active { display: block; }
+  .q-header { background: #2a2a2a; border-left: 5px solid #e9a825; padding: 10px 14px; margin-bottom: 14px; border-radius: 0 4px 4px 0; }
+  .q-num { font-size: 9px; color: #e9a825; font-weight: bold; letter-spacing: 2px; text-transform: uppercase; margin-bottom: 3px; }
+  .q-text { font-size: 14px; font-weight: bold; color: #ffffff; line-height: 1.45; }
+
+  .options { display: flex; flex-direction: column; gap: 8px; margin-bottom: 14px; }
+  .opt-btn { background: #2a2a2a; border: 1px solid #444; border-radius: 5px; padding: 11px 14px; font-size: 13px; color: #cccccc; cursor: pointer; text-align: left; font-family: Arial, sans-serif; transition: border-color 0.15s, background 0.15s; }
+  .opt-btn:hover:not(:disabled) { border-color: #2a9d8f; background: #2a3a38; }
+  .opt-btn.correct { background: #0d2b28; border-color: #2a9d8f; color: #ffffff; }
+  .opt-btn.incorrect { background: #1a0000; border-color: #cc0000; color: #e08080; }
+  .opt-btn:disabled { cursor: default; }
+
+  .feedback { display: none; padding: 10px 14px; border-radius: 5px; font-size: 12px; margin-bottom: 12px; line-height: 1.5; }
+  .feedback.correct { display: block; background: #0d2b28; border-left: 4px solid #2a9d8f; color: #f0faf8; }
+  .feedback.incorrect { display: block; background: #1a0000; border-left: 4px solid #cc0000; color: #f0c0c0; }
+  .feedback-icon { font-weight: bold; margin-bottom: 4px; }
+
+  /* ── Complete box ── */
+  .complete-box { display: none; background: #0d2b28; border: 2px solid #2a9d8f; border-radius: 8px; padding: 20px; text-align: center; margin-top: 10px; }
+  .complete-box.show { display: block; }
+  .complete-icon { font-size: 32px; margin-bottom: 8px; }
+  .complete-title { font-size: 17px; font-weight: bold; color: #2a9d8f; margin-bottom: 6px; }
+  .complete-sub { font-size: 12px; color: #cccccc; }
+  .complete-outcome { margin-top: 12px; background: #2a2a2a; border-radius: 4px; padding: 8px 14px; display: inline-block; font-size: 11px; color: #2a9d8f; border: 1px solid #2a9d8f; }
+</style>
+</head>
+<body>
+
+<div class="header">
+  <div class="header-top">
+    <div>
+      <div class="header-label">Automotive Technology · AUTOA 123</div>
+      <div class="header-title">Metering Valve</div>
+      <div class="header-sub">Brakes</div>
+    </div>
+  </div>
+  <div class="outcome-badge">Hydraulic System &nbsp;·&nbsp; ASE V.C.1</div>
+</div>
+
+<div class="progress-wrap">
+  <div class="progress-label" id="prog-label">Progress &mdash; 0%</div>
+  <div class="progress-track"><div class="progress-fill" id="prog-fill" style="width:0%"></div></div>
+</div>
+
+<div class="content-area">
+
+  <!-- ── Slides ── -->
+  
+  <div class="slide active" id="slide-0">
+    <div class="slide-header">
+      <div class="slide-num">Slide 1 of 3</div>
+      <div class="slide-title">What the Metering Valve Does</div>
+    </div>
+    <div class="slide-body">
+<p>The metering valve (also called the <span class="teal">hold-off valve</span>) is found on vehicles with <strong>front disc and rear drum brakes</strong>. It delays hydraulic pressure to the front disc brakes during the very beginning of a brake application.</p>
+<p><strong>Why is a delay needed?</strong></p>
+<ul>
+  <li>Rear drum brakes have <strong>return springs</strong> that hold the shoes off the drum at rest</li>
+  <li>Before drum brakes can generate any braking force, the wheel cylinder must extend enough to overcome those return springs</li>
+  <li>Disc brake calipers respond <strong>immediately</strong> — no springs to overcome, pistons are always near the rotor</li>
+</ul>
+<div class="info-box">Without a metering valve: during light stops, the front discs would do all the work before the rear drums even engaged — causing brake bias way too far forward and uneven wear.</div>
+<p>The metering valve holds front disc pressure near zero until rear drum pressure is high enough to overcome the return springs — then releases to allow full front pressure.</p></div>
+    <div class="nav-row">
+      <span></span>
+      <button class="btn btn-teal" onclick="nextSlide()">Next &#8594;</button>
+      <span class="slide-counter">1 / 3</span>
+    </div>
+  </div>
+  <div class="slide " id="slide-1">
+    <div class="slide-header">
+      <div class="slide-num">Slide 2 of 3</div>
+      <div class="slide-title">Metering Valve Operation</div>
+    </div>
+    <div class="slide-body">
+<p>The metering valve contains a small <strong>spring-loaded poppet</strong> that blocks front brake pressure until a set pressure threshold is reached:</p>
+<ol style="padding-left:18px;margin-bottom:10px;">
+  <li style="margin-bottom:5px;"><strong>0–3 PSI:</strong> Valve open — allows low-pressure fluid to pass (prevents corrosion and keeps seals lubricated)</li>
+  <li style="margin-bottom:5px;"><strong>3–75 PSI (approx):</strong> Valve closed — blocks front disc pressure while rear drum pressure builds and overcomes return springs</li>
+  <li style="margin-bottom:5px;"><strong>Above split point:</strong> Valve opens fully — front disc and rear drum brake together</li>
+</ol>
+<p>The exact hold-off pressure varies by vehicle — typically <strong>60–135 PSI</strong>. Always verify with ShopKey.</p>
+<div class="warn-box">Metering valves are only needed on <strong>front disc / rear drum</strong> combinations. Vehicles with four-wheel disc brakes do NOT use a metering valve — both front and rear calipers respond at the same rate.</div>
+<p>On many vehicles, the metering valve is integrated into the <span class="amber">combination valve</span> along with the proportioning valve and brake warning switch.</p></div>
+    <div class="nav-row">
+      <button class="btn btn-outline" onclick="prevSlide()">&#8592; Back</button>
+      <button class="btn btn-teal" onclick="nextSlide()">Next &#8594;</button>
+      <span class="slide-counter">2 / 3</span>
+    </div>
+  </div>
+  <div class="slide " id="slide-2">
+    <div class="slide-header">
+      <div class="slide-num">Slide 3 of 3</div>
+      <div class="slide-title">Metering Valve Failure and Diagnosis</div>
+    </div>
+    <div class="slide-body">
+<p><strong>Failure modes:</strong></p>
+<table class="spec-table">
+  <tr><th>Failure</th><th>Symptom</th></tr>
+  <tr><td>Stuck closed (will not open)</td><td>Front brakes not applying — extreme rear brake bias, rear drums overworked, long stopping distance</td></tr>
+  <tr><td>Stuck open (holds off nothing)</td><td>Front discs apply before rear drums engage — front brake dominance, rear shoes underused</td></tr>
+  <tr><td>Leaking past seal</td><td>Fluid leaking from combination valve — low pedal, warning light</td></tr>
+</table>
+<p><strong>Testing the metering valve:</strong></p>
+<ul>
+  <li>Install a <span class="teal">T-fitting and pressure gauge</span> in the front brake line before and after the metering valve</li>
+  <li>Apply light brake pressure — upstream pressure should build while downstream reads zero (valve holding)</li>
+  <li>Increase pressure — both should equalize above the split point (valve opened)</li>
+</ul>
+<div class="info-box">Most metering valve failures show up as <strong>uneven brake bias</strong> — front pads wearing much faster or slower than rear shoes. Any time brake wear is significantly mismatched front-to-rear, check the metering valve function.</div></div>
+    <div class="nav-row">
+      <button class="btn btn-outline" onclick="prevSlide()">&#8592; Back</button>
+      <button class="btn btn-amber" onclick="startQuiz()">Start Knowledge Check &#8594;</button>
+      <span class="slide-counter">3 / 3</span>
+    </div>
+  </div>
+
+  <!-- ── Quiz questions ── -->
+  
+  <div class="quiz-wrap" id="quiz-0">
+    <div class="q-header">
+      <div class="q-num">Knowledge Check &mdash; Question 1 of 3</div>
+      <div class="q-text">A metering valve is required when a vehicle has which brake configuration?</div>
+    </div>
+    <div class="options" id="opts-0">
+      <button class="opt-btn" id="opt-0-0" onclick="answer(0,0)">Four-wheel disc brakes</button><button class="opt-btn" id="opt-0-1" onclick="answer(0,1)">Four-wheel drum brakes</button><button class="opt-btn" id="opt-0-2" onclick="answer(0,2)">Front disc and rear drum brakes</button><button class="opt-btn" id="opt-0-3" onclick="answer(0,3)">Front drum and rear disc brakes</button>
+    </div>
+    <div class="feedback" id="fb-0">
+      <div class="feedback-icon" id="fb-icon-0"></div>
+      <div id="fb-text-0"></div>
+    </div>
+    <div class="nav-row" id="q-nav-0" style="display:none;">
+      <button class="btn btn-teal" onclick="nextQuestion(0)">Next Question &#8594;</button>
+    </div>
+  </div>
+  <div class="quiz-wrap" id="quiz-1">
+    <div class="q-header">
+      <div class="q-num">Knowledge Check &mdash; Question 2 of 3</div>
+      <div class="q-text">During a very light brake application on a vehicle with a functioning metering valve, the front disc calipers will:</div>
+    </div>
+    <div class="options" id="opts-1">
+      <button class="opt-btn" id="opt-1-0" onclick="answer(1,0)">Apply immediately at the same time as the rear drums</button><button class="opt-btn" id="opt-1-1" onclick="answer(1,1)">Apply first — before the rear drums overcome their return springs</button><button class="opt-btn" id="opt-1-2" onclick="answer(1,2)">Not apply at all until rear drum pressure reaches the hold-off threshold</button><button class="opt-btn" id="opt-1-3" onclick="answer(1,3)">Apply automatically through the ABS system only</button>
+    </div>
+    <div class="feedback" id="fb-1">
+      <div class="feedback-icon" id="fb-icon-1"></div>
+      <div id="fb-text-1"></div>
+    </div>
+    <div class="nav-row" id="q-nav-1" style="display:none;">
+      <button class="btn btn-teal" onclick="nextQuestion(1)">Next Question &#8594;</button>
+    </div>
+  </div>
+  <div class="quiz-wrap" id="quiz-2">
+    <div class="q-header">
+      <div class="q-num">Knowledge Check &mdash; Question 3 of 3</div>
+      <div class="q-text">A technician notices the front brake pads on a front-disc/rear-drum vehicle are wearing dramatically faster than the rear shoes. One cause to check is:</div>
+    </div>
+    <div class="options" id="opts-2">
+      <button class="opt-btn" id="opt-2-0" onclick="answer(2,0)">Caliper guide pins are seized, keeping the pads in contact</button><button class="opt-btn" id="opt-2-1" onclick="answer(2,1)">The metering valve may be stuck open, allowing front brakes to apply before rear drums engage</button><button class="opt-btn" id="opt-2-2" onclick="answer(2,2)">The proportioning valve is sending too little pressure to the rear</button><button class="opt-btn" id="opt-2-3" onclick="answer(2,3)">The ABS system is cycling the front brakes during normal stops</button>
+    </div>
+    <div class="feedback" id="fb-2">
+      <div class="feedback-icon" id="fb-icon-2"></div>
+      <div id="fb-text-2"></div>
+    </div>
+    <div class="nav-row" id="q-nav-2" style="display:none;">
+      <button class="btn btn-amber" onclick="showComplete()">Finish Lesson &#10003;</button>
+    </div>
+  </div>
+
+  <!-- ── Complete ── -->
+  <div class="complete-box" id="complete">
+    <div class="complete-icon">&#10003;</div>
+    <div class="complete-title">Lesson Complete</div>
+    <div class="complete-sub">You have finished all slides and knowledge check questions for this lesson.</div>
+    <div class="complete-outcome">Hydraulic System &nbsp;&middot;&nbsp; ASE V.C.1</div>
+  </div>
+
+</div><!-- /content-area -->
+
+<script>
+const TOTAL_STEPS = 6; // 3 slides + 3 questions
+let currentSlide = 0;
+let currentQuiz = -1;
+let answeredQuestions = 0;
+
+const correctAnswers = [2, 2, 1];
+const explanations = ['The metering valve compensates for the timing difference between disc and drum brakes. Disc brakes respond immediately while drum brakes must first overcome their return springs. The metering valve holds off front disc pressure until rear drum pressure is sufficient to engage. Four-wheel disc systems do not need this valve.', 'This is the designed function of the metering valve — it holds front disc pressure near zero until rear drum pressure builds enough to overcome the drum return springs. Once both systems are ready to brake, the metering valve opens and full front pressure flows.', 'If the metering valve is stuck open (no hold-off), the front disc brakes apply before the rear drums engage on every light stop. The front brakes do all the work on light stops, wearing pads prematurely. The metering valve should hold off front pressure until rear drum pressure reaches the split point.'];
+
+function updateProgress(step) {
+  const pct = Math.round((step / TOTAL_STEPS) * 100);
+  document.getElementById('prog-fill').style.width = pct + '%';
+  document.getElementById('prog-label').textContent = 'Progress — ' + pct + '%';
+}
+
+function showSlide(n) {
+  document.querySelectorAll('.slide').forEach(s => s.classList.remove('active'));
+  document.getElementById('slide-' + n).classList.add('active');
+  currentSlide = n;
+  updateProgress(n);
+}
+
+function nextSlide() {
+  if (currentSlide < 2) showSlide(currentSlide + 1);
+}
+
+function prevSlide() {
+  if (currentSlide > 0) showSlide(currentSlide - 1);
+}
+
+function startQuiz() {
+  document.querySelectorAll('.slide').forEach(s => s.classList.remove('active'));
+  document.getElementById('quiz-0').classList.add('active');
+  currentQuiz = 0;
+  updateProgress(3);
+}
+
+function answer(qIndex, optIndex) {
+  const opts = document.querySelectorAll('#opts-' + qIndex + ' .opt-btn');
+  opts.forEach(b => b.disabled = true);
+  const fb = document.getElementById('fb-' + qIndex);
+  const fbIcon = document.getElementById('fb-icon-' + qIndex);
+  const fbText = document.getElementById('fb-text-' + qIndex);
+  const correct = correctAnswers[qIndex];
+  if (optIndex === correct) {
+    opts[optIndex].classList.add('correct');
+    fb.className = 'feedback correct';
+    fbIcon.textContent = '✅ Correct!';
+    fbText.textContent = explanations[qIndex];
+  } else {
+    opts[optIndex].classList.add('incorrect');
+    opts[correct].classList.add('correct');
+    fb.className = 'feedback incorrect';
+    fbIcon.textContent = '❌ Incorrect — correct answer: ' + opts[correct].textContent;
+    fbText.textContent = explanations[qIndex];
+  }
+  document.getElementById('q-nav-' + qIndex).style.display = 'flex';
+  answeredQuestions++;
+  updateProgress(3 + answeredQuestions);
+}
+
+function nextQuestion(current) {
+  document.getElementById('quiz-' + current).classList.remove('active');
+  const next = current + 1;
+  document.getElementById('quiz-' + next).classList.add('active');
+  currentQuiz = next;
+}
+
+function showComplete() {
+  document.querySelectorAll('.quiz-wrap').forEach(q => q.classList.remove('active'));
+  document.getElementById('complete').classList.add('show');
+  updateProgress(6);
+}
+</script>
+
+</body>
+</html>

@@ -1,0 +1,327 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Drum Brake Components — AUTOA 123</title>
+<style>
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body { background: #1a1a1a; font-family: Arial, sans-serif; color: #cccccc; min-height: 100vh; }
+
+  .header { background: #1a1a1a; border-top: 4px solid #2a9d8f; border-bottom: 2px solid #2a9d8f; padding: 10px 16px; }
+  .header-top { display: flex; align-items: center; gap: 12px; }
+  .header-label { color: #2a9d8f; font-size: 10px; font-weight: bold; letter-spacing: 3px; text-transform: uppercase; }
+  .header-title { color: #ffffff; font-size: 15px; font-weight: bold; }
+  .header-sub { color: #888888; font-size: 10px; letter-spacing: 1px; text-transform: uppercase; margin-top: 2px; }
+  .outcome-badge { margin-top: 6px; display: inline-block; background: #2a2a2a; border: 1px solid #2a9d8f; border-radius: 3px; padding: 3px 10px; font-size: 10px; color: #2a9d8f; letter-spacing: 1px; }
+
+  .progress-wrap { padding: 10px 16px 6px 16px; }
+  .progress-label { font-size: 10px; color: #888888; margin-bottom: 4px; font-weight: bold; letter-spacing: 1px; }
+  .progress-track { background: #3a3a3a; border-radius: 3px; height: 6px; width: 100%; }
+  .progress-fill { background: #e9a825; height: 6px; border-radius: 3px; transition: width 0.4s ease; }
+
+  .content-area { padding: 0 16px 16px 16px; }
+
+  /* ── Slide styles ── */
+  .slide { display: none; }
+  .slide.active { display: block; }
+  .slide-header { background: #2a2a2a; border-left: 5px solid #2a9d8f; padding: 10px 14px; margin-bottom: 14px; border-radius: 0 4px 4px 0; }
+  .slide-num { font-size: 9px; color: #2a9d8f; font-weight: bold; letter-spacing: 2px; text-transform: uppercase; margin-bottom: 3px; }
+  .slide-title { font-size: 16px; font-weight: bold; color: #ffffff; }
+
+  .slide-body { font-size: 13px; line-height: 1.65; color: #cccccc; }
+  .slide-body p { margin-bottom: 10px; }
+  .slide-body ul { padding-left: 18px; margin-bottom: 10px; }
+  .slide-body li { margin-bottom: 6px; }
+  .slide-body strong { color: #ffffff; }
+  .slide-body .teal { color: #2a9d8f; font-weight: bold; }
+  .slide-body .amber { color: #e9a825; font-weight: bold; }
+  .slide-body .red { color: #cc0000; font-weight: bold; }
+
+  .info-box { background: #2a2a2a; border-left: 4px solid #2a9d8f; border-radius: 0 6px 6px 0; padding: 10px 14px; margin: 12px 0; font-size: 12px; }
+  .warn-box { background: #1e1800; border-left: 4px solid #e9a825; border-radius: 0 6px 6px 0; padding: 10px 14px; margin: 12px 0; font-size: 12px; color: #e0c060; }
+  .danger-box { background: #1a0000; border-left: 4px solid #cc0000; border-radius: 0 6px 6px 0; padding: 10px 14px; margin: 12px 0; font-size: 12px; color: #e08080; }
+
+  .spec-table { width: 100%; border-collapse: collapse; margin: 10px 0; font-size: 12px; }
+  .spec-table th { background: #2a9d8f; color: #ffffff; padding: 6px 10px; text-align: left; font-size: 11px; letter-spacing: 1px; text-transform: uppercase; }
+  .spec-table td { padding: 6px 10px; border-bottom: 1px solid #333; }
+  .spec-table tr:nth-child(even) td { background: #2a2a2a; }
+  .spec-table tr:nth-child(odd) td { background: #222222; }
+
+  .two-col { display: table; width: 100%; margin: 10px 0; }
+  .col-left { display: table-cell; width: 50%; padding-right: 10px; vertical-align: top; }
+  .col-right { display: table-cell; width: 50%; padding-left: 10px; vertical-align: top; border-left: 1px solid #333; }
+
+  /* ── Nav buttons ── */
+  .nav-row { display: flex; gap: 10px; margin-top: 16px; align-items: center; }
+  .btn { border: none; border-radius: 4px; padding: 9px 20px; font-size: 12px; font-weight: bold; letter-spacing: 1px; text-transform: uppercase; cursor: pointer; font-family: Arial, sans-serif; }
+  .btn-teal { background: #2a9d8f; color: #ffffff; }
+  .btn-teal:hover { background: #1a6b62; }
+  .btn-outline { background: transparent; color: #2a9d8f; border: 1px solid #2a9d8f; }
+  .btn-outline:hover { background: #2a2a2a; }
+  .btn-amber { background: #e9a825; color: #1a1a1a; }
+  .btn-amber:hover { background: #b07d00; color: #ffffff; }
+  .btn:disabled { opacity: 0.35; cursor: default; }
+  .slide-counter { font-size: 11px; color: #888888; margin-left: auto; }
+
+  /* ── Quiz styles ── */
+  .quiz-wrap { display: none; }
+  .quiz-wrap.active { display: block; }
+  .q-header { background: #2a2a2a; border-left: 5px solid #e9a825; padding: 10px 14px; margin-bottom: 14px; border-radius: 0 4px 4px 0; }
+  .q-num { font-size: 9px; color: #e9a825; font-weight: bold; letter-spacing: 2px; text-transform: uppercase; margin-bottom: 3px; }
+  .q-text { font-size: 14px; font-weight: bold; color: #ffffff; line-height: 1.45; }
+
+  .options { display: flex; flex-direction: column; gap: 8px; margin-bottom: 14px; }
+  .opt-btn { background: #2a2a2a; border: 1px solid #444; border-radius: 5px; padding: 11px 14px; font-size: 13px; color: #cccccc; cursor: pointer; text-align: left; font-family: Arial, sans-serif; transition: border-color 0.15s, background 0.15s; }
+  .opt-btn:hover:not(:disabled) { border-color: #2a9d8f; background: #2a3a38; }
+  .opt-btn.correct { background: #0d2b28; border-color: #2a9d8f; color: #ffffff; }
+  .opt-btn.incorrect { background: #1a0000; border-color: #cc0000; color: #e08080; }
+  .opt-btn:disabled { cursor: default; }
+
+  .feedback { display: none; padding: 10px 14px; border-radius: 5px; font-size: 12px; margin-bottom: 12px; line-height: 1.5; }
+  .feedback.correct { display: block; background: #0d2b28; border-left: 4px solid #2a9d8f; color: #f0faf8; }
+  .feedback.incorrect { display: block; background: #1a0000; border-left: 4px solid #cc0000; color: #f0c0c0; }
+  .feedback-icon { font-weight: bold; margin-bottom: 4px; }
+
+  /* ── Complete box ── */
+  .complete-box { display: none; background: #0d2b28; border: 2px solid #2a9d8f; border-radius: 8px; padding: 20px; text-align: center; margin-top: 10px; }
+  .complete-box.show { display: block; }
+  .complete-icon { font-size: 32px; margin-bottom: 8px; }
+  .complete-title { font-size: 17px; font-weight: bold; color: #2a9d8f; margin-bottom: 6px; }
+  .complete-sub { font-size: 12px; color: #cccccc; }
+  .complete-outcome { margin-top: 12px; background: #2a2a2a; border-radius: 4px; padding: 8px 14px; display: inline-block; font-size: 11px; color: #2a9d8f; border: 1px solid #2a9d8f; }
+</style>
+</head>
+<body>
+
+<div class="header">
+  <div class="header-top">
+    <div>
+      <div class="header-label">Automotive Technology · AUTOA 123</div>
+      <div class="header-title">Drum Brake Components</div>
+      <div class="header-sub">Brakes</div>
+    </div>
+  </div>
+  <div class="outcome-badge">Drum Brakes &nbsp;·&nbsp; ASE V.B.1</div>
+</div>
+
+<div class="progress-wrap">
+  <div class="progress-label" id="prog-label">Progress &mdash; 0%</div>
+  <div class="progress-track"><div class="progress-fill" id="prog-fill" style="width:0%"></div></div>
+</div>
+
+<div class="content-area">
+
+  <!-- ── Slides ── -->
+  
+  <div class="slide active" id="slide-0">
+    <div class="slide-header">
+      <div class="slide-num">Slide 1 of 3</div>
+      <div class="slide-title">Drum Brake Components and Operation</div>
+    </div>
+    <div class="slide-body">
+<p>Drum brakes use curved <strong>brake shoes</strong> lined with friction material that press outward against the inside of a rotating <strong>brake drum</strong>. The drum rotates with the wheel hub.</p>
+<p>Key components:</p>
+<ul>
+  <li><strong>Brake drum:</strong> Cast iron, rotates with wheel. Inside diameter is the friction surface.</li>
+  <li><strong>Brake shoes (primary and secondary):</strong> Curved steel backing with friction lining bonded or riveted on.</li>
+  <li><strong>Wheel cylinder:</strong> Hydraulic cylinder with two pistons that push the tops of both shoes outward.</li>
+  <li><strong>Return springs:</strong> Pull shoes back off the drum when brakes are released.</li>
+  <li><strong>Hold-down hardware:</strong> Pins and springs that keep shoes positioned on the backing plate.</li>
+  <li><strong>Adjuster:</strong> Star wheel adjuster maintains correct shoe-to-drum clearance as shoes wear.</li>
+</ul>
+<div class="info-box">The primary (front) shoe and secondary (rear) shoe are NOT the same. They are different lengths and the friction lining may be different. Never swap them.</div></div>
+    <div class="nav-row">
+      <span></span>
+      <button class="btn btn-teal" onclick="nextSlide()">Next &#8594;</button>
+      <span class="slide-counter">1 / 3</span>
+    </div>
+  </div>
+  <div class="slide " id="slide-1">
+    <div class="slide-header">
+      <div class="slide-num">Slide 2 of 3</div>
+      <div class="slide-title">Self-Energizing Action</div>
+    </div>
+    <div class="slide-body">
+<p>Drum brakes have a unique characteristic called <span class="teal">self-energizing</span> (or servo) action. The design causes the rotating drum to pull the brake shoe more tightly into the drum as braking force increases — <strong>the brake partially applies itself.</strong></p>
+<p><strong>How it works (forward rotation, duo-servo design):</strong></p>
+<ol style="padding-left:18px;margin-bottom:10px;">
+  <li style="margin-bottom:5px;">Wheel cylinder pushes primary shoe into the drum</li>
+  <li style="margin-bottom:5px;">Drum rotation drags the primary shoe forward (in direction of travel)</li>
+  <li style="margin-bottom:5px;">Primary shoe force transfers through the adjuster to the secondary shoe</li>
+  <li style="margin-bottom:5px;">Secondary shoe is driven hard into the drum by this transferred force</li>
+  <li style="margin-bottom:5px;">Secondary shoe does most of the braking work in forward direction</li>
+</ol>
+<div class="warn-box">Self-energizing makes drum brakes very effective for parking brakes but more prone to <strong>grabbing or pulling</strong> if components are worn, contaminated, or improperly adjusted. Even a small amount of grease contamination causes severe brake grab.</div></div>
+    <div class="nav-row">
+      <button class="btn btn-outline" onclick="prevSlide()">&#8592; Back</button>
+      <button class="btn btn-teal" onclick="nextSlide()">Next &#8594;</button>
+      <span class="slide-counter">2 / 3</span>
+    </div>
+  </div>
+  <div class="slide " id="slide-2">
+    <div class="slide-header">
+      <div class="slide-num">Slide 3 of 3</div>
+      <div class="slide-title">Drum Brake Service</div>
+    </div>
+    <div class="slide-body">
+<p><strong>Key measurements:</strong></p>
+<table class="spec-table">
+  <tr><th>Measurement</th><th>Tool</th><th>Action</th></tr>
+  <tr><td>Drum inside diameter</td><td>Drum micrometer or inside mic</td><td>Machine if within discard limit; replace if at/beyond discard</td></tr>
+  <tr><td>Shoe lining thickness</td><td>Ruler or vernier caliper</td><td>Replace at 1/16" (1.5mm) remaining lining above rivet</td></tr>
+  <tr><td>Wheel cylinder for leaks</td><td>Visual / boot inspection</td><td>Replace if any fluid present behind boot</td></tr>
+</table>
+<p><strong>Common drum brake problems:</strong></p>
+<ul>
+  <li><span class="red">Brake grab/pull:</span> Contaminated lining (grease or fluid), misadjusted shoes, seized adjuster</li>
+  <li><span class="amber">Brake squeal:</span> Glazed drum or lining, worn lining, hardware resonance</li>
+  <li><span class="teal">Poor adjustment:</span> Excessive pedal travel, requires multiple pumps to firm up pedal</li>
+  <li><span class="amber">Brake drag:</span> Seized wheel cylinder, weak return springs, over-adjusted shoes</li>
+</ul>
+<div class="info-box">Always replace drum brake hardware (springs, hold-downs, adjuster) as a complete kit when replacing shoes. Old springs weaken over time and cause premature wear and noise.</div></div>
+    <div class="nav-row">
+      <button class="btn btn-outline" onclick="prevSlide()">&#8592; Back</button>
+      <button class="btn btn-amber" onclick="startQuiz()">Start Knowledge Check &#8594;</button>
+      <span class="slide-counter">3 / 3</span>
+    </div>
+  </div>
+
+  <!-- ── Quiz questions ── -->
+  
+  <div class="quiz-wrap" id="quiz-0">
+    <div class="q-header">
+      <div class="q-num">Knowledge Check &mdash; Question 1 of 3</div>
+      <div class="q-text">What is "self-energizing" action in a drum brake?</div>
+    </div>
+    <div class="options" id="opts-0">
+      <button class="opt-btn" id="opt-0-0" onclick="answer(0,0)">The adjuster automatically increases shoe-to-drum clearance</button><button class="opt-btn" id="opt-0-1" onclick="answer(0,1)">The rotating drum pulls the shoe more tightly into contact, increasing braking force</button><button class="opt-btn" id="opt-0-2" onclick="answer(0,2)">The wheel cylinder increases hydraulic pressure automatically during hard braking</button><button class="opt-btn" id="opt-0-3" onclick="answer(0,3)">The parking brake cable tensions automatically as the primary shoe wears</button>
+    </div>
+    <div class="feedback" id="fb-0">
+      <div class="feedback-icon" id="fb-icon-0"></div>
+      <div id="fb-text-0"></div>
+    </div>
+    <div class="nav-row" id="q-nav-0" style="display:none;">
+      <button class="btn btn-teal" onclick="nextQuestion(0)">Next Question &#8594;</button>
+    </div>
+  </div>
+  <div class="quiz-wrap" id="quiz-1">
+    <div class="q-header">
+      <div class="q-num">Knowledge Check &mdash; Question 2 of 3</div>
+      <div class="q-text">The secondary shoe in a duo-servo drum brake:</div>
+    </div>
+    <div class="options" id="opts-1">
+      <button class="opt-btn" id="opt-1-0" onclick="answer(1,0)">Is shorter than the primary shoe and does less work</button><button class="opt-btn" id="opt-1-1" onclick="answer(1,1)">Does most of the braking work in the forward direction due to self-energizing</button><button class="opt-btn" id="opt-1-2" onclick="answer(1,2)">Is pushed directly by the wheel cylinder only</button><button class="opt-btn" id="opt-1-3" onclick="answer(1,3)">Is used exclusively for reverse braking</button>
+    </div>
+    <div class="feedback" id="fb-1">
+      <div class="feedback-icon" id="fb-icon-1"></div>
+      <div id="fb-text-1"></div>
+    </div>
+    <div class="nav-row" id="q-nav-1" style="display:none;">
+      <button class="btn btn-teal" onclick="nextQuestion(1)">Next Question &#8594;</button>
+    </div>
+  </div>
+  <div class="quiz-wrap" id="quiz-2">
+    <div class="q-header">
+      <div class="q-num">Knowledge Check &mdash; Question 3 of 3</div>
+      <div class="q-text">What is the most likely cause of a rear drum brake that grabs suddenly and pulls to one side?</div>
+    </div>
+    <div class="options" id="opts-2">
+      <button class="opt-btn" id="opt-2-0" onclick="answer(2,0)">A seized wheel cylinder piston on the opposite side</button><button class="opt-btn" id="opt-2-1" onclick="answer(2,1)">Grease or brake fluid contaminating the brake lining</button><button class="opt-btn" id="opt-2-2" onclick="answer(2,2)">A broken return spring that prevents shoe retraction</button><button class="opt-btn" id="opt-2-3" onclick="answer(2,3)">Incorrect shoe lining thickness measurement</button>
+    </div>
+    <div class="feedback" id="fb-2">
+      <div class="feedback-icon" id="fb-icon-2"></div>
+      <div id="fb-text-2"></div>
+    </div>
+    <div class="nav-row" id="q-nav-2" style="display:none;">
+      <button class="btn btn-amber" onclick="showComplete()">Finish Lesson &#10003;</button>
+    </div>
+  </div>
+
+  <!-- ── Complete ── -->
+  <div class="complete-box" id="complete">
+    <div class="complete-icon">&#10003;</div>
+    <div class="complete-title">Lesson Complete</div>
+    <div class="complete-sub">You have finished all slides and knowledge check questions for this lesson.</div>
+    <div class="complete-outcome">Drum Brakes &nbsp;&middot;&nbsp; ASE V.B.1</div>
+  </div>
+
+</div><!-- /content-area -->
+
+<script>
+const TOTAL_STEPS = 6; // 3 slides + 3 questions
+let currentSlide = 0;
+let currentQuiz = -1;
+let answeredQuestions = 0;
+
+const correctAnswers = [1, 1, 1];
+const explanations = ['Self-energizing means the design uses the rotation of the drum to pull the shoe tighter against the drum surface during braking — amplifying the force applied by the wheel cylinder. This is why drum brakes are effective with relatively small wheel cylinders, but also why they are sensitive to contamination and adjustment.', 'In the duo-servo design, the primary shoe transfers its self-energizing force through the adjuster to the secondary shoe. The secondary shoe ends up doing the majority of the braking work in forward rotation. This is why primary and secondary shoes are different sizes — never interchange them.', 'Even a small amount of grease or fluid contamination on brake lining dramatically reduces friction on one side while the drum rotation can suddenly grab the saturated material. The result is violent brake grab and a pull toward the contaminated side. Contaminated linings must be replaced — cleaning is not sufficient.'];
+
+function updateProgress(step) {
+  const pct = Math.round((step / TOTAL_STEPS) * 100);
+  document.getElementById('prog-fill').style.width = pct + '%';
+  document.getElementById('prog-label').textContent = 'Progress — ' + pct + '%';
+}
+
+function showSlide(n) {
+  document.querySelectorAll('.slide').forEach(s => s.classList.remove('active'));
+  document.getElementById('slide-' + n).classList.add('active');
+  currentSlide = n;
+  updateProgress(n);
+}
+
+function nextSlide() {
+  if (currentSlide < 2) showSlide(currentSlide + 1);
+}
+
+function prevSlide() {
+  if (currentSlide > 0) showSlide(currentSlide - 1);
+}
+
+function startQuiz() {
+  document.querySelectorAll('.slide').forEach(s => s.classList.remove('active'));
+  document.getElementById('quiz-0').classList.add('active');
+  currentQuiz = 0;
+  updateProgress(3);
+}
+
+function answer(qIndex, optIndex) {
+  const opts = document.querySelectorAll('#opts-' + qIndex + ' .opt-btn');
+  opts.forEach(b => b.disabled = true);
+  const fb = document.getElementById('fb-' + qIndex);
+  const fbIcon = document.getElementById('fb-icon-' + qIndex);
+  const fbText = document.getElementById('fb-text-' + qIndex);
+  const correct = correctAnswers[qIndex];
+  if (optIndex === correct) {
+    opts[optIndex].classList.add('correct');
+    fb.className = 'feedback correct';
+    fbIcon.textContent = '✅ Correct!';
+    fbText.textContent = explanations[qIndex];
+  } else {
+    opts[optIndex].classList.add('incorrect');
+    opts[correct].classList.add('correct');
+    fb.className = 'feedback incorrect';
+    fbIcon.textContent = '❌ Incorrect — correct answer: ' + opts[correct].textContent;
+    fbText.textContent = explanations[qIndex];
+  }
+  document.getElementById('q-nav-' + qIndex).style.display = 'flex';
+  answeredQuestions++;
+  updateProgress(3 + answeredQuestions);
+}
+
+function nextQuestion(current) {
+  document.getElementById('quiz-' + current).classList.remove('active');
+  const next = current + 1;
+  document.getElementById('quiz-' + next).classList.add('active');
+  currentQuiz = next;
+}
+
+function showComplete() {
+  document.querySelectorAll('.quiz-wrap').forEach(q => q.classList.remove('active'));
+  document.getElementById('complete').classList.add('show');
+  updateProgress(6);
+}
+</script>
+
+</body>
+</html>

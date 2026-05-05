@@ -1,0 +1,337 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Disc Brake Components — AUTOA 123</title>
+<style>
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body { background: #1a1a1a; font-family: Arial, sans-serif; color: #cccccc; min-height: 100vh; }
+
+  .header { background: #1a1a1a; border-top: 4px solid #2a9d8f; border-bottom: 2px solid #2a9d8f; padding: 10px 16px; }
+  .header-top { display: flex; align-items: center; gap: 12px; }
+  .header-label { color: #2a9d8f; font-size: 10px; font-weight: bold; letter-spacing: 3px; text-transform: uppercase; }
+  .header-title { color: #ffffff; font-size: 15px; font-weight: bold; }
+  .header-sub { color: #888888; font-size: 10px; letter-spacing: 1px; text-transform: uppercase; margin-top: 2px; }
+  .outcome-badge { margin-top: 6px; display: inline-block; background: #2a2a2a; border: 1px solid #2a9d8f; border-radius: 3px; padding: 3px 10px; font-size: 10px; color: #2a9d8f; letter-spacing: 1px; }
+
+  .progress-wrap { padding: 10px 16px 6px 16px; }
+  .progress-label { font-size: 10px; color: #888888; margin-bottom: 4px; font-weight: bold; letter-spacing: 1px; }
+  .progress-track { background: #3a3a3a; border-radius: 3px; height: 6px; width: 100%; }
+  .progress-fill { background: #e9a825; height: 6px; border-radius: 3px; transition: width 0.4s ease; }
+
+  .content-area { padding: 0 16px 16px 16px; }
+
+  /* ── Slide styles ── */
+  .slide { display: none; }
+  .slide.active { display: block; }
+  .slide-header { background: #2a2a2a; border-left: 5px solid #2a9d8f; padding: 10px 14px; margin-bottom: 14px; border-radius: 0 4px 4px 0; }
+  .slide-num { font-size: 9px; color: #2a9d8f; font-weight: bold; letter-spacing: 2px; text-transform: uppercase; margin-bottom: 3px; }
+  .slide-title { font-size: 16px; font-weight: bold; color: #ffffff; }
+
+  .slide-body { font-size: 13px; line-height: 1.65; color: #cccccc; }
+  .slide-body p { margin-bottom: 10px; }
+  .slide-body ul { padding-left: 18px; margin-bottom: 10px; }
+  .slide-body li { margin-bottom: 6px; }
+  .slide-body strong { color: #ffffff; }
+  .slide-body .teal { color: #2a9d8f; font-weight: bold; }
+  .slide-body .amber { color: #e9a825; font-weight: bold; }
+  .slide-body .red { color: #cc0000; font-weight: bold; }
+
+  .info-box { background: #2a2a2a; border-left: 4px solid #2a9d8f; border-radius: 0 6px 6px 0; padding: 10px 14px; margin: 12px 0; font-size: 12px; }
+  .warn-box { background: #1e1800; border-left: 4px solid #e9a825; border-radius: 0 6px 6px 0; padding: 10px 14px; margin: 12px 0; font-size: 12px; color: #e0c060; }
+  .danger-box { background: #1a0000; border-left: 4px solid #cc0000; border-radius: 0 6px 6px 0; padding: 10px 14px; margin: 12px 0; font-size: 12px; color: #e08080; }
+
+  .spec-table { width: 100%; border-collapse: collapse; margin: 10px 0; font-size: 12px; }
+  .spec-table th { background: #2a9d8f; color: #ffffff; padding: 6px 10px; text-align: left; font-size: 11px; letter-spacing: 1px; text-transform: uppercase; }
+  .spec-table td { padding: 6px 10px; border-bottom: 1px solid #333; }
+  .spec-table tr:nth-child(even) td { background: #2a2a2a; }
+  .spec-table tr:nth-child(odd) td { background: #222222; }
+
+  .two-col { display: table; width: 100%; margin: 10px 0; }
+  .col-left { display: table-cell; width: 50%; padding-right: 10px; vertical-align: top; }
+  .col-right { display: table-cell; width: 50%; padding-left: 10px; vertical-align: top; border-left: 1px solid #333; }
+
+  /* ── Nav buttons ── */
+  .nav-row { display: flex; gap: 10px; margin-top: 16px; align-items: center; }
+  .btn { border: none; border-radius: 4px; padding: 9px 20px; font-size: 12px; font-weight: bold; letter-spacing: 1px; text-transform: uppercase; cursor: pointer; font-family: Arial, sans-serif; }
+  .btn-teal { background: #2a9d8f; color: #ffffff; }
+  .btn-teal:hover { background: #1a6b62; }
+  .btn-outline { background: transparent; color: #2a9d8f; border: 1px solid #2a9d8f; }
+  .btn-outline:hover { background: #2a2a2a; }
+  .btn-amber { background: #e9a825; color: #1a1a1a; }
+  .btn-amber:hover { background: #b07d00; color: #ffffff; }
+  .btn:disabled { opacity: 0.35; cursor: default; }
+  .slide-counter { font-size: 11px; color: #888888; margin-left: auto; }
+
+  /* ── Quiz styles ── */
+  .quiz-wrap { display: none; }
+  .quiz-wrap.active { display: block; }
+  .q-header { background: #2a2a2a; border-left: 5px solid #e9a825; padding: 10px 14px; margin-bottom: 14px; border-radius: 0 4px 4px 0; }
+  .q-num { font-size: 9px; color: #e9a825; font-weight: bold; letter-spacing: 2px; text-transform: uppercase; margin-bottom: 3px; }
+  .q-text { font-size: 14px; font-weight: bold; color: #ffffff; line-height: 1.45; }
+
+  .options { display: flex; flex-direction: column; gap: 8px; margin-bottom: 14px; }
+  .opt-btn { background: #2a2a2a; border: 1px solid #444; border-radius: 5px; padding: 11px 14px; font-size: 13px; color: #cccccc; cursor: pointer; text-align: left; font-family: Arial, sans-serif; transition: border-color 0.15s, background 0.15s; }
+  .opt-btn:hover:not(:disabled) { border-color: #2a9d8f; background: #2a3a38; }
+  .opt-btn.correct { background: #0d2b28; border-color: #2a9d8f; color: #ffffff; }
+  .opt-btn.incorrect { background: #1a0000; border-color: #cc0000; color: #e08080; }
+  .opt-btn:disabled { cursor: default; }
+
+  .feedback { display: none; padding: 10px 14px; border-radius: 5px; font-size: 12px; margin-bottom: 12px; line-height: 1.5; }
+  .feedback.correct { display: block; background: #0d2b28; border-left: 4px solid #2a9d8f; color: #f0faf8; }
+  .feedback.incorrect { display: block; background: #1a0000; border-left: 4px solid #cc0000; color: #f0c0c0; }
+  .feedback-icon { font-weight: bold; margin-bottom: 4px; }
+
+  /* ── Complete box ── */
+  .complete-box { display: none; background: #0d2b28; border: 2px solid #2a9d8f; border-radius: 8px; padding: 20px; text-align: center; margin-top: 10px; }
+  .complete-box.show { display: block; }
+  .complete-icon { font-size: 32px; margin-bottom: 8px; }
+  .complete-title { font-size: 17px; font-weight: bold; color: #2a9d8f; margin-bottom: 6px; }
+  .complete-sub { font-size: 12px; color: #cccccc; }
+  .complete-outcome { margin-top: 12px; background: #2a2a2a; border-radius: 4px; padding: 8px 14px; display: inline-block; font-size: 11px; color: #2a9d8f; border: 1px solid #2a9d8f; }
+</style>
+</head>
+<body>
+
+<div class="header">
+  <div class="header-top">
+    <div>
+      <div class="header-label">Automotive Technology · AUTOA 123</div>
+      <div class="header-title">Disc Brake Components</div>
+      <div class="header-sub">Brakes</div>
+    </div>
+  </div>
+  <div class="outcome-badge">Disc Brakes &nbsp;·&nbsp; ASE V.A.1</div>
+</div>
+
+<div class="progress-wrap">
+  <div class="progress-label" id="prog-label">Progress &mdash; 0%</div>
+  <div class="progress-track"><div class="progress-fill" id="prog-fill" style="width:0%"></div></div>
+</div>
+
+<div class="content-area">
+
+  <!-- ── Slides ── -->
+  
+  <div class="slide active" id="slide-0">
+    <div class="slide-header">
+      <div class="slide-num">Slide 1 of 3</div>
+      <div class="slide-title">Disc Brake System Overview</div>
+    </div>
+    <div class="slide-body">
+<p>Disc brakes use a <strong>rotor</strong> (disc) that rotates with the wheel, and a <strong>caliper</strong> that clamps brake pads against both sides of the rotor to create friction and slow the vehicle.</p>
+<p>Key advantages over drum brakes:</p>
+<ul>
+  <li><strong>Better heat dissipation:</strong> Rotor is exposed to airflow — cools faster</li>
+  <li><strong>More consistent performance:</strong> Less prone to fade under repeated hard stops</li>
+  <li><strong>Self-adjusting:</strong> As pads wear, caliper pistons extend automatically</li>
+  <li><strong>Wet weather recovery:</strong> Rotor surfaces wipe dry on first application</li>
+</ul>
+<p><strong>Rotor construction types:</strong></p>
+<table class="spec-table">
+  <tr><th>Type</th><th>Construction</th><th>Used On</th></tr>
+  <tr><td>Solid rotor</td><td>Single solid disc</td><td>Rear, light-duty applications</td></tr>
+  <tr><td>Vented rotor</td><td>Two faces with cooling vanes between</td><td>Front brakes, heavy-duty</td></tr>
+  <tr><td>Drilled / slotted</td><td>Holes or slots to remove gas and debris</td><td>Performance applications</td></tr>
+</table></div>
+    <div class="nav-row">
+      <span></span>
+      <button class="btn btn-teal" onclick="nextSlide()">Next &#8594;</button>
+      <span class="slide-counter">1 / 3</span>
+    </div>
+  </div>
+  <div class="slide " id="slide-1">
+    <div class="slide-header">
+      <div class="slide-num">Slide 2 of 3</div>
+      <div class="slide-title">Caliper Types and Operation</div>
+    </div>
+    <div class="slide-body">
+<p>The caliper is the hydraulic clamping device. Two main designs:</p>
+<div class="two-col">
+  <div class="col-left">
+    <div class="info-box"><strong>Fixed Caliper</strong><br>Bolted rigidly to the knuckle. Has pistons on BOTH sides of the rotor. More expensive, better performance. Common on sports cars. Does not slide.</div>
+  </div>
+  <div class="col-right">
+    <div class="info-box"><strong>Floating (Sliding) Caliper</strong><br>Slides on guide pins. Pistons on ONE side only — the caliper body floats to clamp both pads. Most common design. Requires clean, lubricated guide pins.</div>
+  </div>
+</div>
+<p><strong>How the floating caliper works:</strong></p>
+<ol style="padding-left:18px;margin-bottom:10px;">
+  <li style="margin-bottom:5px;">Hydraulic pressure enters the caliper, pushing the piston outward</li>
+  <li style="margin-bottom:5px;">Piston pushes the inner pad against the rotor</li>
+  <li style="margin-bottom:5px;">Reaction force slides the caliper body inward on the guide pins</li>
+  <li style="margin-bottom:5px;">Outer pad is pulled against the rotor by the caliper sliding</li>
+</ol>
+<div class="warn-box">Seized guide pins prevent the caliper from floating — causing <strong>uneven pad wear</strong>, excessive heat on one side, and brake pull. Inspect and lubricate guide pins during every pad replacement.</div></div>
+    <div class="nav-row">
+      <button class="btn btn-outline" onclick="prevSlide()">&#8592; Back</button>
+      <button class="btn btn-teal" onclick="nextSlide()">Next &#8594;</button>
+      <span class="slide-counter">2 / 3</span>
+    </div>
+  </div>
+  <div class="slide " id="slide-2">
+    <div class="slide-header">
+      <div class="slide-num">Slide 3 of 3</div>
+      <div class="slide-title">Rotor Service and Pad Wear</div>
+    </div>
+    <div class="slide-body">
+<p><strong>Rotor inspection measurements:</strong></p>
+<table class="spec-table">
+  <tr><th>Measurement</th><th>Tool</th><th>Spec Source</th></tr>
+  <tr><td>Rotor thickness</td><td>Outside micrometer</td><td>ShopKey — minimum thickness cast into rotor</td></tr>
+  <tr><td>Lateral runout (wobble)</td><td>Dial indicator</td><td>Typically 0.002"–0.005" max</td></tr>
+  <tr><td>Parallelism (thickness variation)</td><td>Outside micrometer</td><td>Typically 0.0005"–0.001" max</td></tr>
+</table>
+<p><strong>Brake pad wear indicators:</strong></p>
+<ul>
+  <li><span class="teal">Wear indicator tab:</span> Metal tab that contacts rotor when pads are worn — produces a high-pitched squeal</li>
+  <li><span class="amber">Visual inspection:</span> Measure pad thickness — typically replace at 2–3mm</li>
+  <li><span class="red">Metal-to-metal grinding:</span> Pad completely worn through — rotor damage occurring</li>
+</ul>
+<div class="danger-box">Never machine a rotor below minimum thickness. An under-thickness rotor can <strong>crack or fail under load</strong>, causing sudden and complete loss of braking at that corner.</div></div>
+    <div class="nav-row">
+      <button class="btn btn-outline" onclick="prevSlide()">&#8592; Back</button>
+      <button class="btn btn-amber" onclick="startQuiz()">Start Knowledge Check &#8594;</button>
+      <span class="slide-counter">3 / 3</span>
+    </div>
+  </div>
+
+  <!-- ── Quiz questions ── -->
+  
+  <div class="quiz-wrap" id="quiz-0">
+    <div class="q-header">
+      <div class="q-num">Knowledge Check &mdash; Question 1 of 3</div>
+      <div class="q-text">What is the primary advantage of a vented disc rotor over a solid disc rotor?</div>
+    </div>
+    <div class="options" id="opts-0">
+      <button class="opt-btn" id="opt-0-0" onclick="answer(0,0)">Vented rotors are lighter and reduce unsprung weight</button><button class="opt-btn" id="opt-0-1" onclick="answer(0,1)">Vented rotors dissipate heat faster due to airflow through the cooling vanes</button><button class="opt-btn" id="opt-0-2" onclick="answer(0,2)">Vented rotors have a larger friction surface area</button><button class="opt-btn" id="opt-0-3" onclick="answer(0,3)">Vented rotors require less clamping force from the caliper</button>
+    </div>
+    <div class="feedback" id="fb-0">
+      <div class="feedback-icon" id="fb-icon-0"></div>
+      <div id="fb-text-0"></div>
+    </div>
+    <div class="nav-row" id="q-nav-0" style="display:none;">
+      <button class="btn btn-teal" onclick="nextQuestion(0)">Next Question &#8594;</button>
+    </div>
+  </div>
+  <div class="quiz-wrap" id="quiz-1">
+    <div class="q-header">
+      <div class="q-num">Knowledge Check &mdash; Question 2 of 3</div>
+      <div class="q-text">A floating caliper has a piston on only one side. How is the outboard pad clamped against the rotor?</div>
+    </div>
+    <div class="options" id="opts-1">
+      <button class="opt-btn" id="opt-1-0" onclick="answer(1,0)">A second hidden piston on the outboard side</button><button class="opt-btn" id="opt-1-1" onclick="answer(1,1)">The caliper body slides on guide pins, pulling the outboard pad inward as a reaction to piston movement</button><button class="opt-btn" id="opt-1-2" onclick="answer(1,2)">The caliper body is spring-loaded to maintain constant pad contact</button><button class="opt-btn" id="opt-1-3" onclick="answer(1,3)">The wheel bearing preload forces the pad against the rotor</button>
+    </div>
+    <div class="feedback" id="fb-1">
+      <div class="feedback-icon" id="fb-icon-1"></div>
+      <div id="fb-text-1"></div>
+    </div>
+    <div class="nav-row" id="q-nav-1" style="display:none;">
+      <button class="btn btn-teal" onclick="nextQuestion(1)">Next Question &#8594;</button>
+    </div>
+  </div>
+  <div class="quiz-wrap" id="quiz-2">
+    <div class="q-header">
+      <div class="q-num">Knowledge Check &mdash; Question 3 of 3</div>
+      <div class="q-text">During brake pad replacement, the guide pin boots are torn and the pins are corroded. If you install new pads without addressing this, what symptom will the customer likely return with?</div>
+    </div>
+    <div class="options" id="opts-2">
+      <button class="opt-btn" id="opt-2-0" onclick="answer(2,0)">Brake pedal pulsation from rotor runout</button><button class="opt-btn" id="opt-2-1" onclick="answer(2,1)">Uneven pad wear and possibly brake pull to one side</button><button class="opt-btn" id="opt-2-2" onclick="answer(2,2)">Complete brake failure at that corner</button><button class="opt-btn" id="opt-2-3" onclick="answer(2,3)">ABS activating during normal stops</button>
+    </div>
+    <div class="feedback" id="fb-2">
+      <div class="feedback-icon" id="fb-icon-2"></div>
+      <div id="fb-text-2"></div>
+    </div>
+    <div class="nav-row" id="q-nav-2" style="display:none;">
+      <button class="btn btn-amber" onclick="showComplete()">Finish Lesson &#10003;</button>
+    </div>
+  </div>
+
+  <!-- ── Complete ── -->
+  <div class="complete-box" id="complete">
+    <div class="complete-icon">&#10003;</div>
+    <div class="complete-title">Lesson Complete</div>
+    <div class="complete-sub">You have finished all slides and knowledge check questions for this lesson.</div>
+    <div class="complete-outcome">Disc Brakes &nbsp;&middot;&nbsp; ASE V.A.1</div>
+  </div>
+
+</div><!-- /content-area -->
+
+<script>
+const TOTAL_STEPS = 6; // 3 slides + 3 questions
+let currentSlide = 0;
+let currentQuiz = -1;
+let answeredQuestions = 0;
+
+const correctAnswers = [1, 1, 1];
+const explanations = ['Vented rotors have two friction faces with cooling vanes between them. As the wheel rotates, air is drawn through the vanes and carries heat away. This dramatically improves heat dissipation compared to solid rotors, which is why front brakes — which do the most work — almost always use vented rotors.', 'In a floating caliper, the piston pushes the inner pad outward against the rotor. The reaction force slides the entire caliper body inward on the guide pins, which pulls the outer pad bracket against the rotor. Both pads clamp simultaneously from one set of pistons.', 'Seized or sticky guide pins prevent the caliper from sliding freely. The caliper will not fully retract, keeping one pad in contact with the rotor — causing that pad to wear much faster than the other. The vehicle may also pull toward the dragging caliper. Always service guide pins during pad replacement.'];
+
+function updateProgress(step) {
+  const pct = Math.round((step / TOTAL_STEPS) * 100);
+  document.getElementById('prog-fill').style.width = pct + '%';
+  document.getElementById('prog-label').textContent = 'Progress — ' + pct + '%';
+}
+
+function showSlide(n) {
+  document.querySelectorAll('.slide').forEach(s => s.classList.remove('active'));
+  document.getElementById('slide-' + n).classList.add('active');
+  currentSlide = n;
+  updateProgress(n);
+}
+
+function nextSlide() {
+  if (currentSlide < 2) showSlide(currentSlide + 1);
+}
+
+function prevSlide() {
+  if (currentSlide > 0) showSlide(currentSlide - 1);
+}
+
+function startQuiz() {
+  document.querySelectorAll('.slide').forEach(s => s.classList.remove('active'));
+  document.getElementById('quiz-0').classList.add('active');
+  currentQuiz = 0;
+  updateProgress(3);
+}
+
+function answer(qIndex, optIndex) {
+  const opts = document.querySelectorAll('#opts-' + qIndex + ' .opt-btn');
+  opts.forEach(b => b.disabled = true);
+  const fb = document.getElementById('fb-' + qIndex);
+  const fbIcon = document.getElementById('fb-icon-' + qIndex);
+  const fbText = document.getElementById('fb-text-' + qIndex);
+  const correct = correctAnswers[qIndex];
+  if (optIndex === correct) {
+    opts[optIndex].classList.add('correct');
+    fb.className = 'feedback correct';
+    fbIcon.textContent = '✅ Correct!';
+    fbText.textContent = explanations[qIndex];
+  } else {
+    opts[optIndex].classList.add('incorrect');
+    opts[correct].classList.add('correct');
+    fb.className = 'feedback incorrect';
+    fbIcon.textContent = '❌ Incorrect — correct answer: ' + opts[correct].textContent;
+    fbText.textContent = explanations[qIndex];
+  }
+  document.getElementById('q-nav-' + qIndex).style.display = 'flex';
+  answeredQuestions++;
+  updateProgress(3 + answeredQuestions);
+}
+
+function nextQuestion(current) {
+  document.getElementById('quiz-' + current).classList.remove('active');
+  const next = current + 1;
+  document.getElementById('quiz-' + next).classList.add('active');
+  currentQuiz = next;
+}
+
+function showComplete() {
+  document.querySelectorAll('.quiz-wrap').forEach(q => q.classList.remove('active'));
+  document.getElementById('complete').classList.add('show');
+  updateProgress(6);
+}
+</script>
+
+</body>
+</html>

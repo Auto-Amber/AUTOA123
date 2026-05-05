@@ -1,0 +1,318 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Pascal's Law and Hydraulic Brakes — AUTOA 123</title>
+<style>
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body { background: #1a1a1a; font-family: Arial, sans-serif; color: #cccccc; min-height: 100vh; }
+
+  .header { background: #1a1a1a; border-top: 4px solid #2a9d8f; border-bottom: 2px solid #2a9d8f; padding: 10px 16px; }
+  .header-top { display: flex; align-items: center; gap: 12px; }
+  .header-label { color: #2a9d8f; font-size: 10px; font-weight: bold; letter-spacing: 3px; text-transform: uppercase; }
+  .header-title { color: #ffffff; font-size: 15px; font-weight: bold; }
+  .header-sub { color: #888888; font-size: 10px; letter-spacing: 1px; text-transform: uppercase; margin-top: 2px; }
+  .outcome-badge { margin-top: 6px; display: inline-block; background: #2a2a2a; border: 1px solid #2a9d8f; border-radius: 3px; padding: 3px 10px; font-size: 10px; color: #2a9d8f; letter-spacing: 1px; }
+
+  .progress-wrap { padding: 10px 16px 6px 16px; }
+  .progress-label { font-size: 10px; color: #888888; margin-bottom: 4px; font-weight: bold; letter-spacing: 1px; }
+  .progress-track { background: #3a3a3a; border-radius: 3px; height: 6px; width: 100%; }
+  .progress-fill { background: #e9a825; height: 6px; border-radius: 3px; transition: width 0.4s ease; }
+
+  .content-area { padding: 0 16px 16px 16px; }
+
+  /* ── Slide styles ── */
+  .slide { display: none; }
+  .slide.active { display: block; }
+  .slide-header { background: #2a2a2a; border-left: 5px solid #2a9d8f; padding: 10px 14px; margin-bottom: 14px; border-radius: 0 4px 4px 0; }
+  .slide-num { font-size: 9px; color: #2a9d8f; font-weight: bold; letter-spacing: 2px; text-transform: uppercase; margin-bottom: 3px; }
+  .slide-title { font-size: 16px; font-weight: bold; color: #ffffff; }
+
+  .slide-body { font-size: 13px; line-height: 1.65; color: #cccccc; }
+  .slide-body p { margin-bottom: 10px; }
+  .slide-body ul { padding-left: 18px; margin-bottom: 10px; }
+  .slide-body li { margin-bottom: 6px; }
+  .slide-body strong { color: #ffffff; }
+  .slide-body .teal { color: #2a9d8f; font-weight: bold; }
+  .slide-body .amber { color: #e9a825; font-weight: bold; }
+  .slide-body .red { color: #cc0000; font-weight: bold; }
+
+  .info-box { background: #2a2a2a; border-left: 4px solid #2a9d8f; border-radius: 0 6px 6px 0; padding: 10px 14px; margin: 12px 0; font-size: 12px; }
+  .warn-box { background: #1e1800; border-left: 4px solid #e9a825; border-radius: 0 6px 6px 0; padding: 10px 14px; margin: 12px 0; font-size: 12px; color: #e0c060; }
+  .danger-box { background: #1a0000; border-left: 4px solid #cc0000; border-radius: 0 6px 6px 0; padding: 10px 14px; margin: 12px 0; font-size: 12px; color: #e08080; }
+
+  .spec-table { width: 100%; border-collapse: collapse; margin: 10px 0; font-size: 12px; }
+  .spec-table th { background: #2a9d8f; color: #ffffff; padding: 6px 10px; text-align: left; font-size: 11px; letter-spacing: 1px; text-transform: uppercase; }
+  .spec-table td { padding: 6px 10px; border-bottom: 1px solid #333; }
+  .spec-table tr:nth-child(even) td { background: #2a2a2a; }
+  .spec-table tr:nth-child(odd) td { background: #222222; }
+
+  .two-col { display: table; width: 100%; margin: 10px 0; }
+  .col-left { display: table-cell; width: 50%; padding-right: 10px; vertical-align: top; }
+  .col-right { display: table-cell; width: 50%; padding-left: 10px; vertical-align: top; border-left: 1px solid #333; }
+
+  /* ── Nav buttons ── */
+  .nav-row { display: flex; gap: 10px; margin-top: 16px; align-items: center; }
+  .btn { border: none; border-radius: 4px; padding: 9px 20px; font-size: 12px; font-weight: bold; letter-spacing: 1px; text-transform: uppercase; cursor: pointer; font-family: Arial, sans-serif; }
+  .btn-teal { background: #2a9d8f; color: #ffffff; }
+  .btn-teal:hover { background: #1a6b62; }
+  .btn-outline { background: transparent; color: #2a9d8f; border: 1px solid #2a9d8f; }
+  .btn-outline:hover { background: #2a2a2a; }
+  .btn-amber { background: #e9a825; color: #1a1a1a; }
+  .btn-amber:hover { background: #b07d00; color: #ffffff; }
+  .btn:disabled { opacity: 0.35; cursor: default; }
+  .slide-counter { font-size: 11px; color: #888888; margin-left: auto; }
+
+  /* ── Quiz styles ── */
+  .quiz-wrap { display: none; }
+  .quiz-wrap.active { display: block; }
+  .q-header { background: #2a2a2a; border-left: 5px solid #e9a825; padding: 10px 14px; margin-bottom: 14px; border-radius: 0 4px 4px 0; }
+  .q-num { font-size: 9px; color: #e9a825; font-weight: bold; letter-spacing: 2px; text-transform: uppercase; margin-bottom: 3px; }
+  .q-text { font-size: 14px; font-weight: bold; color: #ffffff; line-height: 1.45; }
+
+  .options { display: flex; flex-direction: column; gap: 8px; margin-bottom: 14px; }
+  .opt-btn { background: #2a2a2a; border: 1px solid #444; border-radius: 5px; padding: 11px 14px; font-size: 13px; color: #cccccc; cursor: pointer; text-align: left; font-family: Arial, sans-serif; transition: border-color 0.15s, background 0.15s; }
+  .opt-btn:hover:not(:disabled) { border-color: #2a9d8f; background: #2a3a38; }
+  .opt-btn.correct { background: #0d2b28; border-color: #2a9d8f; color: #ffffff; }
+  .opt-btn.incorrect { background: #1a0000; border-color: #cc0000; color: #e08080; }
+  .opt-btn:disabled { cursor: default; }
+
+  .feedback { display: none; padding: 10px 14px; border-radius: 5px; font-size: 12px; margin-bottom: 12px; line-height: 1.5; }
+  .feedback.correct { display: block; background: #0d2b28; border-left: 4px solid #2a9d8f; color: #f0faf8; }
+  .feedback.incorrect { display: block; background: #1a0000; border-left: 4px solid #cc0000; color: #f0c0c0; }
+  .feedback-icon { font-weight: bold; margin-bottom: 4px; }
+
+  /* ── Complete box ── */
+  .complete-box { display: none; background: #0d2b28; border: 2px solid #2a9d8f; border-radius: 8px; padding: 20px; text-align: center; margin-top: 10px; }
+  .complete-box.show { display: block; }
+  .complete-icon { font-size: 32px; margin-bottom: 8px; }
+  .complete-title { font-size: 17px; font-weight: bold; color: #2a9d8f; margin-bottom: 6px; }
+  .complete-sub { font-size: 12px; color: #cccccc; }
+  .complete-outcome { margin-top: 12px; background: #2a2a2a; border-radius: 4px; padding: 8px 14px; display: inline-block; font-size: 11px; color: #2a9d8f; border: 1px solid #2a9d8f; }
+</style>
+</head>
+<body>
+
+<div class="header">
+  <div class="header-top">
+    <div>
+      <div class="header-label">Automotive Technology · AUTOA 123</div>
+      <div class="header-title">Pascal's Law and Hydraulic Brakes</div>
+      <div class="header-sub">Brakes</div>
+    </div>
+  </div>
+  <div class="outcome-badge">Hydraulic Principles &nbsp;·&nbsp; ASE V.C.1</div>
+</div>
+
+<div class="progress-wrap">
+  <div class="progress-label" id="prog-label">Progress &mdash; 0%</div>
+  <div class="progress-track"><div class="progress-fill" id="prog-fill" style="width:0%"></div></div>
+</div>
+
+<div class="content-area">
+
+  <!-- ── Slides ── -->
+  
+  <div class="slide active" id="slide-0">
+    <div class="slide-header">
+      <div class="slide-num">Slide 1 of 3</div>
+      <div class="slide-title">Pascal's Law — The Foundation of Hydraulic Brakes</div>
+    </div>
+    <div class="slide-body">
+<p><span class="teal">Pascal's Law</span> states: <strong>pressure applied to an enclosed fluid is transmitted equally in all directions throughout the fluid.</strong></p>
+<p>This is why hydraulic brakes work. One master cylinder can simultaneously apply equal pressure to four brake calipers or wheel cylinders at completely different locations — all from one pedal push.</p>
+<div class="info-box"><strong>Pressure formula:</strong><br>Pressure (PSI) = Force (lbs) ÷ Area (in²)<br><br>If you apply 100 lbs of force to a master cylinder piston with 1 in² area: pressure = 100 PSI throughout the entire system.</div>
+<p>That same 100 PSI at a front caliper with a 3 in² piston creates <strong>300 lbs of clamping force</strong> — 3× the input force. This is hydraulic force multiplication.</p></div>
+    <div class="nav-row">
+      <span></span>
+      <button class="btn btn-teal" onclick="nextSlide()">Next &#8594;</button>
+      <span class="slide-counter">1 / 3</span>
+    </div>
+  </div>
+  <div class="slide " id="slide-1">
+    <div class="slide-header">
+      <div class="slide-num">Slide 2 of 3</div>
+      <div class="slide-title">Force Multiplication and Brake Sizing</div>
+    </div>
+    <div class="slide-body">
+<p>Hydraulic brakes use <strong>different piston sizes</strong> to apply different forces at each wheel. Larger pistons receive more force from the same pressure.</p>
+<p>Front brakes do more work than rear brakes (weight transfer under braking), so front calipers have <strong>larger pistons</strong> than rear calipers on most vehicles.</p>
+<div class="two-col">
+  <div class="col-left">
+    <div class="info-box"><strong>Master cylinder</strong><br>Small bore = high pressure from moderate force<br>Typical bore: 7/8" to 1"</div>
+    <div class="info-box" style="margin-top:8px;"><strong>Rear caliper / wheel cylinder</strong><br>Smaller piston = moderate clamping force<br>Typical: 1.5"–1.75" bore</div>
+  </div>
+  <div class="col-right">
+    <div class="info-box"><strong>Front caliper (disc)</strong><br>Larger piston(s) = more clamping force<br>Typical: 1.75"–2.5" bore (or dual pistons)</div>
+    <div class="info-box" style="margin-top:8px;"><strong>Wheel cylinder (drum)</strong><br>Two pistons push outward on brake shoes<br>Typical: 3/4" to 1" bore</div>
+  </div>
+</div>
+<p>Brake bias — the proportion of front vs. rear braking force — is engineered into piston sizes, caliper placement, and proportioning valves.</p></div>
+    <div class="nav-row">
+      <button class="btn btn-outline" onclick="prevSlide()">&#8592; Back</button>
+      <button class="btn btn-teal" onclick="nextSlide()">Next &#8594;</button>
+      <span class="slide-counter">2 / 3</span>
+    </div>
+  </div>
+  <div class="slide " id="slide-2">
+    <div class="slide-header">
+      <div class="slide-num">Slide 3 of 3</div>
+      <div class="slide-title">Why Air in the System Destroys Hydraulic Function</div>
+    </div>
+    <div class="slide-body">
+<p>Hydraulic systems work because <strong>liquid is incompressible</strong>. When you push on brake fluid, the force transfers instantly and completely to the pistons at the other end.</p>
+<p><span class="red">Air is compressible.</span> When air gets into a brake line:</p>
+<ul>
+  <li>Pedal input energy first compresses the air bubble instead of moving the piston</li>
+  <li>Pedal travel increases significantly before any hydraulic pressure builds</li>
+  <li>Result: <strong>spongy, low pedal</strong> — the classic sign of air in the system</li>
+  <li>Severe cases: pedal goes to the floor with little or no braking effect</li>
+</ul>
+<div class="danger-box">A spongy brake pedal is a safety emergency. Do not drive the vehicle until the brake system has been bled and the air source identified and corrected.</div>
+<p><strong>Why bleeding removes air:</strong> Brake fluid (liquid) follows gravity and flows out of the bleeder valve at the caliper. Air bubbles rise and are pushed out with the fluid during the bleeding procedure.</p></div>
+    <div class="nav-row">
+      <button class="btn btn-outline" onclick="prevSlide()">&#8592; Back</button>
+      <button class="btn btn-amber" onclick="startQuiz()">Start Knowledge Check &#8594;</button>
+      <span class="slide-counter">3 / 3</span>
+    </div>
+  </div>
+
+  <!-- ── Quiz questions ── -->
+  
+  <div class="quiz-wrap" id="quiz-0">
+    <div class="q-header">
+      <div class="q-num">Knowledge Check &mdash; Question 1 of 3</div>
+      <div class="q-text">According to Pascal's Law, when pressure is applied to an enclosed fluid it is transmitted:</div>
+    </div>
+    <div class="options" id="opts-0">
+      <button class="opt-btn" id="opt-0-0" onclick="answer(0,0)">Only downward due to gravity</button><button class="opt-btn" id="opt-0-1" onclick="answer(0,1)">Equally in all directions throughout the fluid</button><button class="opt-btn" id="opt-0-2" onclick="answer(0,2)">Only to the closest component</button><button class="opt-btn" id="opt-0-3" onclick="answer(0,3)">Proportionally based on distance from the source</button>
+    </div>
+    <div class="feedback" id="fb-0">
+      <div class="feedback-icon" id="fb-icon-0"></div>
+      <div id="fb-text-0"></div>
+    </div>
+    <div class="nav-row" id="q-nav-0" style="display:none;">
+      <button class="btn btn-teal" onclick="nextQuestion(0)">Next Question &#8594;</button>
+    </div>
+  </div>
+  <div class="quiz-wrap" id="quiz-1">
+    <div class="q-header">
+      <div class="q-num">Knowledge Check &mdash; Question 2 of 3</div>
+      <div class="q-text">A front caliper has a 2 in² piston and a rear caliper has a 1 in² piston. If system pressure is 500 PSI, what is the front caliper clamping force?</div>
+    </div>
+    <div class="options" id="opts-1">
+      <button class="opt-btn" id="opt-1-0" onclick="answer(1,0)">250 lbs</button><button class="opt-btn" id="opt-1-1" onclick="answer(1,1)">500 lbs</button><button class="opt-btn" id="opt-1-2" onclick="answer(1,2)">750 lbs</button><button class="opt-btn" id="opt-1-3" onclick="answer(1,3)">1,000 lbs</button>
+    </div>
+    <div class="feedback" id="fb-1">
+      <div class="feedback-icon" id="fb-icon-1"></div>
+      <div id="fb-text-1"></div>
+    </div>
+    <div class="nav-row" id="q-nav-1" style="display:none;">
+      <button class="btn btn-teal" onclick="nextQuestion(1)">Next Question &#8594;</button>
+    </div>
+  </div>
+  <div class="quiz-wrap" id="quiz-2">
+    <div class="q-header">
+      <div class="q-num">Knowledge Check &mdash; Question 3 of 3</div>
+      <div class="q-text">A spongy brake pedal that goes nearly to the floor is most likely caused by:</div>
+    </div>
+    <div class="options" id="opts-2">
+      <button class="opt-btn" id="opt-2-0" onclick="answer(2,0)">Worn brake pads</button><button class="opt-btn" id="opt-2-1" onclick="answer(2,1)">Air in the hydraulic brake lines</button><button class="opt-btn" id="opt-2-2" onclick="answer(2,2)">A seized caliper piston</button><button class="opt-btn" id="opt-2-3" onclick="answer(2,3)">Contaminated brake fluid color</button>
+    </div>
+    <div class="feedback" id="fb-2">
+      <div class="feedback-icon" id="fb-icon-2"></div>
+      <div id="fb-text-2"></div>
+    </div>
+    <div class="nav-row" id="q-nav-2" style="display:none;">
+      <button class="btn btn-amber" onclick="showComplete()">Finish Lesson &#10003;</button>
+    </div>
+  </div>
+
+  <!-- ── Complete ── -->
+  <div class="complete-box" id="complete">
+    <div class="complete-icon">&#10003;</div>
+    <div class="complete-title">Lesson Complete</div>
+    <div class="complete-sub">You have finished all slides and knowledge check questions for this lesson.</div>
+    <div class="complete-outcome">Hydraulic Principles &nbsp;&middot;&nbsp; ASE V.C.1</div>
+  </div>
+
+</div><!-- /content-area -->
+
+<script>
+const TOTAL_STEPS = 6; // 3 slides + 3 questions
+let currentSlide = 0;
+let currentQuiz = -1;
+let answeredQuestions = 0;
+
+const correctAnswers = [1, 3, 1];
+const explanations = ["Pascal's Law states that pressure applied to an enclosed, incompressible fluid transmits equally in all directions. This allows one master cylinder to apply equal pressure to all four brakes simultaneously.", 'Force = Pressure × Area. 500 PSI × 2 in² = 1,000 lbs. The rear caliper produces 500 × 1 = 500 lbs. This difference in piston size is how engineers create front brake bias — giving the front brakes more clamping force to match the forward weight transfer during braking.', 'Air is compressible — liquid is not. Air in the brake lines means pedal energy compresses the air rather than immediately transmitting pressure to the calipers. Result: long, spongy pedal travel before any braking force builds. This must be corrected by bleeding the system.'];
+
+function updateProgress(step) {
+  const pct = Math.round((step / TOTAL_STEPS) * 100);
+  document.getElementById('prog-fill').style.width = pct + '%';
+  document.getElementById('prog-label').textContent = 'Progress — ' + pct + '%';
+}
+
+function showSlide(n) {
+  document.querySelectorAll('.slide').forEach(s => s.classList.remove('active'));
+  document.getElementById('slide-' + n).classList.add('active');
+  currentSlide = n;
+  updateProgress(n);
+}
+
+function nextSlide() {
+  if (currentSlide < 2) showSlide(currentSlide + 1);
+}
+
+function prevSlide() {
+  if (currentSlide > 0) showSlide(currentSlide - 1);
+}
+
+function startQuiz() {
+  document.querySelectorAll('.slide').forEach(s => s.classList.remove('active'));
+  document.getElementById('quiz-0').classList.add('active');
+  currentQuiz = 0;
+  updateProgress(3);
+}
+
+function answer(qIndex, optIndex) {
+  const opts = document.querySelectorAll('#opts-' + qIndex + ' .opt-btn');
+  opts.forEach(b => b.disabled = true);
+  const fb = document.getElementById('fb-' + qIndex);
+  const fbIcon = document.getElementById('fb-icon-' + qIndex);
+  const fbText = document.getElementById('fb-text-' + qIndex);
+  const correct = correctAnswers[qIndex];
+  if (optIndex === correct) {
+    opts[optIndex].classList.add('correct');
+    fb.className = 'feedback correct';
+    fbIcon.textContent = '✅ Correct!';
+    fbText.textContent = explanations[qIndex];
+  } else {
+    opts[optIndex].classList.add('incorrect');
+    opts[correct].classList.add('correct');
+    fb.className = 'feedback incorrect';
+    fbIcon.textContent = '❌ Incorrect — correct answer: ' + opts[correct].textContent;
+    fbText.textContent = explanations[qIndex];
+  }
+  document.getElementById('q-nav-' + qIndex).style.display = 'flex';
+  answeredQuestions++;
+  updateProgress(3 + answeredQuestions);
+}
+
+function nextQuestion(current) {
+  document.getElementById('quiz-' + current).classList.remove('active');
+  const next = current + 1;
+  document.getElementById('quiz-' + next).classList.add('active');
+  currentQuiz = next;
+}
+
+function showComplete() {
+  document.querySelectorAll('.quiz-wrap').forEach(q => q.classList.remove('active'));
+  document.getElementById('complete').classList.add('show');
+  updateProgress(6);
+}
+</script>
+
+</body>
+</html>

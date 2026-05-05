@@ -1,0 +1,325 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>ABS — Anti-Lock Brake System — AUTOA 123</title>
+<style>
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body { background: #1a1a1a; font-family: Arial, sans-serif; color: #cccccc; min-height: 100vh; }
+
+  .header { background: #1a1a1a; border-top: 4px solid #2a9d8f; border-bottom: 2px solid #2a9d8f; padding: 10px 16px; }
+  .header-top { display: flex; align-items: center; gap: 12px; }
+  .header-label { color: #2a9d8f; font-size: 10px; font-weight: bold; letter-spacing: 3px; text-transform: uppercase; }
+  .header-title { color: #ffffff; font-size: 15px; font-weight: bold; }
+  .header-sub { color: #888888; font-size: 10px; letter-spacing: 1px; text-transform: uppercase; margin-top: 2px; }
+  .outcome-badge { margin-top: 6px; display: inline-block; background: #2a2a2a; border: 1px solid #2a9d8f; border-radius: 3px; padding: 3px 10px; font-size: 10px; color: #2a9d8f; letter-spacing: 1px; }
+
+  .progress-wrap { padding: 10px 16px 6px 16px; }
+  .progress-label { font-size: 10px; color: #888888; margin-bottom: 4px; font-weight: bold; letter-spacing: 1px; }
+  .progress-track { background: #3a3a3a; border-radius: 3px; height: 6px; width: 100%; }
+  .progress-fill { background: #e9a825; height: 6px; border-radius: 3px; transition: width 0.4s ease; }
+
+  .content-area { padding: 0 16px 16px 16px; }
+
+  /* ── Slide styles ── */
+  .slide { display: none; }
+  .slide.active { display: block; }
+  .slide-header { background: #2a2a2a; border-left: 5px solid #2a9d8f; padding: 10px 14px; margin-bottom: 14px; border-radius: 0 4px 4px 0; }
+  .slide-num { font-size: 9px; color: #2a9d8f; font-weight: bold; letter-spacing: 2px; text-transform: uppercase; margin-bottom: 3px; }
+  .slide-title { font-size: 16px; font-weight: bold; color: #ffffff; }
+
+  .slide-body { font-size: 13px; line-height: 1.65; color: #cccccc; }
+  .slide-body p { margin-bottom: 10px; }
+  .slide-body ul { padding-left: 18px; margin-bottom: 10px; }
+  .slide-body li { margin-bottom: 6px; }
+  .slide-body strong { color: #ffffff; }
+  .slide-body .teal { color: #2a9d8f; font-weight: bold; }
+  .slide-body .amber { color: #e9a825; font-weight: bold; }
+  .slide-body .red { color: #cc0000; font-weight: bold; }
+
+  .info-box { background: #2a2a2a; border-left: 4px solid #2a9d8f; border-radius: 0 6px 6px 0; padding: 10px 14px; margin: 12px 0; font-size: 12px; }
+  .warn-box { background: #1e1800; border-left: 4px solid #e9a825; border-radius: 0 6px 6px 0; padding: 10px 14px; margin: 12px 0; font-size: 12px; color: #e0c060; }
+  .danger-box { background: #1a0000; border-left: 4px solid #cc0000; border-radius: 0 6px 6px 0; padding: 10px 14px; margin: 12px 0; font-size: 12px; color: #e08080; }
+
+  .spec-table { width: 100%; border-collapse: collapse; margin: 10px 0; font-size: 12px; }
+  .spec-table th { background: #2a9d8f; color: #ffffff; padding: 6px 10px; text-align: left; font-size: 11px; letter-spacing: 1px; text-transform: uppercase; }
+  .spec-table td { padding: 6px 10px; border-bottom: 1px solid #333; }
+  .spec-table tr:nth-child(even) td { background: #2a2a2a; }
+  .spec-table tr:nth-child(odd) td { background: #222222; }
+
+  .two-col { display: table; width: 100%; margin: 10px 0; }
+  .col-left { display: table-cell; width: 50%; padding-right: 10px; vertical-align: top; }
+  .col-right { display: table-cell; width: 50%; padding-left: 10px; vertical-align: top; border-left: 1px solid #333; }
+
+  /* ── Nav buttons ── */
+  .nav-row { display: flex; gap: 10px; margin-top: 16px; align-items: center; }
+  .btn { border: none; border-radius: 4px; padding: 9px 20px; font-size: 12px; font-weight: bold; letter-spacing: 1px; text-transform: uppercase; cursor: pointer; font-family: Arial, sans-serif; }
+  .btn-teal { background: #2a9d8f; color: #ffffff; }
+  .btn-teal:hover { background: #1a6b62; }
+  .btn-outline { background: transparent; color: #2a9d8f; border: 1px solid #2a9d8f; }
+  .btn-outline:hover { background: #2a2a2a; }
+  .btn-amber { background: #e9a825; color: #1a1a1a; }
+  .btn-amber:hover { background: #b07d00; color: #ffffff; }
+  .btn:disabled { opacity: 0.35; cursor: default; }
+  .slide-counter { font-size: 11px; color: #888888; margin-left: auto; }
+
+  /* ── Quiz styles ── */
+  .quiz-wrap { display: none; }
+  .quiz-wrap.active { display: block; }
+  .q-header { background: #2a2a2a; border-left: 5px solid #e9a825; padding: 10px 14px; margin-bottom: 14px; border-radius: 0 4px 4px 0; }
+  .q-num { font-size: 9px; color: #e9a825; font-weight: bold; letter-spacing: 2px; text-transform: uppercase; margin-bottom: 3px; }
+  .q-text { font-size: 14px; font-weight: bold; color: #ffffff; line-height: 1.45; }
+
+  .options { display: flex; flex-direction: column; gap: 8px; margin-bottom: 14px; }
+  .opt-btn { background: #2a2a2a; border: 1px solid #444; border-radius: 5px; padding: 11px 14px; font-size: 13px; color: #cccccc; cursor: pointer; text-align: left; font-family: Arial, sans-serif; transition: border-color 0.15s, background 0.15s; }
+  .opt-btn:hover:not(:disabled) { border-color: #2a9d8f; background: #2a3a38; }
+  .opt-btn.correct { background: #0d2b28; border-color: #2a9d8f; color: #ffffff; }
+  .opt-btn.incorrect { background: #1a0000; border-color: #cc0000; color: #e08080; }
+  .opt-btn:disabled { cursor: default; }
+
+  .feedback { display: none; padding: 10px 14px; border-radius: 5px; font-size: 12px; margin-bottom: 12px; line-height: 1.5; }
+  .feedback.correct { display: block; background: #0d2b28; border-left: 4px solid #2a9d8f; color: #f0faf8; }
+  .feedback.incorrect { display: block; background: #1a0000; border-left: 4px solid #cc0000; color: #f0c0c0; }
+  .feedback-icon { font-weight: bold; margin-bottom: 4px; }
+
+  /* ── Complete box ── */
+  .complete-box { display: none; background: #0d2b28; border: 2px solid #2a9d8f; border-radius: 8px; padding: 20px; text-align: center; margin-top: 10px; }
+  .complete-box.show { display: block; }
+  .complete-icon { font-size: 32px; margin-bottom: 8px; }
+  .complete-title { font-size: 17px; font-weight: bold; color: #2a9d8f; margin-bottom: 6px; }
+  .complete-sub { font-size: 12px; color: #cccccc; }
+  .complete-outcome { margin-top: 12px; background: #2a2a2a; border-radius: 4px; padding: 8px 14px; display: inline-block; font-size: 11px; color: #2a9d8f; border: 1px solid #2a9d8f; }
+</style>
+</head>
+<body>
+
+<div class="header">
+  <div class="header-top">
+    <div>
+      <div class="header-label">Automotive Technology · AUTOA 123</div>
+      <div class="header-title">ABS — Anti-Lock Brake System</div>
+      <div class="header-sub">Brakes</div>
+    </div>
+  </div>
+  <div class="outcome-badge">ABS & ESC &nbsp;·&nbsp; ASE V.D.1</div>
+</div>
+
+<div class="progress-wrap">
+  <div class="progress-label" id="prog-label">Progress &mdash; 0%</div>
+  <div class="progress-track"><div class="progress-fill" id="prog-fill" style="width:0%"></div></div>
+</div>
+
+<div class="content-area">
+
+  <!-- ── Slides ── -->
+  
+  <div class="slide active" id="slide-0">
+    <div class="slide-header">
+      <div class="slide-num">Slide 1 of 3</div>
+      <div class="slide-title">Why ABS Exists — The Physics of Braking</div>
+    </div>
+    <div class="slide-body">
+<p>When a wheel locks up (stops rotating while the vehicle is still moving), the tire transitions from <strong>rolling friction</strong> to <strong>sliding friction</strong>.</p>
+<ul>
+  <li>Rolling friction coefficient: approximately <strong>0.7–0.8</strong> (high grip)</li>
+  <li>Sliding friction coefficient: approximately <strong>0.4–0.6</strong> (significantly lower)</li>
+</ul>
+<p>A locked wheel actually produces <strong>less stopping force</strong> than a rolling wheel. Additionally:</p>
+<ul>
+  <li>A locked wheel cannot generate lateral (steering) force</li>
+  <li>The driver loses the ability to steer around the obstacle</li>
+  <li>A skidding tire wears rapidly in a flat spot</li>
+</ul>
+<div class="info-box"><strong>ABS goal:</strong> Keep each wheel rotating just at the edge of lockup — maintaining maximum friction and steering control simultaneously. ABS does not necessarily make a vehicle stop shorter on dry pavement — its primary benefit is maintaining <strong>steerability during emergency braking.</strong></div></div>
+    <div class="nav-row">
+      <span></span>
+      <button class="btn btn-teal" onclick="nextSlide()">Next &#8594;</button>
+      <span class="slide-counter">1 / 3</span>
+    </div>
+  </div>
+  <div class="slide " id="slide-1">
+    <div class="slide-header">
+      <div class="slide-num">Slide 2 of 3</div>
+      <div class="slide-title">ABS Components</div>
+    </div>
+    <div class="slide-body">
+<p>Every ABS system uses four key components:</p>
+<div class="two-col">
+  <div class="col-left">
+    <div class="info-box"><strong>Wheel Speed Sensors (WSS)</strong><br>One per wheel. Monitor rotational speed of each wheel. Passive (magnetic) or active (Hall effect). Ring gear on hub or axle shaft.</div>
+    <div class="info-box" style="margin-top:8px;"><strong>ABS Control Module (ABSCM)</strong><br>Monitors all four WSS signals 100+ times per second. Detects impending wheel lockup by comparing wheel speeds. Commands the modulator.</div>
+  </div>
+  <div class="col-right">
+    <div class="info-box"><strong>Hydraulic Control Unit (HCU)</strong><br>Contains inlet and outlet solenoid valves plus a return pump. Controls hydraulic pressure to each wheel individually. 3 or 4 channel designs.</div>
+    <div class="info-box" style="margin-top:8px;"><strong>ABS Warning Light</strong><br>Illuminates when a fault is detected. During normal operation, lights briefly at startup (bulb check) then goes out. ABS still works normally even during wheel-speed sensor learning.</div>
+  </div>
+</div>
+<p>The ABS cycle: <span class="teal">Hold → Reduce → Increase pressure</span> — repeated 8–12 times per second at each wheel independently.</p></div>
+    <div class="nav-row">
+      <button class="btn btn-outline" onclick="prevSlide()">&#8592; Back</button>
+      <button class="btn btn-teal" onclick="nextSlide()">Next &#8594;</button>
+      <span class="slide-counter">2 / 3</span>
+    </div>
+  </div>
+  <div class="slide " id="slide-2">
+    <div class="slide-header">
+      <div class="slide-num">Slide 3 of 3</div>
+      <div class="slide-title">ABS Operation and Diagnosis</div>
+    </div>
+    <div class="slide-body">
+<p><strong>The ABS pressure cycle:</strong></p>
+<ol style="padding-left:18px;margin-bottom:10px;">
+  <li style="margin-bottom:5px;"><strong>Hold:</strong> Inlet valve closes — no more pressure increase at that wheel</li>
+  <li style="margin-bottom:5px;"><strong>Reduce:</strong> Outlet valve opens — pressure drops, wheel begins to rotate again</li>
+  <li style="margin-bottom:5px;"><strong>Increase:</strong> Inlet valve reopens — pressure builds again toward lockup threshold</li>
+  <li style="margin-bottom:5px;">Cycle repeats 8–12 times per second until wheel is stable or vehicle stops</li>
+</ol>
+<p>The pedal pulsation and noise a driver feels during ABS activation is <strong>normal and expected</strong>. Drivers should be instructed to: hold firm pressure on the pedal and steer around the hazard — do not pump the brakes.</p>
+<div class="warn-box"><strong>ABS diagnosis sequence:</strong> Scan for DTCs → identify the circuit → check wheel speed sensor, ring gear, wiring, and connector before replacing the module or HCU. WSS failures are the most common ABS fault.</div>
+<p>A faulty wheel speed sensor signal causes the module to detect a false "lockup" — triggering ABS at low speeds or preventing ABS from activating when needed.</p></div>
+    <div class="nav-row">
+      <button class="btn btn-outline" onclick="prevSlide()">&#8592; Back</button>
+      <button class="btn btn-amber" onclick="startQuiz()">Start Knowledge Check &#8594;</button>
+      <span class="slide-counter">3 / 3</span>
+    </div>
+  </div>
+
+  <!-- ── Quiz questions ── -->
+  
+  <div class="quiz-wrap" id="quiz-0">
+    <div class="q-header">
+      <div class="q-num">Knowledge Check &mdash; Question 1 of 3</div>
+      <div class="q-text">Why does a locked (skidding) wheel produce LESS stopping force than a rolling wheel?</div>
+    </div>
+    <div class="options" id="opts-0">
+      <button class="opt-btn" id="opt-0-0" onclick="answer(0,0)">Locked wheels cannot build hydraulic pressure in the caliper</button><button class="opt-btn" id="opt-0-1" onclick="answer(0,1)">Sliding friction is lower than rolling friction — locking reduces grip</button><button class="opt-btn" id="opt-0-2" onclick="answer(0,2)">Locked wheels generate excessive heat that glazes the brake pads</button><button class="opt-btn" id="opt-0-3" onclick="answer(0,3)">ABS prevents the hydraulic system from working during a lockup</button>
+    </div>
+    <div class="feedback" id="fb-0">
+      <div class="feedback-icon" id="fb-icon-0"></div>
+      <div id="fb-text-0"></div>
+    </div>
+    <div class="nav-row" id="q-nav-0" style="display:none;">
+      <button class="btn btn-teal" onclick="nextQuestion(0)">Next Question &#8594;</button>
+    </div>
+  </div>
+  <div class="quiz-wrap" id="quiz-1">
+    <div class="q-header">
+      <div class="q-num">Knowledge Check &mdash; Question 2 of 3</div>
+      <div class="q-text">What is the PRIMARY benefit of ABS on most vehicle types?</div>
+    </div>
+    <div class="options" id="opts-1">
+      <button class="opt-btn" id="opt-1-0" onclick="answer(1,0)">Significantly shorter stopping distances on dry pavement</button><button class="opt-btn" id="opt-1-1" onclick="answer(1,1)">Maintaining steering control during hard braking</button><button class="opt-btn" id="opt-1-2" onclick="answer(1,2)">Preventing brake fade during mountain descents</button><button class="opt-btn" id="opt-1-3" onclick="answer(1,3)">Equalizing front and rear braking force automatically</button>
+    </div>
+    <div class="feedback" id="fb-1">
+      <div class="feedback-icon" id="fb-icon-1"></div>
+      <div id="fb-text-1"></div>
+    </div>
+    <div class="nav-row" id="q-nav-1" style="display:none;">
+      <button class="btn btn-teal" onclick="nextQuestion(1)">Next Question &#8594;</button>
+    </div>
+  </div>
+  <div class="quiz-wrap" id="quiz-2">
+    <div class="q-header">
+      <div class="q-num">Knowledge Check &mdash; Question 3 of 3</div>
+      <div class="q-text">The ABS warning light comes on during a road test. The technician connects a scan tool and finds a fault in the left front wheel speed sensor circuit. The next step is:</div>
+    </div>
+    <div class="options" id="opts-2">
+      <button class="opt-btn" id="opt-2-0" onclick="answer(2,0)">Replace the ABS control module — the sensor is likely fine</button><button class="opt-btn" id="opt-2-1" onclick="answer(2,1)">Replace the hydraulic control unit</button><button class="opt-btn" id="opt-2-2" onclick="answer(2,2)">Inspect the left front WSS, ring gear, wiring, and connector before replacing the sensor</button><button class="opt-btn" id="opt-2-3" onclick="answer(2,3)">Perform a brake fluid flush immediately</button>
+    </div>
+    <div class="feedback" id="fb-2">
+      <div class="feedback-icon" id="fb-icon-2"></div>
+      <div id="fb-text-2"></div>
+    </div>
+    <div class="nav-row" id="q-nav-2" style="display:none;">
+      <button class="btn btn-amber" onclick="showComplete()">Finish Lesson &#10003;</button>
+    </div>
+  </div>
+
+  <!-- ── Complete ── -->
+  <div class="complete-box" id="complete">
+    <div class="complete-icon">&#10003;</div>
+    <div class="complete-title">Lesson Complete</div>
+    <div class="complete-sub">You have finished all slides and knowledge check questions for this lesson.</div>
+    <div class="complete-outcome">ABS & ESC &nbsp;&middot;&nbsp; ASE V.D.1</div>
+  </div>
+
+</div><!-- /content-area -->
+
+<script>
+const TOTAL_STEPS = 6; // 3 slides + 3 questions
+let currentSlide = 0;
+let currentQuiz = -1;
+let answeredQuestions = 0;
+
+const correctAnswers = [1, 1, 2];
+const explanations = ['The coefficient of rolling friction (approximately 0.7–0.8) is higher than sliding friction (0.4–0.6). A skidding tire has less grip than a tire rotating just at the edge of lockup. ABS keeps wheels rolling at peak friction rather than sliding.', 'ABS keeps the front wheels rolling during hard braking so the driver can steer around the hazard. On dry pavement, ABS may not shorten stopping distance compared to a skilled driver at the threshold of lockup — but it maintains steerability for the average driver.', 'Always inspect the complete circuit before replacing parts. Check the sensor, the ring gear for damage or debris, the wiring harness for chafing or corrosion, and the connector for damage. WSS failures are common but so are wiring and connector issues — especially at the wheel where flex and corrosion occur.'];
+
+function updateProgress(step) {
+  const pct = Math.round((step / TOTAL_STEPS) * 100);
+  document.getElementById('prog-fill').style.width = pct + '%';
+  document.getElementById('prog-label').textContent = 'Progress — ' + pct + '%';
+}
+
+function showSlide(n) {
+  document.querySelectorAll('.slide').forEach(s => s.classList.remove('active'));
+  document.getElementById('slide-' + n).classList.add('active');
+  currentSlide = n;
+  updateProgress(n);
+}
+
+function nextSlide() {
+  if (currentSlide < 2) showSlide(currentSlide + 1);
+}
+
+function prevSlide() {
+  if (currentSlide > 0) showSlide(currentSlide - 1);
+}
+
+function startQuiz() {
+  document.querySelectorAll('.slide').forEach(s => s.classList.remove('active'));
+  document.getElementById('quiz-0').classList.add('active');
+  currentQuiz = 0;
+  updateProgress(3);
+}
+
+function answer(qIndex, optIndex) {
+  const opts = document.querySelectorAll('#opts-' + qIndex + ' .opt-btn');
+  opts.forEach(b => b.disabled = true);
+  const fb = document.getElementById('fb-' + qIndex);
+  const fbIcon = document.getElementById('fb-icon-' + qIndex);
+  const fbText = document.getElementById('fb-text-' + qIndex);
+  const correct = correctAnswers[qIndex];
+  if (optIndex === correct) {
+    opts[optIndex].classList.add('correct');
+    fb.className = 'feedback correct';
+    fbIcon.textContent = '✅ Correct!';
+    fbText.textContent = explanations[qIndex];
+  } else {
+    opts[optIndex].classList.add('incorrect');
+    opts[correct].classList.add('correct');
+    fb.className = 'feedback incorrect';
+    fbIcon.textContent = '❌ Incorrect — correct answer: ' + opts[correct].textContent;
+    fbText.textContent = explanations[qIndex];
+  }
+  document.getElementById('q-nav-' + qIndex).style.display = 'flex';
+  answeredQuestions++;
+  updateProgress(3 + answeredQuestions);
+}
+
+function nextQuestion(current) {
+  document.getElementById('quiz-' + current).classList.remove('active');
+  const next = current + 1;
+  document.getElementById('quiz-' + next).classList.add('active');
+  currentQuiz = next;
+}
+
+function showComplete() {
+  document.querySelectorAll('.quiz-wrap').forEach(q => q.classList.remove('active'));
+  document.getElementById('complete').classList.add('show');
+  updateProgress(6);
+}
+</script>
+
+</body>
+</html>
