@@ -1,0 +1,521 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>AST Workload Tracker</title>
+<style>
+*{box-sizing:border-box;margin:0;padding:0;}
+body{font-family:Arial,sans-serif;background:#f5f5f5;color:#1a1a1a;min-height:100vh;}
+.ast-hdr{background:#1a1a1a;border-top:4px solid #2a9d8f;border-bottom:4px solid #2a9d8f;padding:12px 16px;display:flex;align-items:center;justify-content:space-between;position:sticky;top:0;z-index:100;}
+.ast-hdr-left .sub{color:#2a9d8f;font-size:10px;text-transform:uppercase;letter-spacing:1.5px;}
+.ast-hdr-left .title{color:#fff;font-size:16px;font-weight:500;}
+.ast-hdr-right{font-size:11px;color:#888;text-align:right;}
+.status-dot{display:inline-block;width:7px;height:7px;border-radius:50%;background:#888;margin-right:4px;vertical-align:middle;}
+.status-dot.connected{background:#2a9d8f;}
+.tab-bar{display:flex;border-bottom:2px solid #ddd;background:#fff;padding:0 8px;overflow-x:auto;-webkit-overflow-scrolling:touch;}
+.tab-btn{padding:10px 14px;font-size:13px;font-family:Arial,sans-serif;border:none;background:none;cursor:pointer;color:#666;border-bottom:2px solid transparent;margin-bottom:-2px;white-space:nowrap;flex-shrink:0;}
+.tab-btn.on{color:#2a9d8f;border-bottom-color:#2a9d8f;font-weight:500;}
+.panel{padding:14px 16px;max-width:700px;margin:0 auto;}
+.sec{font-size:10px;color:#007a6e;font-weight:500;letter-spacing:2px;text-transform:uppercase;margin-bottom:7px;}
+.bkt-row{display:flex;gap:6px;margin-bottom:12px;}
+.bkt-btn{flex:1;padding:9px 4px;font-size:12px;border:1.5px solid #ccc;border-radius:6px;background:#fff;cursor:pointer;color:#666;text-align:center;line-height:1.3;}
+.bkt-btn.on1{background:#f0faf7;border-color:#2a9d8f;color:#0a5c54;font-weight:500;}
+.bkt-btn.on2{background:#fffbf0;border-color:#e9a825;color:#7a5c00;font-weight:500;}
+.bkt-btn.on3{background:#eeedfe;border-color:#7f77dd;color:#3c3489;font-weight:500;}
+.act-grid{display:flex;flex-wrap:wrap;gap:6px;margin-bottom:12px;}
+.act-btn{padding:6px 12px;border-radius:20px;font-size:12px;border:1.5px solid #ccc;background:#fff;cursor:pointer;color:#1a1a1a;-webkit-tap-highlight-color:transparent;}
+.act-btn.sel1{background:#2a9d8f;border-color:#2a9d8f;color:#fff;}
+.act-btn.sel2{background:#e9a825;border-color:#e9a825;color:#1a1a1a;}
+.act-btn.sel3{background:#534ab7;border-color:#534ab7;color:#fff;}
+.form-card{background:#fff;border-radius:10px;padding:14px;border:1px solid #e0e0e0;margin-bottom:12px;}
+.frow{display:flex;gap:8px;flex-wrap:wrap;align-items:flex-end;}
+.fg{display:flex;flex-direction:column;gap:4px;}
+.flabel{font-size:10px;color:#666;text-transform:uppercase;letter-spacing:1px;}
+input[type=date],input[type=number],input[type=text]{font-family:Arial,sans-serif;font-size:14px;padding:9px 11px;border:1.5px solid #ccc;border-radius:6px;background:#fff;color:#1a1a1a;width:100%;}
+input:focus{outline:none;border-color:#2a9d8f;}
+.log-btn{padding:10px 20px;background:#2a9d8f;color:#fff;border:none;border-radius:6px;font-size:14px;font-family:Arial,sans-serif;cursor:pointer;font-weight:500;white-space:nowrap;-webkit-tap-highlight-color:transparent;}
+.log-btn:active{background:#1d7a6d;}
+.log-btn:disabled{background:#aaa;cursor:not-allowed;}
+.flash-msg{font-size:12px;color:#2a9d8f;min-height:18px;margin-top:6px;}
+.flash-msg.err{color:#e24b4a;}
+/* Quarter & bucket filters */
+.filter-section{background:#fff;border-radius:10px;padding:12px;border:1px solid #e0e0e0;margin-bottom:12px;}
+.qtr-scroll{display:flex;gap:5px;overflow-x:auto;padding-bottom:4px;-webkit-overflow-scrolling:touch;}
+.qtr-btn{padding:5px 12px;border-radius:20px;font-size:12px;border:1.5px solid #ccc;background:#fff;cursor:pointer;color:#666;white-space:nowrap;flex-shrink:0;-webkit-tap-highlight-color:transparent;}
+.qtr-btn.on{background:#1a1a1a;border-color:#1a1a1a;color:#fff;font-weight:500;}
+.bf-row{display:flex;gap:5px;flex-wrap:wrap;margin-top:8px;}
+.bf-btn{padding:5px 11px;border-radius:20px;font-size:12px;border:1.5px solid #ccc;background:#fff;cursor:pointer;color:#666;-webkit-tap-highlight-color:transparent;}
+.bf-btn.on-all{background:#444;border-color:#444;color:#fff;}
+.bf-btn.on1{background:#2a9d8f;border-color:#2a9d8f;color:#fff;}
+.bf-btn.on2{background:#e9a825;border-color:#e9a825;color:#1a1a1a;}
+.bf-btn.on3{background:#534ab7;border-color:#534ab7;color:#fff;}
+/* Summary cards */
+.sum-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-bottom:14px;}
+.sum-card{background:#fff;border-radius:10px;padding:12px;text-align:center;border:1px solid #e0e0e0;}
+.sum-lbl{font-size:10px;color:#666;text-transform:uppercase;letter-spacing:1px;margin-bottom:3px;}
+.sum-val{font-size:22px;font-weight:500;}
+.sum-sub{font-size:10px;color:#999;}
+/* Log entries */
+.entry-list{display:flex;flex-direction:column;gap:8px;}
+.entry-card{background:#fff;border-radius:8px;padding:12px;border:1px solid #e0e0e0;display:flex;align-items:flex-start;gap:10px;}
+.entry-left{flex:1;min-width:0;}
+.entry-act{font-size:13px;font-weight:500;color:#1a1a1a;margin-bottom:3px;word-break:break-word;}
+.entry-meta{font-size:11px;color:#888;display:flex;flex-wrap:wrap;gap:6px;align-items:center;}
+.entry-note{font-size:11px;color:#666;margin-top:4px;font-style:italic;}
+.entry-hrs{font-size:18px;font-weight:500;color:#2a9d8f;white-space:nowrap;min-width:40px;text-align:right;}
+.del-btn{background:none;border:none;color:#ccc;cursor:pointer;font-size:18px;padding:0;line-height:1;-webkit-tap-highlight-color:transparent;}
+.del-btn:active{color:#e24b4a;}
+.bdg{border-radius:4px;padding:2px 7px;font-size:10px;font-weight:500;}
+.b1c{background:#f0faf7;color:#0a5c54;}
+.b2c{background:#fffbf0;color:#7a5c00;}
+.b3c{background:#eeedfe;color:#3c3489;}
+.qbdg{background:#f0f0f0;color:#555;border-radius:4px;padding:2px 7px;font-size:10px;}
+.empty{text-align:center;padding:40px 20px;color:#999;font-size:14px;}
+/* Service report */
+.svc-header{background:#eeedfe;border:2px solid #534ab7;border-radius:10px;padding:14px 16px;margin-bottom:14px;display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:8px;}
+.svc-total-lbl{font-size:10px;color:#3c3489;text-transform:uppercase;letter-spacing:1.5px;margin-bottom:2px;}
+.svc-total-val{font-size:30px;font-weight:500;color:#534ab7;}
+.svc-act-card{background:#fff;border-radius:8px;padding:12px;border:1px solid #e0e0e0;margin-bottom:8px;}
+.svc-act-name{font-size:13px;font-weight:500;margin-bottom:6px;}
+.svc-bar-wrap{background:#f0f0f0;border-radius:4px;height:6px;width:100%;margin-bottom:4px;}
+.svc-bar{background:#534ab7;border-radius:4px;height:6px;transition:width 0.4s ease;}
+.svc-meta{display:flex;justify-content:space-between;font-size:11px;color:#888;}
+/* Equity */
+.eq-note{background:#fff3cc;border-left:4px solid #e9a825;border-radius:0 6px 6px 0;padding:10px 14px;margin-bottom:14px;font-size:12px;color:#7a5c00;line-height:1.6;}
+.eq-chart-wrap{background:#fff;border-radius:10px;padding:14px;border:1px solid #e0e0e0;margin-bottom:14px;}
+.eq-legend{display:flex;flex-wrap:wrap;gap:8px;margin-top:10px;font-size:11px;color:#555;}
+.eq-legend span{display:flex;align-items:center;gap:4px;}
+.eq-swatch{width:10px;height:10px;border-radius:2px;flex-shrink:0;}
+.eq-stat{background:#fff;border-radius:10px;padding:14px;border:1px solid #e0e0e0;}
+.eq-stat table{width:100%;font-size:12px;border-collapse:collapse;}
+.eq-stat td{padding:6px 4px;border-bottom:1px solid #f0f0f0;}
+.custom-wrap{margin-bottom:10px;}
+/* Loading */
+.loading{text-align:center;padding:30px;color:#888;font-size:13px;}
+@media(max-width:480px){
+  .sum-grid{grid-template-columns:repeat(3,1fr);}
+  .sum-val{font-size:18px;}
+  .bkt-btn{font-size:11px;padding:8px 2px;}
+  .frow{flex-direction:column;}
+  .fg{width:100%;}
+  input[type=date],input[type=number],input[type=text]{font-size:16px;}
+}
+</style>
+</head>
+<body>
+
+<div class="ast-hdr">
+  <div class="ast-hdr-left">
+    <div class="sub">PATC · Shoreline Community College</div>
+    <div class="title">⚙ AST Workload Tracker</div>
+  </div>
+  <div class="ast-hdr-right">
+    <span class="status-dot" id="statusDot"></span>
+    <span id="statusTxt">Connecting...</span>
+  </div>
+</div>
+
+<div class="tab-bar">
+  <button class="tab-btn on" onclick="goTab('log',this)">Log Hours</button>
+  <button class="tab-btn" onclick="goTab('view',this)">View Log</button>
+  <button class="tab-btn" onclick="goTab('service',this)">Service Report</button>
+  <button class="tab-btn" onclick="goTab('equity',this)">Equity View</button>
+</div>
+
+<!-- LOG HOURS -->
+<div id="tab-log" class="panel">
+  <div class="sec" style="margin-bottom:10px;">Select bucket</div>
+  <div class="bkt-row">
+    <button class="bkt-btn on1" id="bb1" onclick="selBkt(1)">B1<br>Instruction</button>
+    <button class="bkt-btn" id="bb2" onclick="selBkt(2)">B2<br>Designated Days</button>
+    <button class="bkt-btn" id="bb3" onclick="selBkt(3)">B3<br>Service</button>
+  </div>
+  <div class="sec">Activity</div>
+  <div class="act-grid" id="actGrid"></div>
+  <div class="custom-wrap" id="customWrap" style="display:none;">
+    <input type="text" id="customTxt" placeholder="Describe the activity..." />
+  </div>
+  <div class="form-card">
+    <div class="frow">
+      <div class="fg" style="flex:0 0 auto;">
+        <span class="flabel">Date</span>
+        <input type="date" id="logDate" style="width:150px;" />
+      </div>
+      <div class="fg" style="flex:0 0 auto;">
+        <span class="flabel">Hours</span>
+        <input type="number" id="logHrs" min="0.25" max="24" step="0.25" placeholder="2.5" style="width:90px;" />
+      </div>
+      <div class="fg" style="flex:1;min-width:140px;">
+        <span class="flabel">Note (optional)</span>
+        <input type="text" id="logNote" placeholder="Brief detail..." />
+      </div>
+    </div>
+    <div style="margin-top:10px;display:flex;align-items:center;gap:12px;flex-wrap:wrap;">
+      <button class="log-btn" id="logBtn" onclick="doLog()">+ Log it</button>
+      <div class="flash-msg" id="flashMsg"></div>
+    </div>
+  </div>
+</div>
+
+<!-- VIEW LOG -->
+<div id="tab-view" class="panel" style="display:none;">
+  <div class="sum-grid" id="sumCards">
+    <div class="sum-card"><div class="sum-lbl">B1 Instruction</div><div class="sum-val" style="color:#2a9d8f">—</div></div>
+    <div class="sum-card"><div class="sum-lbl">B2 Designated</div><div class="sum-val" style="color:#b07d00">—</div></div>
+    <div class="sum-card"><div class="sum-lbl">B3 Service</div><div class="sum-val" style="color:#534ab7">—</div></div>
+  </div>
+  <div class="filter-section">
+    <div class="sec" style="margin-bottom:6px;">Quarter</div>
+    <div class="qtr-scroll" id="qtrBar"></div>
+    <div class="sec" style="margin-top:10px;margin-bottom:6px;">Bucket</div>
+    <div class="bf-row" id="bktFilterRow"></div>
+  </div>
+  <div id="entryList" class="entry-list"></div>
+  <div id="emptyMsg" class="empty" style="display:none;">No entries match this filter.</div>
+  <div id="loadingMsg" class="loading">Loading entries...</div>
+</div>
+
+<!-- SERVICE REPORT -->
+<div id="tab-service" class="panel" style="display:none;">
+  <div class="filter-section">
+    <div class="sec" style="margin-bottom:6px;">Quarter</div>
+    <div class="qtr-scroll" id="svcQtrBar"></div>
+  </div>
+  <div id="svcContent"></div>
+  <div id="svcEmpty" class="empty" style="display:none;">No B3 service entries for this period.</div>
+</div>
+
+<!-- EQUITY VIEW -->
+<div id="tab-equity" class="panel" style="display:none;">
+  <div class="eq-note">
+    <strong>CBA Art. VII §D.1.c.(2)</strong> — Automotive contact load: <strong>24 hrs/wk</strong> vs. the standard 15. The chart shows where grading &amp; prep time is allocated in the standard model — and what happens to it in yours.
+  </div>
+  <div class="eq-chart-wrap">
+    <div style="position:relative;width:100%;height:160px;">
+      <canvas id="eqChart" role="img" aria-label="Stacked bar chart comparing standard and automotive faculty workload allocation"></canvas>
+    </div>
+    <div class="eq-legend">
+      <span><span class="eq-swatch" style="background:#2a9d8f;"></span>Classroom</span>
+      <span><span class="eq-swatch" style="background:#5dc8bb;"></span>Finals</span>
+      <span><span class="eq-swatch" style="background:#e9a825;"></span>Office hours</span>
+      <span><span class="eq-swatch" style="background:#534ab7;"></span>Grading &amp; prep</span>
+      <span><span class="eq-swatch" style="background:#888780;"></span>Service / other</span>
+      <span><span class="eq-swatch" style="background:#e24b4a;"></span>Remaining for all duties ⚠</span>
+    </div>
+  </div>
+  <div class="eq-stat">
+    <div class="sec" style="margin-bottom:8px;">By the numbers</div>
+    <table>
+      <tr><td style="color:#888;font-size:11px;padding-bottom:6px;"></td><td style="text-align:center;color:#888;font-size:11px;padding-bottom:6px;">Standard</td><td style="text-align:center;color:#0a5c54;font-size:11px;font-weight:500;padding-bottom:6px;">Automotive</td></tr>
+      <tr><td>Contact hrs / week</td><td style="text-align:center;">15</td><td style="text-align:center;font-weight:500;color:#0a5c54;">24</td></tr>
+      <tr><td>Hrs left for grading + prep + service</td><td style="text-align:center;">~46%</td><td style="text-align:center;font-weight:500;color:#e24b4a;">~23%</td></tr>
+      <tr><td colspan="3" style="font-size:11px;color:#888;padding-top:8px;border-bottom:none;">Standard faculty have <strong>2× more</strong> unscheduled time. CBA §D.1.c.(2) names Automotive at 24 hrs but makes no accommodation for the compression.</td></tr>
+    </table>
+  </div>
+</div>
+
+<script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-database-compat.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.js"></script>
+<script>
+const firebaseConfig = {
+  apiKey: "AIzaSyBE0eb2NtfzE-nSvXtb-MM9sBA4fyt1D_Q",
+  authDomain: "ast-queue.firebaseapp.com",
+  databaseURL: "https://ast-queue-default-rtdb.firebaseio.com",
+  projectId: "ast-queue",
+  storageBucket: "ast-queue.firebasestorage.app",
+  messagingSenderId: "777240902353",
+  appId: "1:777240902353:web:96d7a50afc9d186ae623f0"
+};
+
+firebase.initializeApp(firebaseConfig);
+const db = firebase.database();
+const ENTRIES_REF = db.ref('workload-tracker/entries');
+
+const ACTS = {
+  1: ['Classroom instruction','Finals / exam admin','Office hours','Grading','Class prep / planning','Equipment repair / lab maintenance','Other B1'],
+  2: ['Convocation','Day of Learning','Guerrilla days','Division meeting','Department meeting','Other B2'],
+  3: ['Academic advising','Degree planning','Graduation application','ARC committee','CRAIG committee','Hiring committee','Faculty Senate','Recruiting event','Advisory board — internal','Advisory board — external','Outreach / community','Curriculum / program dev','Peer mentoring','Student recognition','Other B3']
+};
+
+let bkt = 1, selAct = null, entries = [];
+let viewQtr = 'All', viewBkt = 'All', svcQtr = 'All';
+let currentTab = 'log';
+
+// Firebase connection status
+db.ref('.info/connected').on('value', snap => {
+  const connected = snap.val();
+  document.getElementById('statusDot').className = 'status-dot' + (connected ? ' connected' : '');
+  document.getElementById('statusTxt').textContent = connected ? 'Live' : 'Offline';
+});
+
+// Listen for real-time updates
+ENTRIES_REF.on('value', snap => {
+  entries = [];
+  snap.forEach(child => {
+    entries.push({ id: child.key, ...child.val() });
+  });
+  entries.sort((a, b) => b.date.localeCompare(a.date));
+  document.getElementById('loadingMsg').style.display = 'none';
+  if (currentTab === 'view') renderView();
+  if (currentTab === 'service') renderService();
+});
+
+function dateToQtr(dateStr) {
+  const d = new Date(dateStr + 'T12:00:00');
+  const y = d.getFullYear(), m = d.getMonth() + 1;
+  if (m >= 9) return 'Fall ' + y;
+  if (m >= 7) return 'Summer ' + y;
+  if (m >= 4) return 'Spring ' + y;
+  return 'Winter ' + y;
+}
+
+function getQtrs(list) {
+  const s = new Set(list.map(e => dateToQtr(e.date)));
+  const order = ['Fall','Summer','Spring','Winter'];
+  return ['All', ...[...s].sort((a, b) => {
+    const [sa, ya] = a.split(' '), [sb, yb] = b.split(' ');
+    return ya !== yb ? parseInt(yb) - parseInt(ya) : order.indexOf(sa) - order.indexOf(sb);
+  })];
+}
+
+function selBkt(b) {
+  bkt = b; selAct = null;
+  [1,2,3].forEach(i => {
+    document.getElementById('bb'+i).className = 'bkt-btn' + (i === b ? ' on'+b : '');
+  });
+  renderActs();
+}
+
+function renderActs() {
+  document.getElementById('actGrid').innerHTML = ACTS[bkt].map(a =>
+    `<button class="act-btn${selAct===a?' sel'+bkt:''}" onclick="pickAct(this,'${a.replace(/'/g,"\\'")}')">${a}</button>`
+  ).join('');
+  document.getElementById('customWrap').style.display = (selAct && selAct.startsWith('Other')) ? 'block' : 'none';
+}
+
+function pickAct(btn, a) {
+  selAct = a;
+  document.querySelectorAll('.act-btn').forEach(b => b.className = 'act-btn');
+  btn.className = 'act-btn sel' + bkt;
+  document.getElementById('customWrap').style.display = a.startsWith('Other') ? 'block' : 'none';
+  if (!a.startsWith('Other')) document.getElementById('customTxt').value = '';
+}
+
+function doLog() {
+  let act = selAct;
+  if (!act) { flash('Pick an activity first.', true); return; }
+  if (act.startsWith('Other')) {
+    const c = document.getElementById('customTxt').value.trim();
+    if (!c) { flash('Describe the activity.', true); return; }
+    act = c;
+  }
+  const d = document.getElementById('logDate').value;
+  const h = parseFloat(document.getElementById('logHrs').value);
+  const n = document.getElementById('logNote').value.trim();
+  if (!d) { flash('Add a date.', true); return; }
+  if (!h || h <= 0) { flash('Add hours > 0.', true); return; }
+
+  const btn = document.getElementById('logBtn');
+  btn.disabled = true;
+  btn.textContent = 'Saving...';
+
+  ENTRIES_REF.push({ date: d, bkt, act, hrs: h, note: n, ts: Date.now() })
+    .then(() => {
+      document.getElementById('logHrs').value = '';
+      document.getElementById('logNote').value = '';
+      document.getElementById('customTxt').value = '';
+      flash('✓ ' + h + ' hrs logged — ' + act);
+      btn.disabled = false;
+      btn.textContent = '+ Log it';
+    })
+    .catch(err => {
+      flash('Error saving. Check connection.', true);
+      btn.disabled = false;
+      btn.textContent = '+ Log it';
+    });
+}
+
+function flash(msg, isErr) {
+  const el = document.getElementById('flashMsg');
+  el.textContent = msg;
+  el.className = 'flash-msg' + (isErr ? ' err' : '');
+  setTimeout(() => el.textContent = '', 3500);
+}
+
+function delEntry(id) {
+  if (!confirm('Delete this entry?')) return;
+  ENTRIES_REF.child(id).remove();
+}
+
+function renderQtrBar(containerId, currentVal, setter, list) {
+  const qtrs = getQtrs(list);
+  document.getElementById(containerId).innerHTML = qtrs.map(q =>
+    `<button class="qtr-btn${q===currentVal?' on':''}" onclick="${setter}('${q}')">${q}</button>`
+  ).join('');
+}
+
+function renderBktFilter() {
+  const opts = [['All','all'],['B1 Instruction','1'],['B2 Designated','2'],['B3 Service','3']];
+  document.getElementById('bktFilterRow').innerHTML = opts.map(([lbl, val]) =>
+    `<button class="bf-btn${viewBkt===val?' on-'+(val==='all'?'all':val):''}" onclick="setViewBkt('${val}')">${lbl}</button>`
+  ).join('');
+}
+
+function setViewQtr(q) { viewQtr = q; renderView(); }
+function setViewBkt(b) { viewBkt = b; renderView(); }
+function setSvcQtr(q) { svcQtr = q; renderService(); }
+
+function renderView() {
+  const filtered = entries.filter(e => {
+    const qOk = viewQtr === 'All' || dateToQtr(e.date) === viewQtr;
+    const bOk = viewBkt === 'All' || e.bkt === parseInt(viewBkt);
+    return qOk && bOk;
+  });
+
+  const sum = arr => arr.reduce((s, e) => s + e.hrs, 0);
+  const b1 = filtered.filter(e => e.bkt===1), b2 = filtered.filter(e => e.bkt===2), b3 = filtered.filter(e => e.bkt===3);
+
+  document.getElementById('sumCards').innerHTML =
+    `<div class="sum-card"><div class="sum-lbl">B1 Instruction</div><div class="sum-val" style="color:#2a9d8f">${sum(b1).toFixed(1)}</div><div class="sum-sub">${b1.length} entries</div></div>` +
+    `<div class="sum-card"><div class="sum-lbl">B2 Designated</div><div class="sum-val" style="color:#b07d00">${sum(b2).toFixed(1)}</div><div class="sum-sub">${b2.length} entries</div></div>` +
+    `<div class="sum-card"><div class="sum-lbl">B3 Service</div><div class="sum-val" style="color:#534ab7">${sum(b3).toFixed(1)}</div><div class="sum-sub">${b3.length} entries</div></div>`;
+
+  renderQtrBar('qtrBar', viewQtr, 'setViewQtr', entries);
+  renderBktFilter();
+
+  const list = document.getElementById('entryList');
+  const empty = document.getElementById('emptyMsg');
+
+  if (!filtered.length) {
+    list.innerHTML = '';
+    empty.style.display = 'block';
+    return;
+  }
+  empty.style.display = 'none';
+
+  list.innerHTML = filtered.map(e => `
+    <div class="entry-card">
+      <div class="entry-left">
+        <div class="entry-act">${e.act}</div>
+        <div class="entry-meta">
+          <span class="bdg b${e.bkt}c">B${e.bkt}</span>
+          <span class="qbdg">${dateToQtr(e.date)}</span>
+          <span>${e.date}</span>
+        </div>
+        ${e.note ? `<div class="entry-note">${e.note}</div>` : ''}
+      </div>
+      <div style="display:flex;align-items:center;gap:8px;">
+        <div class="entry-hrs">${e.hrs}h</div>
+        <button class="del-btn" onclick="delEntry('${e.id}')" aria-label="Delete entry">✕</button>
+      </div>
+    </div>
+  `).join('');
+}
+
+function renderService() {
+  const b3all = entries.filter(e => e.bkt === 3);
+  renderQtrBar('svcQtrBar', svcQtr, 'setSvcQtr', b3all);
+
+  const b3 = b3all.filter(e => svcQtr === 'All' || dateToQtr(e.date) === svcQtr);
+  const empty = document.getElementById('svcEmpty');
+  const content = document.getElementById('svcContent');
+
+  if (!b3.length) {
+    content.innerHTML = '';
+    empty.style.display = 'block';
+    return;
+  }
+  empty.style.display = 'none';
+
+  const totalHrs = b3.reduce((s, e) => s + e.hrs, 0);
+  const byAct = {};
+  b3.forEach(e => { byAct[e.act] = (byAct[e.act] || 0) + e.hrs; });
+  const actRows = Object.entries(byAct).sort((a, b) => b[1] - a[1]);
+  const maxHrs = actRows[0] ? actRows[0][1] : 1;
+
+  content.innerHTML = `
+    <div class="svc-header">
+      <div>
+        <div class="svc-total-lbl">Total B3 Service Hours${svcQtr !== 'All' ? ' — ' + svcQtr : ''}</div>
+        <div class="svc-total-val">${totalHrs.toFixed(1)} hrs</div>
+      </div>
+      <div style="text-align:right;">
+        <div class="svc-total-lbl">Activities</div>
+        <div class="svc-total-val">${actRows.length}</div>
+      </div>
+    </div>
+    ${actRows.map(([act, hrs]) => `
+      <div class="svc-act-card">
+        <div class="svc-act-name">${act}</div>
+        <div class="svc-bar-wrap"><div class="svc-bar" style="width:${Math.round(hrs/maxHrs*100)}%"></div></div>
+        <div class="svc-meta"><span>${hrs.toFixed(1)} hrs</span><span>${Math.round(hrs/totalHrs*100)}% of total</span></div>
+      </div>
+    `).join('')}
+    <div style="margin-top:14px;">
+      <div class="sec" style="margin-bottom:8px;">All B3 entries — ${svcQtr !== 'All' ? svcQtr : 'all quarters'}</div>
+      ${b3.sort((a,b)=>b.date.localeCompare(a.date)).map(e => `
+        <div class="entry-card">
+          <div class="entry-left">
+            <div class="entry-act">${e.act}</div>
+            <div class="entry-meta">
+              <span class="qbdg">${dateToQtr(e.date)}</span>
+              <span>${e.date}</span>
+            </div>
+            ${e.note ? `<div class="entry-note">${e.note}</div>` : ''}
+          </div>
+          <div class="entry-hrs">${e.hrs}h</div>
+        </div>
+      `).join('')}
+    </div>
+  `;
+}
+
+let eqChart = null;
+function renderEquity() {
+  if (eqChart) { eqChart.destroy(); eqChart = null; }
+  const ctx = document.getElementById('eqChart').getContext('2d');
+  eqChart = new Chart(ctx, {
+    type: 'bar',
+    data: {
+      labels: ['Standard faculty', 'Automotive (you)'],
+      datasets: [
+        { label: 'Classroom', data: [38.5, 61], backgroundColor: '#2a9d8f' },
+        { label: 'Finals', data: [1.5, 1.5], backgroundColor: '#5dc8bb' },
+        { label: 'Office hours', data: [14, 14.1], backgroundColor: '#e9a825' },
+        { label: 'Grading & prep', data: [23, 0], backgroundColor: '#534ab7' },
+        { label: 'Service / other', data: [23, 0], backgroundColor: '#888780' },
+        { label: 'Remaining for all duties', data: [0, 23.4], backgroundColor: '#e24b4a' },
+      ]
+    },
+    options: {
+      indexAxis: 'y', responsive: true, maintainAspectRatio: false,
+      plugins: { legend: { display: false }, tooltip: { callbacks: { label: c => ` ${c.dataset.label}: ${c.raw}%` } } },
+      scales: {
+        x: { stacked: true, max: 105, ticks: { callback: v => v + '%', font: { family: 'Arial', size: 11 } }, grid: { color: 'rgba(0,0,0,0.06)' } },
+        y: { stacked: true, ticks: { font: { family: 'Arial', size: 12 } } }
+      }
+    }
+  });
+}
+
+function goTab(t, btn) {
+  ['log','view','service','equity'].forEach(id => {
+    document.getElementById('tab-' + id).style.display = id === t ? 'block' : 'none';
+  });
+  document.querySelectorAll('.tab-btn').forEach(b => b.className = 'tab-btn');
+  btn.className = 'tab-btn on';
+  currentTab = t;
+  if (t === 'view') renderView();
+  if (t === 'service') renderService();
+  if (t === 'equity') renderEquity();
+}
+
+// Init
+const today = new Date().toISOString().slice(0, 10);
+document.getElementById('logDate').value = today;
+renderActs();
+</script>
+</body>
+</html>
