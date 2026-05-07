@@ -192,16 +192,46 @@ input:focus{outline:none;border-color:#2a9d8f;}
     <strong>CBA Art. VII §D.1.c.(2)</strong> — Automotive contact load: <strong>24 hrs/wk</strong> vs. the standard 15. The chart shows where grading &amp; prep time is allocated in the standard model — and what happens to it in yours.
   </div>
   <div class="eq-chart-wrap">
-    <canvas id="eqChart" role="img" aria-label="Stacked bar chart comparing standard and automotive faculty workload allocation" style="width:100%;"></canvas>
+
+    <!-- Pure CSS stacked horizontal bar chart — no Chart.js -->
+    <div style="margin-bottom:20px;">
+
+      <!-- Standard Faculty -->
+      <div style="margin-bottom:14px;">
+        <div style="font-size:12px;font-weight:500;color:#444;margin-bottom:5px;">Standard faculty</div>
+        <div style="display:flex;width:100%;height:38px;border-radius:5px;overflow:hidden;">
+          <div style="width:38.5%;background:#2a9d8f;display:flex;align-items:center;justify-content:center;font-size:10px;color:#fff;font-weight:500;" title="Classroom 38.5%">38.5%</div>
+          <div style="width:1.5%;background:#5dc8bb;" title="Finals 1.5%"></div>
+          <div style="width:14%;background:#e9a825;display:flex;align-items:center;justify-content:center;font-size:10px;color:#1a1a1a;font-weight:500;" title="Office hours 14%">14%</div>
+          <div style="width:23%;background:#534ab7;display:flex;align-items:center;justify-content:center;font-size:10px;color:#fff;font-weight:500;" title="Grading & prep 23%">23%</div>
+          <div style="width:23%;background:#888780;display:flex;align-items:center;justify-content:center;font-size:10px;color:#fff;font-weight:500;" title="Service/other 23%">23%</div>
+        </div>
+        <div style="font-size:10px;color:#888;margin-top:3px;">46% available for grading, prep &amp; service</div>
+      </div>
+
+      <!-- Automotive -->
+      <div>
+        <div style="font-size:12px;font-weight:500;color:#444;margin-bottom:5px;">Automotive — you</div>
+        <div style="display:flex;width:100%;height:38px;border-radius:5px;overflow:hidden;">
+          <div style="width:61%;background:#2a9d8f;display:flex;align-items:center;justify-content:center;font-size:10px;color:#fff;font-weight:500;" title="Classroom 61%">61%</div>
+          <div style="width:1.5%;background:#5dc8bb;" title="Finals 1.5%"></div>
+          <div style="width:14.1%;background:#e9a825;display:flex;align-items:center;justify-content:center;font-size:10px;color:#1a1a1a;font-weight:500;" title="Office hours 14.1%">14%</div>
+          <div style="width:23.4%;background:#e24b4a;display:flex;align-items:center;justify-content:center;font-size:10px;color:#fff;font-weight:500;" title="Only 23.4% left for everything">23.4% ⚠</div>
+        </div>
+        <div style="font-size:10px;color:#e24b4a;margin-top:3px;font-weight:500;">Only 23.4% left for grading, prep AND service combined</div>
+      </div>
+    </div>
+
     <div class="eq-legend">
       <span><span class="eq-swatch" style="background:#2a9d8f;"></span>Classroom</span>
       <span><span class="eq-swatch" style="background:#5dc8bb;"></span>Finals</span>
       <span><span class="eq-swatch" style="background:#e9a825;"></span>Office hours</span>
-      <span><span class="eq-swatch" style="background:#534ab7;"></span>Grading &amp; prep</span>
+      <span><span class="eq-swatch" style="background:#534ab7;"></span>Grading &amp; prep (allocated)</span>
       <span><span class="eq-swatch" style="background:#888780;"></span>Service / other</span>
-      <span><span class="eq-swatch" style="background:#e24b4a;"></span>Remaining for all duties ⚠</span>
+      <span><span class="eq-swatch" style="background:#e24b4a;"></span>Remaining for everything ⚠</span>
     </div>
   </div>
+
   <div class="eq-stat">
     <div class="sec" style="margin-bottom:8px;">By the numbers</div>
     <table>
@@ -215,7 +245,6 @@ input:focus{outline:none;border-color:#2a9d8f;}
 
 <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-app-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-database-compat.js"></script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.js"></script>
 <script>
 const firebaseConfig = {
   apiKey: "AIzaSyBE0eb2NtfzE-nSvXtb-MM9sBA4fyt1D_Q",
@@ -470,36 +499,6 @@ function renderService() {
   `;
 }
 
-let eqChart = null;
-function renderEquity() {
-  if (eqChart) { eqChart.destroy(); eqChart = null; }
-  const ctx = document.getElementById('eqChart').getContext('2d');
-  const h = Math.min(window.innerWidth < 480 ? 200 : 240, 240);
-  document.getElementById('eqChart').style.height = h + 'px';
-  eqChart = new Chart(ctx, {
-    type: 'bar',
-    data: {
-      labels: ['Standard faculty', 'Automotive (you)'],
-      datasets: [
-        { label: 'Classroom', data: [38.5, 61], backgroundColor: '#2a9d8f' },
-        { label: 'Finals', data: [1.5, 1.5], backgroundColor: '#5dc8bb' },
-        { label: 'Office hours', data: [14, 14.1], backgroundColor: '#e9a825' },
-        { label: 'Grading & prep', data: [23, 0], backgroundColor: '#534ab7' },
-        { label: 'Service / other', data: [23, 0], backgroundColor: '#888780' },
-        { label: 'Remaining for all duties', data: [0, 23.4], backgroundColor: '#e24b4a' },
-      ]
-    },
-    options: {
-      indexAxis: 'y', responsive: true, maintainAspectRatio: false,
-      plugins: { legend: { display: false }, tooltip: { callbacks: { label: c => ` ${c.dataset.label}: ${c.raw}%` } } },
-      scales: {
-        x: { stacked: true, max: 105, ticks: { callback: v => v + '%', font: { family: 'Arial', size: 11 } }, grid: { color: 'rgba(0,0,0,0.06)' } },
-        y: { stacked: true, ticks: { font: { family: 'Arial', size: 12 } } }
-      }
-    }
-  });
-}
-
 function goTab(t, btn) {
   ['log','view','service','equity'].forEach(id => {
     document.getElementById('tab-' + id).style.display = id === t ? 'block' : 'none';
@@ -509,7 +508,6 @@ function goTab(t, btn) {
   currentTab = t;
   if (t === 'view') renderView();
   if (t === 'service') renderService();
-  if (t === 'equity') renderEquity();
 }
 
 // Init
