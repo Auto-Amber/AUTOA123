@@ -1,0 +1,266 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AUTOA 123 - Brakes Unit</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f5f5f5;
+            color: #1a1a1a;
+            line-height: 1.6;
+        }
+        .header {
+            background-color: #1a1a1a;
+            border-top: 5px solid #2a9d8f;
+            border-bottom: 5px solid #2a9d8f;
+            padding: 20px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 30px;
+        }
+        .header-left {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+        .logo {
+            width: 50px;
+            height: 50px;
+            background-color: #2a9d8f;
+            border-radius: 5px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-weight: bold;
+            font-size: 24px;
+        }
+        .header-text h1 {
+            color: white;
+            font-size: 24px;
+            font-weight: bold;
+        }
+        .header-text p {
+            color: #2a9d8f;
+            font-size: 12px;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+        .exam-badge {
+            background-color: #e9a825;
+            color: #1a1a1a;
+            padding: 10px 15px;
+            border-radius: 5px;
+            font-weight: bold;
+            font-size: 12px;
+            text-align: center;
+        }
+        .container {
+            max-width: 900px;
+            margin: 0 auto;
+            padding: 0 20px 40px 20px;
+        }
+        .section {
+            margin-bottom: 20px;
+            border: 2px solid #2a9d8f;
+            border-radius: 8px;
+            background-color: white;
+            overflow: hidden;
+        }
+        .section-header {
+            background-color: #2a9d8f;
+            padding: 16px;
+            cursor: pointer;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            color: white;
+            font-weight: bold;
+            font-size: 16px;
+            user-select: none;
+            transition: background-color 0.3s;
+        }
+        .section-header:hover {
+            background-color: #238077;
+        }
+        .section-header i {
+            transition: transform 0.3s;
+        }
+        .section.open .section-header i {
+            transform: rotate(180deg);
+        }
+        .section-content {
+            padding: 16px;
+            display: none;
+            animation: slideDown 0.3s ease-out;
+        }
+        .section.open .section-content {
+            display: block;
+        }
+        @keyframes slideDown {
+            from {
+                opacity: 0;
+                max-height: 0;
+            }
+            to {
+                opacity: 1;
+                max-height: 1000px;
+            }
+        }
+        .item {
+            padding: 12px;
+            margin-bottom: 10px;
+            background-color: #f0faf7;
+            border-left: 4px solid #2a9d8f;
+            border-radius: 0 6px 6px 0;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            gap: 10px;
+        }
+        .item:last-child {
+            margin-bottom: 0;
+        }
+        .item-name {
+            flex: 1;
+            color: #1a1a1a;
+        }
+        .item a {
+            background-color: #2a9d8f;
+            color: white;
+            padding: 8px 16px;
+            border-radius: 5px;
+            text-decoration: none;
+            font-size: 12px;
+            font-weight: bold;
+            white-space: nowrap;
+            transition: background-color 0.3s;
+        }
+        .item a:hover {
+            background-color: #238077;
+        }
+        .intro {
+            background-color: #f0faf7;
+            border: 2px solid #2a9d8f;
+            border-radius: 8px;
+            padding: 20px;
+            margin-bottom: 30px;
+        }
+        .intro h2 {
+            color: #2a9d8f;
+            margin-bottom: 10px;
+        }
+        .intro p {
+            color: #1a1a1a;
+            line-height: 1.7;
+        }
+    </style>
+</head>
+<body>
+    <div class="header">
+        <div class="header-left">
+            <div class="logo">⚙️</div>
+            <div class="header-text">
+                <h1>Brakes Unit Review</h1>
+                <p>AUTOA 123 · Shoreline Community College</p>
+            </div>
+        </div>
+        <div class="exam-badge">
+            Unit Exam<br>Thursday
+        </div>
+    </div>
+
+    <div class="container">
+        <div class="intro">
+            <h2>Get Ready for Thursday's Exam</h2>
+            <p>All your Brakes unit materials in one place. Click on each section below to expand and access lectures, labs, and micro-lessons. Download and review the materials at your own pace.</p>
+        </div>
+
+        <div class="section">
+            <div class="section-header">
+                <span>📚 Lectures</span>
+                <i class="fas fa-chevron-down"></i>
+            </div>
+            <div class="section-content">
+                <div class="item">
+                    <div class="item-name">Intro to Brakes</div>
+                    <a href="lecture-intro-to-brakes.pdf" download>Download PDF</a>
+                </div>
+                <div class="item">
+                    <div class="item-name">Pascal's Law & Master Cylinders</div>
+                    <a href="lecture-pascals-law-master-cylinders.pdf" download>Download PDF</a>
+                </div>
+                <div class="item">
+                    <div class="item-name">Disc Brakes</div>
+                    <a href="lecture-disc-brakes.pdf" download>Download PDF</a>
+                </div>
+                <div class="item">
+                    <div class="item-name">Brake Boosters</div>
+                    <a href="Brake_Boosters_AST.pdf" download>Download PDF</a>
+                </div>
+            </div>
+        </div>
+
+        <div class="section">
+            <div class="section-header">
+                <span>🔧 Labs</span>
+                <i class="fas fa-chevron-down"></i>
+            </div>
+            <div class="section-content">
+                <div class="item">
+                    <div class="item-name">Disc Brake System Basics</div>
+                    <a href="disc-brake-system-basics-AUTOA123__3_.pdf" download>Download PDF</a>
+                </div>
+                <div class="item">
+                    <div class="item-name">Disc Brake Walkthrough</div>
+                    <a href="disc-brake-walkthrough-AUTOA123.pdf" download>Download PDF</a>
+                </div>
+                <div class="item">
+                    <div class="item-name">Brake Booster System Basics</div>
+                    <a href="brake-booster-system-basics-AUTOA123.pdf" download>Download PDF</a>
+                </div>
+                <div class="item">
+                    <div class="item-name">Brake Booster Walkthrough</div>
+                    <a href="brake-booster-walkthrough-AUTOA123.pdf" download>Download PDF</a>
+                </div>
+            </div>
+        </div>
+
+        <div class="section">
+            <div class="section-header">
+                <span>🎯 Micro Lessons</span>
+                <i class="fas fa-chevron-down"></i>
+            </div>
+            <div class="section-content">
+                <div style="color: #666; padding: 12px; text-align: center;">
+                    Micro lesson links coming soon. Check back for GitHub-hosted content.
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        document.querySelectorAll('.section-header').forEach(header => {
+            header.addEventListener('click', function() {
+                const section = this.closest('.section');
+                section.classList.toggle('open');
+            });
+        });
+
+        document.querySelectorAll('.section').forEach((section, index) => {
+            if (index === 0 || index === 1) {
+                section.classList.add('open');
+            }
+        });
+    </script>
+</body>
+</html>
