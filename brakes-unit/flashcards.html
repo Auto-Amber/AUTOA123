@@ -1,0 +1,251 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Brakes Unit Flashcards</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f5f5f5;
+            color: #1a1a1a;
+            padding: 20px;
+        }
+        .header {
+            background-color: #1a1a1a;
+            border-top: 5px solid #2a9d8f;
+            border-bottom: 5px solid #2a9d8f;
+            padding: 20px;
+            margin-bottom: 30px;
+            border-radius: 8px;
+            text-align: center;
+        }
+        .header h1 {
+            color: white;
+            font-size: 28px;
+            margin-bottom: 5px;
+        }
+        .header p {
+            color: #2a9d8f;
+            font-size: 12px;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+        .container {
+            max-width: 900px;
+            margin: 0 auto;
+        }
+        .card-counter {
+            text-align: center;
+            margin-bottom: 20px;
+            font-size: 16px;
+            color: #666;
+        }
+        .flashcard-container {
+            perspective: 1000px;
+            height: 500px;
+            margin-bottom: 30px;
+        }
+        .flashcard {
+            position: relative;
+            width: 100%;
+            height: 100%;
+            transition: transform 0.6s;
+            transform-style: preserve-3d;
+            cursor: pointer;
+        }
+        .flashcard.flipped {
+            transform: rotateY(180deg);
+        }
+        .card-face {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            backface-visibility: hidden;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 12px;
+            font-size: 18px;
+            font-weight: bold;
+            padding: 20px;
+            text-align: center;
+        }
+        .card-front {
+            background-color: white;
+            border: 3px solid #2a9d8f;
+            overflow: auto;
+        }
+        .card-front img {
+            max-width: 100%;
+            max-height: 100%;
+            object-fit: contain;
+        }
+        .card-back {
+            background: linear-gradient(135deg, #2a9d8f 0%, #238077 100%);
+            color: white;
+            transform: rotateY(180deg);
+            flex-direction: column;
+            border: 3px solid #2a9d8f;
+        }
+        .card-back-content {
+            text-align: center;
+        }
+        .card-back-content h2 {
+            font-size: 32px;
+            margin-bottom: 10px;
+        }
+        .card-back-content p {
+            font-size: 14px;
+            opacity: 0.9;
+        }
+        .controls {
+            display: flex;
+            justify-content: center;
+            gap: 15px;
+            margin-bottom: 30px;
+        }
+        button {
+            background-color: #2a9d8f;
+            color: white;
+            border: none;
+            padding: 12px 24px;
+            border-radius: 6px;
+            font-size: 14px;
+            font-weight: bold;
+            cursor: pointer;
+            transition: background-color 0.3s;
+        }
+        button:hover {
+            background-color: #238077;
+        }
+        .instructions {
+            background-color: #f0faf7;
+            border: 2px solid #2a9d8f;
+            border-radius: 8px;
+            padding: 20px;
+            margin-bottom: 30px;
+            text-align: center;
+            color: #1a1a1a;
+        }
+        .instructions p {
+            margin-bottom: 10px;
+        }
+        .instructions strong {
+            color: #2a9d8f;
+        }
+    </style>
+</head>
+<body>
+    <div class="header">
+        <h1>Brakes Unit Flashcards</h1>
+        <p>AUTOA 123 · Shoreline Community College</p>
+    </div>
+
+    <div class="container">
+        <div class="instructions">
+            <p><strong>Click the card to flip</strong> and reveal the component name.</p>
+            <p>Use the Previous and Next buttons to navigate through all 20 brake components.</p>
+        </div>
+
+        <div class="card-counter">
+            Card <span id="current">1</span> of <span id="total">20</span>
+        </div>
+
+        <div class="flashcard-container">
+            <div class="flashcard" id="card">
+                <div class="card-face card-front">
+                    <img id="cardImage" src="" alt="Brake component">
+                </div>
+                <div class="card-face card-back">
+                    <div class="card-back-content">
+                        <h2 id="cardLabel"></h2>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="controls">
+            <button onclick="previousCard()">← Previous</button>
+            <button onclick="toggleFlip()">Flip Card</button>
+            <button onclick="nextCard()">Next →</button>
+        </div>
+    </div>
+
+    <script>
+        const cards = [
+            { image: '1000030722.jpg', label: 'Anti-Rattle Clips' },
+            { image: '1000030714.jpg', label: 'Floating Caliper Slide Pin' },
+            { image: '1000030716.webp', label: 'Floating Caliper' },
+            { image: '1000030720.webp', label: 'Fixed Caliper' },
+            { image: '1000030718.jpg', label: 'Slide Pin' },
+            { image: '1000030715.jpg', label: 'Caliper Pin Boot' },
+            { image: '1000030711.jpg', label: 'Sil-Glyde Lubricant' },
+            { image: '1000030713.jpg', label: 'Caliper Lock Pin' },
+            { image: '1000030721.jpg', label: 'Brake Pad Shim' },
+            { image: '1000030710.jpg', label: 'Master Cylinder' },
+            { image: '1000030709.jpg', label: 'Wheel Cylinder' },
+            { image: '1000030712.jpg', label: 'Bleeder Screw' },
+            { image: '1000030705.jpg', label: 'Drum Brake Hold Down' },
+            { image: '1000030706.webp', label: 'Bonded Brake Shoe' },
+            { image: '1000030707.webp', label: 'Riveted Brake Shoe' },
+            { image: '1000030708.jpg', label: 'Drum Brake Star Wheel Adjuster' },
+            { image: '1000030724.jpg', label: 'Worn Brake Pad' },
+            { image: '1000030719.jpg', label: 'Brake Pad Wear Clip' },
+            { image: '1000030717.jpg', label: 'Caliper Bracket' },
+            { image: '1000030725.jpg', label: 'Brake Pad' }
+        ];
+
+        let currentCard = 0;
+        let isFlipped = false;
+
+        function loadCard() {
+            const card = cards[currentCard];
+            document.getElementById('cardImage').src = card.image;
+            document.getElementById('cardLabel').textContent = card.label;
+            document.getElementById('current').textContent = currentCard + 1;
+            document.getElementById('total').textContent = cards.length;
+            
+            // Reset flip state
+            isFlipped = false;
+            document.getElementById('card').classList.remove('flipped');
+        }
+
+        function toggleFlip() {
+            isFlipped = !isFlipped;
+            document.getElementById('card').classList.toggle('flipped');
+        }
+
+        function nextCard() {
+            currentCard = (currentCard + 1) % cards.length;
+            loadCard();
+        }
+
+        function previousCard() {
+            currentCard = (currentCard - 1 + cards.length) % cards.length;
+            loadCard();
+        }
+
+        // Keyboard controls
+        document.addEventListener('keydown', function(event) {
+            if (event.key === 'ArrowRight') nextCard();
+            if (event.key === 'ArrowLeft') previousCard();
+            if (event.key === ' ') {
+                event.preventDefault();
+                toggleFlip();
+            }
+        });
+
+        // Click card to flip
+        document.getElementById('card').addEventListener('click', toggleFlip);
+
+        // Load first card
+        loadCard();
+    </script>
+</body>
+</html>
