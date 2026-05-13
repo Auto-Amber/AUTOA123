@@ -1,0 +1,411 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Wheel Speed Sensors: Passive vs Active</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Source+Sans+3:wght@400;600;700&family=Oswald:wght@500;700&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --dark: #1a1a1a;
+    --teal: #2a9d8f;
+    --teal-light: #f0faf8;
+    --teal-border: #d0ede9;
+    --teal-dark: #1a7a6e;
+    --amber: #e9a825;
+    --amber-light: #fffbf0;
+    --amber-inner: #fdf0c8;
+    --amber-text: #b07d00;
+    --body: #1a1a1a;
+    --sub: #555555;
+    --gray: #888888;
+    --red: #c0392b;
+    --red-light: #fdecea;
+    --track: #3a3a3a;
+  }
+  * { box-sizing: border-box; }
+  body {
+    font-family: 'Source Sans 3', Arial, sans-serif;
+    color: var(--body);
+    background-color: transparent;
+    margin: 0;
+    padding: 20px;
+    line-height: 1.55;
+  }
+  h1, h2, h3 {
+    font-family: 'Oswald', Arial, sans-serif;
+    font-weight: 600;
+    color: var(--dark);
+    margin: 0 0 12px 0;
+  }
+  h2 { font-size: 24px; }
+  .container {
+    max-width: 700px;
+    margin: 0 auto;
+    background: #ffffff;
+    border: 2px solid var(--teal-border);
+    border-radius: 10px;
+    padding: 24px;
+  }
+  .lesson-header {
+    background: var(--dark);
+    color: #ffffff;
+    padding: 14px 18px;
+    border-radius: 8px;
+    margin-bottom: 18px;
+    border-top: 4px solid var(--teal);
+  }
+  .lesson-header .label {
+    font-family: 'Oswald', Arial, sans-serif;
+    color: var(--teal);
+    font-size: 11px;
+    font-weight: 700;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+  }
+  .lesson-header .title {
+    color: #ffffff;
+    font-size: 18px;
+    font-weight: 700;
+    margin-top: 2px;
+  }
+  .progress-wrap {
+    margin-bottom: 18px;
+  }
+  .progress-label {
+    font-size: 12px;
+    color: var(--sub);
+    margin-bottom: 4px;
+    font-weight: 600;
+  }
+  .progress-track {
+    background: var(--track);
+    height: 6px;
+    border-radius: 3px;
+    overflow: hidden;
+  }
+  .progress-fill {
+    background: var(--amber);
+    height: 100%;
+    width: 0%;
+    transition: width 0.3s ease;
+  }
+  .slide-num {
+    color: var(--gray);
+    font-size: 12px;
+    font-weight: 700;
+    letter-spacing: 1px;
+    text-transform: uppercase;
+    margin-bottom: 6px;
+  }
+  .slide, .question { min-height: 280px; }
+  p { margin: 0 0 10px 0; font-size: 16px; }
+  ul { margin: 0 0 10px 0; padding-left: 22px; }
+  li { margin-bottom: 6px; font-size: 16px; }
+  .callout {
+    background: var(--teal-light);
+    border-left: 4px solid var(--teal);
+    padding: 10px 14px;
+    border-radius: 0 6px 6px 0;
+    margin: 12px 0;
+    font-size: 15px;
+  }
+  .callout-amber {
+    background: var(--amber-light);
+    border-left: 4px solid var(--amber);
+    padding: 10px 14px;
+    border-radius: 0 6px 6px 0;
+    margin: 12px 0;
+    font-size: 15px;
+  }
+  .choices {
+    display: table;
+    width: 100%;
+    border-spacing: 0 8px;
+    margin-top: 10px;
+  }
+  .choice {
+    display: table-row;
+    width: 100%;
+  }
+  button.choice {
+    display: block;
+    width: 100%;
+    background: #ffffff;
+    border: 2px solid var(--teal-border);
+    color: var(--body);
+    padding: 12px 14px;
+    font-family: 'Source Sans 3', Arial, sans-serif;
+    font-size: 15px;
+    font-weight: 600;
+    text-align: left;
+    border-radius: 6px;
+    cursor: pointer;
+    margin-bottom: 8px;
+    transition: all 0.15s ease;
+  }
+  button.choice:hover:not(:disabled) {
+    background: var(--teal-light);
+    border-color: var(--teal);
+  }
+  button.choice:disabled { cursor: default; }
+  button.choice.correct {
+    background: var(--teal-light);
+    border-color: var(--teal);
+    color: var(--teal-dark);
+    font-weight: 700;
+  }
+  button.choice.wrong {
+    background: var(--red-light);
+    border-color: var(--red);
+    color: var(--red);
+  }
+  .feedback {
+    margin-top: 14px;
+    padding: 12px 14px;
+    border-radius: 6px;
+    font-size: 15px;
+    display: none;
+  }
+  .feedback.show { display: block; }
+  .feedback.correct {
+    background: var(--teal-light);
+    border-left: 4px solid var(--teal);
+    color: var(--teal-dark);
+  }
+  .feedback.wrong {
+    background: var(--red-light);
+    border-left: 4px solid var(--red);
+    color: var(--red);
+  }
+  .nav {
+    display: table;
+    width: 100%;
+    margin-top: 18px;
+  }
+  .nav-row { display: table-row; }
+  .nav-cell { display: table-cell; vertical-align: middle; padding: 4px; }
+  .nav-cell.right { text-align: right; }
+  button.nav-btn {
+    background: var(--teal);
+    color: #ffffff;
+    border: none;
+    padding: 11px 22px;
+    font-family: 'Oswald', Arial, sans-serif;
+    font-size: 14px;
+    font-weight: 600;
+    letter-spacing: 1px;
+    text-transform: uppercase;
+    border-radius: 6px;
+    cursor: pointer;
+  }
+  button.nav-btn:hover { background: var(--teal-dark); }
+  button.nav-btn:disabled { background: var(--gray); cursor: not-allowed; opacity: 0.5; }
+  .complete-box {
+    background: var(--teal-light);
+    border: 2px solid var(--teal);
+    border-radius: 8px;
+    padding: 20px;
+    text-align: center;
+    margin-top: 20px;
+    display: none;
+  }
+  .complete-box.show { display: block; }
+  .complete-box h3 {
+    color: var(--teal-dark);
+    font-size: 22px;
+    margin-bottom: 8px;
+  }
+  .complete-box p { color: var(--body); }
+</style>
+</head>
+<body>
+
+<div class="container">
+
+  <div class="lesson-header">
+    <div class="label">Micro Lesson &middot; AUTOA 123</div>
+    <div class="title">Wheel Speed Sensors: Passive vs Active</div>
+  </div>
+
+  <div class="progress-wrap">
+    <div class="progress-label">Progress &middot; <span id="progress-pct">0%</span></div>
+    <div class="progress-track">
+      <div class="progress-fill" id="progress-fill"></div>
+    </div>
+  </div>
+
+  
+    <div class="slide" id="slide-1" style="display:block;">
+      <div class="slide-num">Slide 1 of 3</div>
+      <h2>Two Sensor Types</h2>
+      
+<p>Wheel speed sensors come in two flavors:</p>
+<ul>
+  <li><strong>Passive (AC generator):</strong> A magnet inside a coil. As the toothed tone ring spins past, it induces an AC voltage signal that varies in frequency and amplitude with speed.</li>
+  <li><strong>Active (Hall effect or magneto-resistive):</strong> A powered sensor that outputs a clean digital square wave. Frequency increases with speed but voltage stays constant.</li>
+</ul>
+<div class="callout">Active sensors work at very low speeds (down to nearly zero). Passive sensors lose their signal at very low speeds.</div>
+    </div>
+    <div class="slide" id="slide-2" style="display:none;">
+      <div class="slide-num">Slide 2 of 3</div>
+      <h2>Testing a Passive Sensor</h2>
+      
+<p>A passive sensor is just a coil. Test it with a DVOM:</p>
+<ul>
+  <li><strong>Resistance:</strong> Set DVOM to ohms. Should fall in the spec range (often a few hundred to several thousand ohms).</li>
+  <li><strong>AC voltage output:</strong> Spin the wheel by hand and watch the DVOM in AC volts. Should see a voltage that rises with speed.</li>
+  <li><strong>Air gap:</strong> Distance between sensor tip and tone ring. Too far = no signal.</li>
+</ul>
+    </div>
+    <div class="slide" id="slide-3" style="display:none;">
+      <div class="slide-num">Slide 3 of 3</div>
+      <h2>Testing an Active Sensor</h2>
+      
+<p>Active sensors need power. Don't test them like passive sensors.</p>
+<ul>
+  <li><strong>Power and ground:</strong> Check with key on. Sensor should have battery voltage (or sometimes 5V or 8V) on the power wire and a good ground.</li>
+  <li><strong>Live data on scan tool:</strong> The easiest test. Spin the wheel and watch wheel speed go up in the scan tool live data PIDs.</li>
+  <li><strong>Scope pattern:</strong> A scope will show the digital square wave. Frequency increases with speed.</li>
+</ul>
+<div class="callout-amber"><strong>Common mistake:</strong> Trying to test an active sensor with the DVOM in resistance mode. That will damage the sensor. Always know which type you have before testing.</div>
+    </div>
+
+  
+    <div class="question" id="question-1" style="display:none;">
+      <div class="slide-num">Knowledge Check 1 of 3</div>
+      <h2>What is the key advantage of an active wheel speed sensor over a passive one?</h2>
+      <div class="choices">
+        <button class="choice" onclick="answer(1,0,1)" id="q1-c0">Active sensors are smaller</button>
+        <button class="choice" onclick="answer(1,1,1)" id="q1-c1">Active sensors provide a clean signal at very low speeds, while passive sensors lose signal near zero</button>
+        <button class="choice" onclick="answer(1,2,1)" id="q1-c2">Active sensors cost less</button>
+        <button class="choice" onclick="answer(1,3,1)" id="q1-c3">Active sensors don't need a tone ring</button>
+      </div>
+      <div class="feedback" id="feedback-1"></div>
+    </div>
+    <div class="question" id="question-2" style="display:none;">
+      <div class="slide-num">Knowledge Check 2 of 3</div>
+      <h2>You suspect a wheel speed sensor problem and the vehicle has active sensors. What is the easiest first test?</h2>
+      <div class="choices">
+        <button class="choice" onclick="answer(2,0,1)" id="q2-c0">Disconnect the sensor and check resistance with a DVOM</button>
+        <button class="choice" onclick="answer(2,1,1)" id="q2-c1">Spin the wheel and watch wheel speed PIDs on a scan tool to confirm the sensor reports speed correctly</button>
+        <button class="choice" onclick="answer(2,2,1)" id="q2-c2">Apply battery voltage directly to the sensor</button>
+        <button class="choice" onclick="answer(2,3,1)" id="q2-c3">Replace the sensor and see if the fault clears</button>
+      </div>
+      <div class="feedback" id="feedback-2"></div>
+    </div>
+    <div class="question" id="question-3" style="display:none;">
+      <div class="slide-num">Knowledge Check 3 of 3</div>
+      <h2>Why is it important to know whether a wheel speed sensor is passive or active before testing?</h2>
+      <div class="choices">
+        <button class="choice" onclick="answer(3,0,1)" id="q3-c0">It doesn't matter, both test the same way</button>
+        <button class="choice" onclick="answer(3,1,1)" id="q3-c1">Testing an active sensor with a DVOM in resistance mode can damage the sensor</button>
+        <button class="choice" onclick="answer(3,2,1)" id="q3-c2">Only passive sensors need an air gap measurement</button>
+        <button class="choice" onclick="answer(3,3,1)" id="q3-c3">Active sensors are not used on new vehicles</button>
+      </div>
+      <div class="feedback" id="feedback-3"></div>
+    </div>
+
+  <div class="complete-box" id="complete-box">
+    <h3>Lesson Complete!</h3>
+    <p>Nice work. You can replay the lesson with the Restart button, or close this tab and return to Canvas.</p>
+  </div>
+
+  <div class="nav">
+    <div class="nav-row">
+      <div class="nav-cell">
+        <button class="nav-btn" id="prev-btn" onclick="prevStep()" disabled>Back</button>
+      </div>
+      <div class="nav-cell right">
+        <button class="nav-btn" id="next-btn" onclick="nextStep()">Next</button>
+      </div>
+    </div>
+  </div>
+
+</div>
+
+<script>
+  const totalSteps = 6; // 3 slides + 3 questions
+  let current = 1;
+  const answered = [false, false, false];
+  const questionData = [{correct:1,text:'Passive sensors generate their signal from movement of a magnetic field, which falls off at very low speeds. Active sensors are powered and can produce a clean signal down to near zero, which is essential for low-speed traction control and stability control.',correctAnswer:'Active sensors provide a clean signal at very low speeds, while passive sensors lose signal near zero'},{correct:1,text:"Active sensors need power to work and shouldn't be tested in resistance mode. The easiest test is to use a scan tool and watch the wheel speed live data PID for each wheel. Spin each wheel by hand and confirm it reads speed correctly.",correctAnswer:'Spin the wheel and watch wheel speed PIDs on a scan tool to confirm the sensor reports speed correctly'},{correct:1,text:'Active sensors have internal electronics that can be damaged by the test current from a DVOM in resistance mode. Always identify the sensor type before testing. Passive sensors are coils and tolerate resistance testing fine.',correctAnswer:'Testing an active sensor with a DVOM in resistance mode can damage the sensor'}];
+
+  function show(step) {
+    document.querySelectorAll('.slide, .question').forEach(el => el.style.display = 'none');
+    if (step <= 3) {
+      document.getElementById('slide-' + step).style.display = 'block';
+    } else {
+      document.getElementById('question-' + (step - 3)).style.display = 'block';
+    }
+    document.getElementById('prev-btn').disabled = (step === 1);
+    const nextBtn = document.getElementById('next-btn');
+    if (step === totalSteps) {
+      nextBtn.textContent = 'Finish';
+    } else {
+      nextBtn.textContent = 'Next';
+    }
+    // For questions, disable Next until answered
+    if (step > 3 && !answered[step - 4]) {
+      nextBtn.disabled = true;
+    } else {
+      nextBtn.disabled = false;
+    }
+    updateProgress(step);
+  }
+
+  function updateProgress(step) {
+    const pct = Math.round((step / totalSteps) * 100);
+    document.getElementById('progress-fill').style.width = pct + '%';
+    document.getElementById('progress-pct').textContent = pct + '%';
+  }
+
+  function nextStep() {
+    if (current < totalSteps) {
+      current++;
+      show(current);
+    } else {
+      // Finished - show complete box if all questions answered
+      if (answered.every(a => a)) {
+        document.getElementById('complete-box').classList.add('show');
+        document.getElementById('next-btn').disabled = true;
+      }
+    }
+  }
+
+  function prevStep() {
+    if (current > 1) {
+      current--;
+      show(current);
+    }
+  }
+
+  function answer(qNum, choiceIdx, correctIdx) {
+    if (answered[qNum - 1]) return; // lock after first answer
+    answered[qNum - 1] = true;
+    const data = questionData[qNum - 1];
+    const buttons = document.querySelectorAll('#question-' + qNum + ' button.choice');
+    buttons.forEach((btn, i) => {
+      btn.disabled = true;
+      if (i === correctIdx) btn.classList.add('correct');
+      else if (i === choiceIdx) btn.classList.add('wrong');
+    });
+    const feedback = document.getElementById('feedback-' + qNum);
+    if (choiceIdx === correctIdx) {
+      feedback.className = 'feedback correct show';
+      feedback.innerHTML = '<strong>Correct!</strong> ' + data.text;
+    } else {
+      feedback.className = 'feedback wrong show';
+      feedback.innerHTML = '<strong>Not quite.</strong> The correct answer is: <em>' + data.correctAnswer + '</em>. ' + data.text;
+    }
+    // Enable next button now that question is answered
+    document.getElementById('next-btn').disabled = false;
+  }
+
+  // init
+  show(1);
+</script>
+
+</body>
+</html>

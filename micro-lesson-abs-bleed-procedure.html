@@ -1,0 +1,412 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>ABS Bleed Procedure: Scan Tool Required</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Source+Sans+3:wght@400;600;700&family=Oswald:wght@500;700&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --dark: #1a1a1a;
+    --teal: #2a9d8f;
+    --teal-light: #f0faf8;
+    --teal-border: #d0ede9;
+    --teal-dark: #1a7a6e;
+    --amber: #e9a825;
+    --amber-light: #fffbf0;
+    --amber-inner: #fdf0c8;
+    --amber-text: #b07d00;
+    --body: #1a1a1a;
+    --sub: #555555;
+    --gray: #888888;
+    --red: #c0392b;
+    --red-light: #fdecea;
+    --track: #3a3a3a;
+  }
+  * { box-sizing: border-box; }
+  body {
+    font-family: 'Source Sans 3', Arial, sans-serif;
+    color: var(--body);
+    background-color: transparent;
+    margin: 0;
+    padding: 20px;
+    line-height: 1.55;
+  }
+  h1, h2, h3 {
+    font-family: 'Oswald', Arial, sans-serif;
+    font-weight: 600;
+    color: var(--dark);
+    margin: 0 0 12px 0;
+  }
+  h2 { font-size: 24px; }
+  .container {
+    max-width: 700px;
+    margin: 0 auto;
+    background: #ffffff;
+    border: 2px solid var(--teal-border);
+    border-radius: 10px;
+    padding: 24px;
+  }
+  .lesson-header {
+    background: var(--dark);
+    color: #ffffff;
+    padding: 14px 18px;
+    border-radius: 8px;
+    margin-bottom: 18px;
+    border-top: 4px solid var(--teal);
+  }
+  .lesson-header .label {
+    font-family: 'Oswald', Arial, sans-serif;
+    color: var(--teal);
+    font-size: 11px;
+    font-weight: 700;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+  }
+  .lesson-header .title {
+    color: #ffffff;
+    font-size: 18px;
+    font-weight: 700;
+    margin-top: 2px;
+  }
+  .progress-wrap {
+    margin-bottom: 18px;
+  }
+  .progress-label {
+    font-size: 12px;
+    color: var(--sub);
+    margin-bottom: 4px;
+    font-weight: 600;
+  }
+  .progress-track {
+    background: var(--track);
+    height: 6px;
+    border-radius: 3px;
+    overflow: hidden;
+  }
+  .progress-fill {
+    background: var(--amber);
+    height: 100%;
+    width: 0%;
+    transition: width 0.3s ease;
+  }
+  .slide-num {
+    color: var(--gray);
+    font-size: 12px;
+    font-weight: 700;
+    letter-spacing: 1px;
+    text-transform: uppercase;
+    margin-bottom: 6px;
+  }
+  .slide, .question { min-height: 280px; }
+  p { margin: 0 0 10px 0; font-size: 16px; }
+  ul { margin: 0 0 10px 0; padding-left: 22px; }
+  li { margin-bottom: 6px; font-size: 16px; }
+  .callout {
+    background: var(--teal-light);
+    border-left: 4px solid var(--teal);
+    padding: 10px 14px;
+    border-radius: 0 6px 6px 0;
+    margin: 12px 0;
+    font-size: 15px;
+  }
+  .callout-amber {
+    background: var(--amber-light);
+    border-left: 4px solid var(--amber);
+    padding: 10px 14px;
+    border-radius: 0 6px 6px 0;
+    margin: 12px 0;
+    font-size: 15px;
+  }
+  .choices {
+    display: table;
+    width: 100%;
+    border-spacing: 0 8px;
+    margin-top: 10px;
+  }
+  .choice {
+    display: table-row;
+    width: 100%;
+  }
+  button.choice {
+    display: block;
+    width: 100%;
+    background: #ffffff;
+    border: 2px solid var(--teal-border);
+    color: var(--body);
+    padding: 12px 14px;
+    font-family: 'Source Sans 3', Arial, sans-serif;
+    font-size: 15px;
+    font-weight: 600;
+    text-align: left;
+    border-radius: 6px;
+    cursor: pointer;
+    margin-bottom: 8px;
+    transition: all 0.15s ease;
+  }
+  button.choice:hover:not(:disabled) {
+    background: var(--teal-light);
+    border-color: var(--teal);
+  }
+  button.choice:disabled { cursor: default; }
+  button.choice.correct {
+    background: var(--teal-light);
+    border-color: var(--teal);
+    color: var(--teal-dark);
+    font-weight: 700;
+  }
+  button.choice.wrong {
+    background: var(--red-light);
+    border-color: var(--red);
+    color: var(--red);
+  }
+  .feedback {
+    margin-top: 14px;
+    padding: 12px 14px;
+    border-radius: 6px;
+    font-size: 15px;
+    display: none;
+  }
+  .feedback.show { display: block; }
+  .feedback.correct {
+    background: var(--teal-light);
+    border-left: 4px solid var(--teal);
+    color: var(--teal-dark);
+  }
+  .feedback.wrong {
+    background: var(--red-light);
+    border-left: 4px solid var(--red);
+    color: var(--red);
+  }
+  .nav {
+    display: table;
+    width: 100%;
+    margin-top: 18px;
+  }
+  .nav-row { display: table-row; }
+  .nav-cell { display: table-cell; vertical-align: middle; padding: 4px; }
+  .nav-cell.right { text-align: right; }
+  button.nav-btn {
+    background: var(--teal);
+    color: #ffffff;
+    border: none;
+    padding: 11px 22px;
+    font-family: 'Oswald', Arial, sans-serif;
+    font-size: 14px;
+    font-weight: 600;
+    letter-spacing: 1px;
+    text-transform: uppercase;
+    border-radius: 6px;
+    cursor: pointer;
+  }
+  button.nav-btn:hover { background: var(--teal-dark); }
+  button.nav-btn:disabled { background: var(--gray); cursor: not-allowed; opacity: 0.5; }
+  .complete-box {
+    background: var(--teal-light);
+    border: 2px solid var(--teal);
+    border-radius: 8px;
+    padding: 20px;
+    text-align: center;
+    margin-top: 20px;
+    display: none;
+  }
+  .complete-box.show { display: block; }
+  .complete-box h3 {
+    color: var(--teal-dark);
+    font-size: 22px;
+    margin-bottom: 8px;
+  }
+  .complete-box p { color: var(--body); }
+</style>
+</head>
+<body>
+
+<div class="container">
+
+  <div class="lesson-header">
+    <div class="label">Micro Lesson &middot; AUTOA 123</div>
+    <div class="title">ABS Bleed Procedure: Scan Tool Required</div>
+  </div>
+
+  <div class="progress-wrap">
+    <div class="progress-label">Progress &middot; <span id="progress-pct">0%</span></div>
+    <div class="progress-track">
+      <div class="progress-fill" id="progress-fill"></div>
+    </div>
+  </div>
+
+  
+    <div class="slide" id="slide-1" style="display:block;">
+      <div class="slide-num">Slide 1 of 3</div>
+      <h2>Why Conventional Bleeding Isn't Enough</h2>
+      
+<p>The ABS Hydraulic Control Unit (HCU) contains isolation valves, dump valves, accumulators, and pump chambers that hold small pockets of brake fluid.</p>
+<div class="callout"><strong>Air trapped in those internal cavities is unreachable by bleeding at the wheel cylinders.</strong> You can bleed all four wheels until the fluid runs perfectly clear and still have a spongy pedal because air is hiding inside the HCU.</div>
+<p>This is when you need a scan tool with ABS bleed capability.</p>
+    </div>
+    <div class="slide" id="slide-2" style="display:none;">
+      <div class="slide-num">Slide 2 of 3</div>
+      <h2>What the Scan Tool Does</h2>
+      
+<p>The scan tool sends bidirectional commands to the ABS module. The module then cycles its internal valves and runs the pump:</p>
+<ul>
+  <li>Solenoid valves open and close rapidly.</li>
+  <li>The pump motor activates and circulates fluid through the internal passages.</li>
+  <li>Air pockets in the HCU are flushed through and out to the wheel cylinders.</li>
+  <li>You then bleed each wheel as usual to expel the air.</li>
+</ul>
+<div class="callout-amber"><strong>Without a scan tool, the valves stay in their default rest position.</strong> The fluid you push through goes around the trapped air pockets, not through them.</div>
+    </div>
+    <div class="slide" id="slide-3" style="display:none;">
+      <div class="slide-num">Slide 3 of 3</div>
+      <h2>When You Need It</h2>
+      
+<p>Use the scan tool ABS bleed procedure when:</p>
+<ul>
+  <li>You replaced the ABS module or HCU.</li>
+  <li>You replaced the master cylinder.</li>
+  <li>You opened any brake line between the master cylinder and the HCU.</li>
+  <li>The pedal stays spongy after conventional bleeding at all four wheels.</li>
+  <li>The vehicle's service manual specifies it for the repair you performed.</li>
+</ul>
+<p>For a routine brake fluid flush (no air introduced) on most vehicles, conventional bleeding is sufficient. The scan tool procedure is for when air got past the master cylinder.</p>
+    </div>
+
+  
+    <div class="question" id="question-1" style="display:none;">
+      <div class="slide-num">Knowledge Check 1 of 3</div>
+      <h2>You just replaced an ABS HCU. After conventional bleeding at all four wheels, the pedal is still spongy. Why?</h2>
+      <div class="choices">
+        <button class="choice" onclick="answer(1,0,1)" id="q1-c0">The new HCU is defective</button>
+        <button class="choice" onclick="answer(1,1,1)" id="q1-c1">Air is trapped in the internal passages of the new HCU; you need to use a scan tool to cycle the valves and pump out the air</button>
+        <button class="choice" onclick="answer(1,2,1)" id="q1-c2">More brake fluid is needed in the reservoir</button>
+        <button class="choice" onclick="answer(1,3,1)" id="q1-c3">The pads need to be bedded first</button>
+      </div>
+      <div class="feedback" id="feedback-1"></div>
+    </div>
+    <div class="question" id="question-2" style="display:none;">
+      <div class="slide-num">Knowledge Check 2 of 3</div>
+      <h2>What does a scan tool do during an ABS bleed procedure?</h2>
+      <div class="choices">
+        <button class="choice" onclick="answer(2,0,1)" id="q2-c0">Reads codes only</button>
+        <button class="choice" onclick="answer(2,1,1)" id="q2-c1">Sends bidirectional commands that cycle the ABS solenoid valves and pump motor, flushing air through the HCU's internal passages</button>
+        <button class="choice" onclick="answer(2,2,1)" id="q2-c2">Increases brake fluid pressure to the wheels</button>
+        <button class="choice" onclick="answer(2,3,1)" id="q2-c3">Disables the ABS module so air can escape</button>
+      </div>
+      <div class="feedback" id="feedback-2"></div>
+    </div>
+    <div class="question" id="question-3" style="display:none;">
+      <div class="slide-num">Knowledge Check 3 of 3</div>
+      <h2>Which of the following situations would NOT typically require a scan tool ABS bleed procedure?</h2>
+      <div class="choices">
+        <button class="choice" onclick="answer(3,0,1)" id="q3-c0">Replacing the master cylinder</button>
+        <button class="choice" onclick="answer(3,1,1)" id="q3-c1">A routine flush of fluid through all four wheel cylinders without opening any lines</button>
+        <button class="choice" onclick="answer(3,2,1)" id="q3-c2">Replacing the ABS module</button>
+        <button class="choice" onclick="answer(3,3,1)" id="q3-c3">Pedal stays spongy after conventional bleeding</button>
+      </div>
+      <div class="feedback" id="feedback-3"></div>
+    </div>
+
+  <div class="complete-box" id="complete-box">
+    <h3>Lesson Complete!</h3>
+    <p>Nice work. You can replay the lesson with the Restart button, or close this tab and return to Canvas.</p>
+  </div>
+
+  <div class="nav">
+    <div class="nav-row">
+      <div class="nav-cell">
+        <button class="nav-btn" id="prev-btn" onclick="prevStep()" disabled>Back</button>
+      </div>
+      <div class="nav-cell right">
+        <button class="nav-btn" id="next-btn" onclick="nextStep()">Next</button>
+      </div>
+    </div>
+  </div>
+
+</div>
+
+<script>
+  const totalSteps = 6; // 3 slides + 3 questions
+  let current = 1;
+  const answered = [false, false, false];
+  const questionData = [{correct:1,text:"A new HCU comes with air in its internal cavities. Conventional bleeding can't reach those pockets because the valves are in their default position. A scan tool ABS bleed routine cycles the internal valves and pump, flushing the trapped air out toward the wheels where it can be bled normally.",correctAnswer:'Air is trapped in the internal passages of the new HCU; you need to use a scan tool to cycle the valves and pump out the air'},{correct:1,text:'The scan tool sends commands telling the module to cycle its valves and run its pump. This actively moves fluid through the internal passages of the HCU, dislodging trapped air. Without these commands, the valves stay in their rest position and the air has no path out.',correctAnswer:"Sends bidirectional commands that cycle the ABS solenoid valves and pump motor, flushing air through the HCU's internal passages"},{correct:1,text:"A routine fluid flush at the wheels doesn't introduce air past the master cylinder, so the HCU's internal passages stay full of fluid. Conventional bleeding is sufficient. Scan tool bleeding is needed when air was introduced upstream of the wheel cylinders, like during component replacement.",correctAnswer:'A routine flush of fluid through all four wheel cylinders without opening any lines'}];
+
+  function show(step) {
+    document.querySelectorAll('.slide, .question').forEach(el => el.style.display = 'none');
+    if (step <= 3) {
+      document.getElementById('slide-' + step).style.display = 'block';
+    } else {
+      document.getElementById('question-' + (step - 3)).style.display = 'block';
+    }
+    document.getElementById('prev-btn').disabled = (step === 1);
+    const nextBtn = document.getElementById('next-btn');
+    if (step === totalSteps) {
+      nextBtn.textContent = 'Finish';
+    } else {
+      nextBtn.textContent = 'Next';
+    }
+    // For questions, disable Next until answered
+    if (step > 3 && !answered[step - 4]) {
+      nextBtn.disabled = true;
+    } else {
+      nextBtn.disabled = false;
+    }
+    updateProgress(step);
+  }
+
+  function updateProgress(step) {
+    const pct = Math.round((step / totalSteps) * 100);
+    document.getElementById('progress-fill').style.width = pct + '%';
+    document.getElementById('progress-pct').textContent = pct + '%';
+  }
+
+  function nextStep() {
+    if (current < totalSteps) {
+      current++;
+      show(current);
+    } else {
+      // Finished - show complete box if all questions answered
+      if (answered.every(a => a)) {
+        document.getElementById('complete-box').classList.add('show');
+        document.getElementById('next-btn').disabled = true;
+      }
+    }
+  }
+
+  function prevStep() {
+    if (current > 1) {
+      current--;
+      show(current);
+    }
+  }
+
+  function answer(qNum, choiceIdx, correctIdx) {
+    if (answered[qNum - 1]) return; // lock after first answer
+    answered[qNum - 1] = true;
+    const data = questionData[qNum - 1];
+    const buttons = document.querySelectorAll('#question-' + qNum + ' button.choice');
+    buttons.forEach((btn, i) => {
+      btn.disabled = true;
+      if (i === correctIdx) btn.classList.add('correct');
+      else if (i === choiceIdx) btn.classList.add('wrong');
+    });
+    const feedback = document.getElementById('feedback-' + qNum);
+    if (choiceIdx === correctIdx) {
+      feedback.className = 'feedback correct show';
+      feedback.innerHTML = '<strong>Correct!</strong> ' + data.text;
+    } else {
+      feedback.className = 'feedback wrong show';
+      feedback.innerHTML = '<strong>Not quite.</strong> The correct answer is: <em>' + data.correctAnswer + '</em>. ' + data.text;
+    }
+    // Enable next button now that question is answered
+    document.getElementById('next-btn').disabled = false;
+  }
+
+  // init
+  show(1);
+</script>
+
+</body>
+</html>

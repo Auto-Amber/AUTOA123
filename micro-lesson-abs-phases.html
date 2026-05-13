@@ -1,0 +1,407 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>ABS Phases: Increase, Hold & Decrease</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Source+Sans+3:wght@400;600;700&family=Oswald:wght@500;700&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --dark: #1a1a1a;
+    --teal: #2a9d8f;
+    --teal-light: #f0faf8;
+    --teal-border: #d0ede9;
+    --teal-dark: #1a7a6e;
+    --amber: #e9a825;
+    --amber-light: #fffbf0;
+    --amber-inner: #fdf0c8;
+    --amber-text: #b07d00;
+    --body: #1a1a1a;
+    --sub: #555555;
+    --gray: #888888;
+    --red: #c0392b;
+    --red-light: #fdecea;
+    --track: #3a3a3a;
+  }
+  * { box-sizing: border-box; }
+  body {
+    font-family: 'Source Sans 3', Arial, sans-serif;
+    color: var(--body);
+    background-color: transparent;
+    margin: 0;
+    padding: 20px;
+    line-height: 1.55;
+  }
+  h1, h2, h3 {
+    font-family: 'Oswald', Arial, sans-serif;
+    font-weight: 600;
+    color: var(--dark);
+    margin: 0 0 12px 0;
+  }
+  h2 { font-size: 24px; }
+  .container {
+    max-width: 700px;
+    margin: 0 auto;
+    background: #ffffff;
+    border: 2px solid var(--teal-border);
+    border-radius: 10px;
+    padding: 24px;
+  }
+  .lesson-header {
+    background: var(--dark);
+    color: #ffffff;
+    padding: 14px 18px;
+    border-radius: 8px;
+    margin-bottom: 18px;
+    border-top: 4px solid var(--teal);
+  }
+  .lesson-header .label {
+    font-family: 'Oswald', Arial, sans-serif;
+    color: var(--teal);
+    font-size: 11px;
+    font-weight: 700;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+  }
+  .lesson-header .title {
+    color: #ffffff;
+    font-size: 18px;
+    font-weight: 700;
+    margin-top: 2px;
+  }
+  .progress-wrap {
+    margin-bottom: 18px;
+  }
+  .progress-label {
+    font-size: 12px;
+    color: var(--sub);
+    margin-bottom: 4px;
+    font-weight: 600;
+  }
+  .progress-track {
+    background: var(--track);
+    height: 6px;
+    border-radius: 3px;
+    overflow: hidden;
+  }
+  .progress-fill {
+    background: var(--amber);
+    height: 100%;
+    width: 0%;
+    transition: width 0.3s ease;
+  }
+  .slide-num {
+    color: var(--gray);
+    font-size: 12px;
+    font-weight: 700;
+    letter-spacing: 1px;
+    text-transform: uppercase;
+    margin-bottom: 6px;
+  }
+  .slide, .question { min-height: 280px; }
+  p { margin: 0 0 10px 0; font-size: 16px; }
+  ul { margin: 0 0 10px 0; padding-left: 22px; }
+  li { margin-bottom: 6px; font-size: 16px; }
+  .callout {
+    background: var(--teal-light);
+    border-left: 4px solid var(--teal);
+    padding: 10px 14px;
+    border-radius: 0 6px 6px 0;
+    margin: 12px 0;
+    font-size: 15px;
+  }
+  .callout-amber {
+    background: var(--amber-light);
+    border-left: 4px solid var(--amber);
+    padding: 10px 14px;
+    border-radius: 0 6px 6px 0;
+    margin: 12px 0;
+    font-size: 15px;
+  }
+  .choices {
+    display: table;
+    width: 100%;
+    border-spacing: 0 8px;
+    margin-top: 10px;
+  }
+  .choice {
+    display: table-row;
+    width: 100%;
+  }
+  button.choice {
+    display: block;
+    width: 100%;
+    background: #ffffff;
+    border: 2px solid var(--teal-border);
+    color: var(--body);
+    padding: 12px 14px;
+    font-family: 'Source Sans 3', Arial, sans-serif;
+    font-size: 15px;
+    font-weight: 600;
+    text-align: left;
+    border-radius: 6px;
+    cursor: pointer;
+    margin-bottom: 8px;
+    transition: all 0.15s ease;
+  }
+  button.choice:hover:not(:disabled) {
+    background: var(--teal-light);
+    border-color: var(--teal);
+  }
+  button.choice:disabled { cursor: default; }
+  button.choice.correct {
+    background: var(--teal-light);
+    border-color: var(--teal);
+    color: var(--teal-dark);
+    font-weight: 700;
+  }
+  button.choice.wrong {
+    background: var(--red-light);
+    border-color: var(--red);
+    color: var(--red);
+  }
+  .feedback {
+    margin-top: 14px;
+    padding: 12px 14px;
+    border-radius: 6px;
+    font-size: 15px;
+    display: none;
+  }
+  .feedback.show { display: block; }
+  .feedback.correct {
+    background: var(--teal-light);
+    border-left: 4px solid var(--teal);
+    color: var(--teal-dark);
+  }
+  .feedback.wrong {
+    background: var(--red-light);
+    border-left: 4px solid var(--red);
+    color: var(--red);
+  }
+  .nav {
+    display: table;
+    width: 100%;
+    margin-top: 18px;
+  }
+  .nav-row { display: table-row; }
+  .nav-cell { display: table-cell; vertical-align: middle; padding: 4px; }
+  .nav-cell.right { text-align: right; }
+  button.nav-btn {
+    background: var(--teal);
+    color: #ffffff;
+    border: none;
+    padding: 11px 22px;
+    font-family: 'Oswald', Arial, sans-serif;
+    font-size: 14px;
+    font-weight: 600;
+    letter-spacing: 1px;
+    text-transform: uppercase;
+    border-radius: 6px;
+    cursor: pointer;
+  }
+  button.nav-btn:hover { background: var(--teal-dark); }
+  button.nav-btn:disabled { background: var(--gray); cursor: not-allowed; opacity: 0.5; }
+  .complete-box {
+    background: var(--teal-light);
+    border: 2px solid var(--teal);
+    border-radius: 8px;
+    padding: 20px;
+    text-align: center;
+    margin-top: 20px;
+    display: none;
+  }
+  .complete-box.show { display: block; }
+  .complete-box h3 {
+    color: var(--teal-dark);
+    font-size: 22px;
+    margin-bottom: 8px;
+  }
+  .complete-box p { color: var(--body); }
+</style>
+</head>
+<body>
+
+<div class="container">
+
+  <div class="lesson-header">
+    <div class="label">Micro Lesson &middot; AUTOA 123</div>
+    <div class="title">ABS Phases: Increase, Hold & Decrease</div>
+  </div>
+
+  <div class="progress-wrap">
+    <div class="progress-label">Progress &middot; <span id="progress-pct">0%</span></div>
+    <div class="progress-track">
+      <div class="progress-fill" id="progress-fill"></div>
+    </div>
+  </div>
+
+  
+    <div class="slide" id="slide-1" style="display:block;">
+      <div class="slide-num">Slide 1 of 3</div>
+      <h2>The Whole Point of ABS</h2>
+      
+<p>The ABS system exists for one reason: prevent wheels from locking up under hard braking.</p>
+<div class="callout"><strong>Why locked wheels are bad:</strong> a locked wheel is sliding. A sliding wheel has less traction than a rolling wheel. And a locked wheel can't be steered.</div>
+<p>The ABS module monitors wheel speed continuously. If a wheel is decelerating much faster than vehicle speed (about to lock), the module intervenes.</p>
+    </div>
+    <div class="slide" id="slide-2" style="display:none;">
+      <div class="slide-num">Slide 2 of 3</div>
+      <h2>Three Pressure Phases</h2>
+      
+<p>During an ABS event, the HCU (Hydraulic Control Unit) cycles each wheel through three distinct pressure phases:</p>
+<ul>
+  <li><strong>Pressure Decrease (Dump):</strong> An isolation valve closes, blocking the driver's pedal pressure from reaching the wheel. A dump valve opens, releasing pressure from the caliper. The wheel speed recovers as it stops trying to lock.</li>
+  <li><strong>Pressure Hold:</strong> Both valves are closed. Pressure stays at whatever level it was when the wheel was at threshold. No more pressure can reach the wheel, but none is released.</li>
+  <li><strong>Pressure Increase:</strong> Isolation valve opens, dump valve stays closed. Pedal pressure returns to the wheel. The pump may also actively re-pressurize the line.</li>
+</ul>
+    </div>
+    <div class="slide" id="slide-3" style="display:none;">
+      <div class="slide-num">Slide 3 of 3</div>
+      <h2>What the Driver Feels</h2>
+      
+<p>During an ABS event, the driver experiences:</p>
+<ul>
+  <li><strong>Pedal pulsing or vibration:</strong> the rapid valve cycling sends pressure pulses back up the brake lines to the pedal.</li>
+  <li><strong>A buzzing or grinding sound:</strong> the ABS pump motor and valves making rapid hydraulic adjustments.</li>
+</ul>
+<div class="callout-amber"><strong>This is NORMAL behavior during ABS activation.</strong> Drivers sometimes release the pedal thinking something's wrong. Educate them: keep firm pressure on the pedal and let the system work.</div>
+    </div>
+
+  
+    <div class="question" id="question-1" style="display:none;">
+      <div class="slide-num">Knowledge Check 1 of 3</div>
+      <h2>During an ABS event, what does the HCU do when it detects a wheel is about to lock up?</h2>
+      <div class="choices">
+        <button class="choice" onclick="answer(1,0,1)" id="q1-c0">Increases brake pressure to that wheel</button>
+        <button class="choice" onclick="answer(1,1,1)" id="q1-c1">Releases (decreases) brake pressure at that wheel until the wheel speed recovers, then cycles through hold and increase phases</button>
+        <button class="choice" onclick="answer(1,2,1)" id="q1-c2">Disengages all four brakes</button>
+        <button class="choice" onclick="answer(1,3,1)" id="q1-c3">Slows the engine</button>
+      </div>
+      <div class="feedback" id="feedback-1"></div>
+    </div>
+    <div class="question" id="question-2" style="display:none;">
+      <div class="slide-num">Knowledge Check 2 of 3</div>
+      <h2>A driver complains they felt the brake pedal 'pulsing and vibrating' during a hard stop on wet pavement. What was most likely happening?</h2>
+      <div class="choices">
+        <button class="choice" onclick="answer(2,0,1)" id="q2-c0">The master cylinder is failing</button>
+        <button class="choice" onclick="answer(2,1,1)" id="q2-c1">Normal ABS activation; pedal pulsing and vibration are expected during an ABS event</button>
+        <button class="choice" onclick="answer(2,2,1)" id="q2-c2">The rotors are warped</button>
+        <button class="choice" onclick="answer(2,3,1)" id="q2-c3">Brake fluid was leaking</button>
+      </div>
+      <div class="feedback" id="feedback-2"></div>
+    </div>
+    <div class="question" id="question-3" style="display:none;">
+      <div class="slide-num">Knowledge Check 3 of 3</div>
+      <h2>Which of these is NOT one of the three ABS pressure phases?</h2>
+      <div class="choices">
+        <button class="choice" onclick="answer(3,0,1)" id="q3-c0">Pressure Hold</button>
+        <button class="choice" onclick="answer(3,1,1)" id="q3-c1">Pressure Reverse</button>
+        <button class="choice" onclick="answer(3,2,1)" id="q3-c2">Pressure Decrease (Dump)</button>
+        <button class="choice" onclick="answer(3,3,1)" id="q3-c3">Pressure Increase</button>
+      </div>
+      <div class="feedback" id="feedback-3"></div>
+    </div>
+
+  <div class="complete-box" id="complete-box">
+    <h3>Lesson Complete!</h3>
+    <p>Nice work. You can replay the lesson with the Restart button, or close this tab and return to Canvas.</p>
+  </div>
+
+  <div class="nav">
+    <div class="nav-row">
+      <div class="nav-cell">
+        <button class="nav-btn" id="prev-btn" onclick="prevStep()" disabled>Back</button>
+      </div>
+      <div class="nav-cell right">
+        <button class="nav-btn" id="next-btn" onclick="nextStep()">Next</button>
+      </div>
+    </div>
+  </div>
+
+</div>
+
+<script>
+  const totalSteps = 6; // 3 slides + 3 questions
+  let current = 1;
+  const answered = [false, false, false];
+  const questionData = [{correct:1,text:'The HCU first dumps pressure at the wheel about to lock, allowing it to spin back up. Then it holds pressure at a safe level, then carefully re-increases. This cycle happens many times per second, keeping each wheel at maximum traction without locking.',correctAnswer:'Releases (decreases) brake pressure at that wheel until the wheel speed recovers, then cycles through hold and increase phases'},{correct:1,text:"Pedal pulsation under hard braking on slick pavement is the ABS doing its job. The rapid valve cycling in the HCU sends pressure pulses up to the pedal. Educate drivers to keep firm pressure on the pedal during an ABS event, don't release it.",correctAnswer:'Normal ABS activation; pedal pulsing and vibration are expected during an ABS event'},{correct:1,text:"The three ABS phases are Decrease (dump pressure), Hold (lock pressure at current level), and Increase (build pressure back up). There is no 'Pressure Reverse' phase. The system never reverses fluid direction; it only modulates how much pressure reaches each wheel.",correctAnswer:'Pressure Reverse'}];
+
+  function show(step) {
+    document.querySelectorAll('.slide, .question').forEach(el => el.style.display = 'none');
+    if (step <= 3) {
+      document.getElementById('slide-' + step).style.display = 'block';
+    } else {
+      document.getElementById('question-' + (step - 3)).style.display = 'block';
+    }
+    document.getElementById('prev-btn').disabled = (step === 1);
+    const nextBtn = document.getElementById('next-btn');
+    if (step === totalSteps) {
+      nextBtn.textContent = 'Finish';
+    } else {
+      nextBtn.textContent = 'Next';
+    }
+    // For questions, disable Next until answered
+    if (step > 3 && !answered[step - 4]) {
+      nextBtn.disabled = true;
+    } else {
+      nextBtn.disabled = false;
+    }
+    updateProgress(step);
+  }
+
+  function updateProgress(step) {
+    const pct = Math.round((step / totalSteps) * 100);
+    document.getElementById('progress-fill').style.width = pct + '%';
+    document.getElementById('progress-pct').textContent = pct + '%';
+  }
+
+  function nextStep() {
+    if (current < totalSteps) {
+      current++;
+      show(current);
+    } else {
+      // Finished - show complete box if all questions answered
+      if (answered.every(a => a)) {
+        document.getElementById('complete-box').classList.add('show');
+        document.getElementById('next-btn').disabled = true;
+      }
+    }
+  }
+
+  function prevStep() {
+    if (current > 1) {
+      current--;
+      show(current);
+    }
+  }
+
+  function answer(qNum, choiceIdx, correctIdx) {
+    if (answered[qNum - 1]) return; // lock after first answer
+    answered[qNum - 1] = true;
+    const data = questionData[qNum - 1];
+    const buttons = document.querySelectorAll('#question-' + qNum + ' button.choice');
+    buttons.forEach((btn, i) => {
+      btn.disabled = true;
+      if (i === correctIdx) btn.classList.add('correct');
+      else if (i === choiceIdx) btn.classList.add('wrong');
+    });
+    const feedback = document.getElementById('feedback-' + qNum);
+    if (choiceIdx === correctIdx) {
+      feedback.className = 'feedback correct show';
+      feedback.innerHTML = '<strong>Correct!</strong> ' + data.text;
+    } else {
+      feedback.className = 'feedback wrong show';
+      feedback.innerHTML = '<strong>Not quite.</strong> The correct answer is: <em>' + data.correctAnswer + '</em>. ' + data.text;
+    }
+    // Enable next button now that question is answered
+    document.getElementById('next-btn').disabled = false;
+  }
+
+  // init
+  show(1);
+</script>
+
+</body>
+</html>
