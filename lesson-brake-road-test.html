@@ -1,0 +1,420 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Brake System Road Test</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Source+Sans+3:wght@400;600;700&family=Oswald:wght@500;700&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --dark: #1a1a1a;
+    --teal: #2a9d8f;
+    --teal-light: #f0faf8;
+    --teal-border: #d0ede9;
+    --teal-dark: #1a7a6e;
+    --amber: #e9a825;
+    --amber-light: #fffbf0;
+    --amber-inner: #fdf0c8;
+    --amber-text: #b07d00;
+    --body: #1a1a1a;
+    --sub: #555555;
+    --gray: #888888;
+    --red: #c0392b;
+    --red-light: #fdecea;
+    --track: #3a3a3a;
+  }
+  * { box-sizing: border-box; }
+  body {
+    font-family: 'Source Sans 3', Arial, sans-serif;
+    color: var(--body);
+    background-color: transparent;
+    margin: 0;
+    padding: 20px;
+    line-height: 1.55;
+  }
+  h1, h2, h3 {
+    font-family: 'Oswald', Arial, sans-serif;
+    font-weight: 600;
+    color: var(--dark);
+    margin: 0 0 12px 0;
+  }
+  h2 { font-size: 24px; }
+  .container {
+    max-width: 700px;
+    margin: 0 auto;
+    background: #ffffff;
+    border: 2px solid var(--teal-border);
+    border-radius: 10px;
+    padding: 24px;
+  }
+  .lesson-header {
+    background: var(--dark);
+    color: #ffffff;
+    padding: 14px 18px;
+    border-radius: 8px;
+    margin-bottom: 18px;
+    border-top: 4px solid var(--teal);
+  }
+  .lesson-header .label {
+    font-family: 'Oswald', Arial, sans-serif;
+    color: var(--teal);
+    font-size: 11px;
+    font-weight: 700;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+  }
+  .lesson-header .title {
+    color: #ffffff;
+    font-size: 18px;
+    font-weight: 700;
+    margin-top: 2px;
+  }
+  .progress-wrap {
+    margin-bottom: 18px;
+  }
+  .progress-label {
+    font-size: 12px;
+    color: var(--sub);
+    margin-bottom: 4px;
+    font-weight: 600;
+  }
+  .progress-track {
+    background: var(--track);
+    height: 6px;
+    border-radius: 3px;
+    overflow: hidden;
+  }
+  .progress-fill {
+    background: var(--amber);
+    height: 100%;
+    width: 0%;
+    transition: width 0.3s ease;
+  }
+  .slide-num {
+    color: var(--gray);
+    font-size: 12px;
+    font-weight: 700;
+    letter-spacing: 1px;
+    text-transform: uppercase;
+    margin-bottom: 6px;
+  }
+  .slide, .question { min-height: 280px; }
+  p { margin: 0 0 10px 0; font-size: 16px; }
+  ul { margin: 0 0 10px 0; padding-left: 22px; }
+  li { margin-bottom: 6px; font-size: 16px; }
+  .callout {
+    background: var(--teal-light);
+    border-left: 4px solid var(--teal);
+    padding: 10px 14px;
+    border-radius: 0 6px 6px 0;
+    margin: 12px 0;
+    font-size: 15px;
+  }
+  .callout-amber {
+    background: var(--amber-light);
+    border-left: 4px solid var(--amber);
+    padding: 10px 14px;
+    border-radius: 0 6px 6px 0;
+    margin: 12px 0;
+    font-size: 15px;
+  }
+  .choices {
+    display: table;
+    width: 100%;
+    border-spacing: 0 8px;
+    margin-top: 10px;
+  }
+  .choice {
+    display: table-row;
+    width: 100%;
+  }
+  button.choice {
+    display: block;
+    width: 100%;
+    background: #ffffff;
+    border: 2px solid var(--teal-border);
+    color: var(--body);
+    padding: 12px 14px;
+    font-family: 'Source Sans 3', Arial, sans-serif;
+    font-size: 15px;
+    font-weight: 600;
+    text-align: left;
+    border-radius: 6px;
+    cursor: pointer;
+    margin-bottom: 8px;
+    transition: all 0.15s ease;
+  }
+  button.choice:hover:not(:disabled) {
+    background: var(--teal-light);
+    border-color: var(--teal);
+  }
+  button.choice:disabled { cursor: default; }
+  button.choice.correct {
+    background: var(--teal-light);
+    border-color: var(--teal);
+    color: var(--teal-dark);
+    font-weight: 700;
+  }
+  button.choice.wrong {
+    background: var(--red-light);
+    border-color: var(--red);
+    color: var(--red);
+  }
+  .feedback {
+    margin-top: 14px;
+    padding: 12px 14px;
+    border-radius: 6px;
+    font-size: 15px;
+    display: none;
+  }
+  .feedback.show { display: block; }
+  .feedback.correct {
+    background: var(--teal-light);
+    border-left: 4px solid var(--teal);
+    color: var(--teal-dark);
+  }
+  .feedback.wrong {
+    background: var(--red-light);
+    border-left: 4px solid var(--red);
+    color: var(--red);
+  }
+  .nav {
+    display: table;
+    width: 100%;
+    margin-top: 18px;
+  }
+  .nav-row { display: table-row; }
+  .nav-cell { display: table-cell; vertical-align: middle; padding: 4px; }
+  .nav-cell.right { text-align: right; }
+  button.nav-btn {
+    background: var(--teal);
+    color: #ffffff;
+    border: none;
+    padding: 11px 22px;
+    font-family: 'Oswald', Arial, sans-serif;
+    font-size: 14px;
+    font-weight: 600;
+    letter-spacing: 1px;
+    text-transform: uppercase;
+    border-radius: 6px;
+    cursor: pointer;
+  }
+  button.nav-btn:hover { background: var(--teal-dark); }
+  button.nav-btn:disabled { background: var(--gray); cursor: not-allowed; opacity: 0.5; }
+  .complete-box {
+    background: var(--teal-light);
+    border: 2px solid var(--teal);
+    border-radius: 8px;
+    padding: 20px;
+    text-align: center;
+    margin-top: 20px;
+    display: none;
+  }
+  .complete-box.show { display: block; }
+  .complete-box h3 {
+    color: var(--teal-dark);
+    font-size: 22px;
+    margin-bottom: 8px;
+  }
+  .complete-box p { color: var(--body); }
+</style>
+</head>
+<body>
+
+<div class="container">
+
+  <div class="lesson-header">
+    <div class="label">Micro Lesson &middot; AUTOA 123</div>
+    <div class="title">Brake System Road Test</div>
+  </div>
+
+  <div class="progress-wrap">
+    <div class="progress-label">Progress &middot; <span id="progress-pct">0%</span></div>
+    <div class="progress-track">
+      <div class="progress-fill" id="progress-fill"></div>
+    </div>
+  </div>
+
+  
+    <div class="slide" id="slide-1" style="display:block;">
+      <div class="slide-num">Slide 1 of 3</div>
+      <h2>Before You Drive</h2>
+      
+<p>The road test is the most important diagnostic tool you have for the brake system. But preparation matters:</p>
+<ul>
+  <li>Verify brake fluid level. Don't road test with a low reservoir.</li>
+  <li>Check tire pressures (all four should match spec).</li>
+  <li>Do a stationary pedal test first. Pedal should be firm and high.</li>
+  <li>Confirm the parking brake holds and releases.</li>
+  <li>Walk around the vehicle. Listen for hissing (vacuum leak) with the engine running.</li>
+</ul>
+<div class="callout"><strong>If anything fails the stationary checks, don't road test until it's resolved.</strong></div>
+    </div>
+    <div class="slide" id="slide-2" style="display:none;">
+      <div class="slide-num">Slide 2 of 3</div>
+      <h2>On the Road</h2>
+      
+<p>A complete brake road test includes:</p>
+<ul>
+  <li><strong>Light braking from low speed:</strong> Listen for noise, feel for vibration, check for pull.</li>
+  <li><strong>Moderate braking from 30-40 mph:</strong> Verify smooth pedal, even braking, no pulsation or pull.</li>
+  <li><strong>Firm braking from 40-50 mph on dry pavement:</strong> Confirm strong stopping power without lockup.</li>
+  <li><strong>ABS function test:</strong> On safe, empty wet or gravel surface, apply hard braking to verify ABS activates. Pedal will pulse, motor will buzz. This is normal.</li>
+  <li><strong>Parking brake test:</strong> Apply on a slight grade and verify it holds the vehicle.</li>
+</ul>
+<div class="callout-amber">Always have a clear road behind you for hard braking tests. Brake-checking the car behind you is dangerous.</div>
+    </div>
+    <div class="slide" id="slide-3" style="display:none;">
+      <div class="slide-num">Slide 3 of 3</div>
+      <h2>What to Document</h2>
+      
+<p>Note any abnormal behavior on the repair order:</p>
+<ul>
+  <li>Pulling direction (left or right) and at what severity</li>
+  <li>Pedal feel (spongy, low, hard, normal)</li>
+  <li>Noise (squeal, grind, click) and when it occurs</li>
+  <li>Vibration and at what speeds</li>
+  <li>Warning lights that came on during the test</li>
+  <li>ABS activation success or failure</li>
+</ul>
+<p>Documentation protects you legally and gives the next technician (or yourself, in two weeks) a clear picture of the symptoms.</p>
+    </div>
+
+  
+    <div class="question" id="question-1" style="display:none;">
+      <div class="slide-num">Knowledge Check 1 of 3</div>
+      <h2>Before performing a brake system road test, which of these is the most important to verify?</h2>
+      <div class="choices">
+        <button class="choice" onclick="answer(1,0,1)" id="q1-c0">The radio is working</button>
+        <button class="choice" onclick="answer(1,1,1)" id="q1-c1">Brake fluid level is correct, pedal is firm at rest, tire pressures match spec, and parking brake holds</button>
+        <button class="choice" onclick="answer(1,2,1)" id="q1-c2">The tires are new</button>
+        <button class="choice" onclick="answer(1,3,1)" id="q1-c3">The customer is in the passenger seat</button>
+      </div>
+      <div class="feedback" id="feedback-1"></div>
+    </div>
+    <div class="question" id="question-2" style="display:none;">
+      <div class="slide-num">Knowledge Check 2 of 3</div>
+      <h2>Where is it appropriate to test ABS function?</h2>
+      <div class="choices">
+        <button class="choice" onclick="answer(2,0,1)" id="q2-c0">On a busy public road at high speed</button>
+        <button class="choice" onclick="answer(2,1,1)" id="q2-c1">On a closed course, empty wet/gravel surface, or quiet road with no traffic behind, at moderate speed</button>
+        <button class="choice" onclick="answer(2,2,1)" id="q2-c2">In the customer's driveway</button>
+        <button class="choice" onclick="answer(2,3,1)" id="q2-c3">Anywhere, it doesn't matter</button>
+      </div>
+      <div class="feedback" id="feedback-2"></div>
+    </div>
+    <div class="question" id="question-3" style="display:none;">
+      <div class="slide-num">Knowledge Check 3 of 3</div>
+      <h2>During the road test you confirm a slight pull to the right under braking. What should you do with this finding?</h2>
+      <div class="choices">
+        <button class="choice" onclick="answer(3,0,1)" id="q3-c0">Ignore it if the vehicle still stops</button>
+        <button class="choice" onclick="answer(3,1,1)" id="q3-c1">Document it on the repair order with the direction and severity, and investigate the cause</button>
+        <button class="choice" onclick="answer(3,2,1)" id="q3-c2">Tell the customer it's normal</button>
+        <button class="choice" onclick="answer(3,3,1)" id="q3-c3">Adjust the steering to compensate</button>
+      </div>
+      <div class="feedback" id="feedback-3"></div>
+    </div>
+
+  <div class="complete-box" id="complete-box">
+    <h3>Lesson Complete!</h3>
+    <p>Nice work. You can replay the lesson with the Restart button, or close this tab and return to Canvas.</p>
+  </div>
+
+  <div class="nav">
+    <div class="nav-row">
+      <div class="nav-cell">
+        <button class="nav-btn" id="prev-btn" onclick="prevStep()" disabled>Back</button>
+      </div>
+      <div class="nav-cell right">
+        <button class="nav-btn" id="next-btn" onclick="nextStep()">Next</button>
+      </div>
+    </div>
+  </div>
+
+</div>
+
+<script>
+  const totalSteps = 6; // 3 slides + 3 questions
+  let current = 1;
+  const answered = [false, false, false];
+  const questionData = [{correct:1,text:'Always do stationary checks before a road test. Low fluid, soft pedal, mismatched tire pressures, or a failed parking brake all need to be addressed before you take the vehicle on public roads. A failed brake system on test drive is a serious safety issue.',correctAnswer:'Brake fluid level is correct, pedal is firm at rest, tire pressures match spec, and parking brake holds'},{correct:1,text:"ABS testing involves hard braking that can surprise other drivers. Always do it where there's nothing behind you and a safe surface that will trigger ABS (slick is best). Brake-checking other drivers is dangerous and irresponsible.",correctAnswer:'On a closed course, empty wet/gravel surface, or quiet road with no traffic behind, at moderate speed'},{correct:1,text:'Any abnormal behavior during a road test should be documented and investigated. Brake pull usually indicates a caliper issue, hose problem, or contamination on one side. Recording the symptom protects you and gives the diagnostic technician a starting point.',correctAnswer:'Document it on the repair order with the direction and severity, and investigate the cause'}];
+
+  function show(step) {
+    document.querySelectorAll('.slide, .question').forEach(el => el.style.display = 'none');
+    if (step <= 3) {
+      document.getElementById('slide-' + step).style.display = 'block';
+    } else {
+      document.getElementById('question-' + (step - 3)).style.display = 'block';
+    }
+    document.getElementById('prev-btn').disabled = (step === 1);
+    const nextBtn = document.getElementById('next-btn');
+    if (step === totalSteps) {
+      nextBtn.textContent = 'Finish';
+    } else {
+      nextBtn.textContent = 'Next';
+    }
+    // For questions, disable Next until answered
+    if (step > 3 && !answered[step - 4]) {
+      nextBtn.disabled = true;
+    } else {
+      nextBtn.disabled = false;
+    }
+    updateProgress(step);
+  }
+
+  function updateProgress(step) {
+    const pct = Math.round((step / totalSteps) * 100);
+    document.getElementById('progress-fill').style.width = pct + '%';
+    document.getElementById('progress-pct').textContent = pct + '%';
+  }
+
+  function nextStep() {
+    if (current < totalSteps) {
+      current++;
+      show(current);
+    } else {
+      // Finished - show complete box if all questions answered
+      if (answered.every(a => a)) {
+        document.getElementById('complete-box').classList.add('show');
+        document.getElementById('next-btn').disabled = true;
+      }
+    }
+  }
+
+  function prevStep() {
+    if (current > 1) {
+      current--;
+      show(current);
+    }
+  }
+
+  function answer(qNum, choiceIdx, correctIdx) {
+    if (answered[qNum - 1]) return; // lock after first answer
+    answered[qNum - 1] = true;
+    const data = questionData[qNum - 1];
+    const buttons = document.querySelectorAll('#question-' + qNum + ' button.choice');
+    buttons.forEach((btn, i) => {
+      btn.disabled = true;
+      if (i === correctIdx) btn.classList.add('correct');
+      else if (i === choiceIdx) btn.classList.add('wrong');
+    });
+    const feedback = document.getElementById('feedback-' + qNum);
+    if (choiceIdx === correctIdx) {
+      feedback.className = 'feedback correct show';
+      feedback.innerHTML = '<strong>Correct!</strong> ' + data.text;
+    } else {
+      feedback.className = 'feedback wrong show';
+      feedback.innerHTML = '<strong>Not quite.</strong> The correct answer is: <em>' + data.correctAnswer + '</em>. ' + data.text;
+    }
+    // Enable next button now that question is answered
+    document.getElementById('next-btn').disabled = false;
+  }
+
+  // init
+  show(1);
+</script>
+
+</body>
+</html>
