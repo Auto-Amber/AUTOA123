@@ -1,0 +1,409 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Brake Pad Wear Patterns & Diagnosis</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Source+Sans+3:wght@400;600;700&family=Oswald:wght@500;700&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --dark: #1a1a1a;
+    --teal: #2a9d8f;
+    --teal-light: #f0faf8;
+    --teal-border: #d0ede9;
+    --teal-dark: #1a7a6e;
+    --amber: #e9a825;
+    --amber-light: #fffbf0;
+    --amber-inner: #fdf0c8;
+    --amber-text: #b07d00;
+    --body: #1a1a1a;
+    --sub: #555555;
+    --gray: #888888;
+    --red: #c0392b;
+    --red-light: #fdecea;
+    --track: #3a3a3a;
+  }
+  * { box-sizing: border-box; }
+  body {
+    font-family: 'Source Sans 3', Arial, sans-serif;
+    color: var(--body);
+    background-color: transparent;
+    margin: 0;
+    padding: 20px;
+    line-height: 1.55;
+  }
+  h1, h2, h3 {
+    font-family: 'Oswald', Arial, sans-serif;
+    font-weight: 600;
+    color: var(--dark);
+    margin: 0 0 12px 0;
+  }
+  h2 { font-size: 24px; }
+  .container {
+    max-width: 700px;
+    margin: 0 auto;
+    background: #ffffff;
+    border: 2px solid var(--teal-border);
+    border-radius: 10px;
+    padding: 24px;
+  }
+  .lesson-header {
+    background: var(--dark);
+    color: #ffffff;
+    padding: 14px 18px;
+    border-radius: 8px;
+    margin-bottom: 18px;
+    border-top: 4px solid var(--teal);
+  }
+  .lesson-header .label {
+    font-family: 'Oswald', Arial, sans-serif;
+    color: var(--teal);
+    font-size: 11px;
+    font-weight: 700;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+  }
+  .lesson-header .title {
+    color: #ffffff;
+    font-size: 18px;
+    font-weight: 700;
+    margin-top: 2px;
+  }
+  .progress-wrap {
+    margin-bottom: 18px;
+  }
+  .progress-label {
+    font-size: 12px;
+    color: var(--sub);
+    margin-bottom: 4px;
+    font-weight: 600;
+  }
+  .progress-track {
+    background: var(--track);
+    height: 6px;
+    border-radius: 3px;
+    overflow: hidden;
+  }
+  .progress-fill {
+    background: var(--amber);
+    height: 100%;
+    width: 0%;
+    transition: width 0.3s ease;
+  }
+  .slide-num {
+    color: var(--gray);
+    font-size: 12px;
+    font-weight: 700;
+    letter-spacing: 1px;
+    text-transform: uppercase;
+    margin-bottom: 6px;
+  }
+  .slide, .question { min-height: 280px; }
+  p { margin: 0 0 10px 0; font-size: 16px; }
+  ul { margin: 0 0 10px 0; padding-left: 22px; }
+  li { margin-bottom: 6px; font-size: 16px; }
+  .callout {
+    background: var(--teal-light);
+    border-left: 4px solid var(--teal);
+    padding: 10px 14px;
+    border-radius: 0 6px 6px 0;
+    margin: 12px 0;
+    font-size: 15px;
+  }
+  .callout-amber {
+    background: var(--amber-light);
+    border-left: 4px solid var(--amber);
+    padding: 10px 14px;
+    border-radius: 0 6px 6px 0;
+    margin: 12px 0;
+    font-size: 15px;
+  }
+  .choices {
+    display: table;
+    width: 100%;
+    border-spacing: 0 8px;
+    margin-top: 10px;
+  }
+  .choice {
+    display: table-row;
+    width: 100%;
+  }
+  button.choice {
+    display: block;
+    width: 100%;
+    background: #ffffff;
+    border: 2px solid var(--teal-border);
+    color: var(--body);
+    padding: 12px 14px;
+    font-family: 'Source Sans 3', Arial, sans-serif;
+    font-size: 15px;
+    font-weight: 600;
+    text-align: left;
+    border-radius: 6px;
+    cursor: pointer;
+    margin-bottom: 8px;
+    transition: all 0.15s ease;
+  }
+  button.choice:hover:not(:disabled) {
+    background: var(--teal-light);
+    border-color: var(--teal);
+  }
+  button.choice:disabled { cursor: default; }
+  button.choice.correct {
+    background: var(--teal-light);
+    border-color: var(--teal);
+    color: var(--teal-dark);
+    font-weight: 700;
+  }
+  button.choice.wrong {
+    background: var(--red-light);
+    border-color: var(--red);
+    color: var(--red);
+  }
+  .feedback {
+    margin-top: 14px;
+    padding: 12px 14px;
+    border-radius: 6px;
+    font-size: 15px;
+    display: none;
+  }
+  .feedback.show { display: block; }
+  .feedback.correct {
+    background: var(--teal-light);
+    border-left: 4px solid var(--teal);
+    color: var(--teal-dark);
+  }
+  .feedback.wrong {
+    background: var(--red-light);
+    border-left: 4px solid var(--red);
+    color: var(--red);
+  }
+  .nav {
+    display: table;
+    width: 100%;
+    margin-top: 18px;
+  }
+  .nav-row { display: table-row; }
+  .nav-cell { display: table-cell; vertical-align: middle; padding: 4px; }
+  .nav-cell.right { text-align: right; }
+  button.nav-btn {
+    background: var(--teal);
+    color: #ffffff;
+    border: none;
+    padding: 11px 22px;
+    font-family: 'Oswald', Arial, sans-serif;
+    font-size: 14px;
+    font-weight: 600;
+    letter-spacing: 1px;
+    text-transform: uppercase;
+    border-radius: 6px;
+    cursor: pointer;
+  }
+  button.nav-btn:hover { background: var(--teal-dark); }
+  button.nav-btn:disabled { background: var(--gray); cursor: not-allowed; opacity: 0.5; }
+  .complete-box {
+    background: var(--teal-light);
+    border: 2px solid var(--teal);
+    border-radius: 8px;
+    padding: 20px;
+    text-align: center;
+    margin-top: 20px;
+    display: none;
+  }
+  .complete-box.show { display: block; }
+  .complete-box h3 {
+    color: var(--teal-dark);
+    font-size: 22px;
+    margin-bottom: 8px;
+  }
+  .complete-box p { color: var(--body); }
+</style>
+</head>
+<body>
+
+<div class="container">
+
+  <div class="lesson-header">
+    <div class="label">Micro Lesson &middot; AUTOA 123</div>
+    <div class="title">Brake Pad Wear Patterns & Diagnosis</div>
+  </div>
+
+  <div class="progress-wrap">
+    <div class="progress-label">Progress &middot; <span id="progress-pct">0%</span></div>
+    <div class="progress-track">
+      <div class="progress-fill" id="progress-fill"></div>
+    </div>
+  </div>
+
+  
+    <div class="slide" id="slide-1" style="display:block;">
+      <div class="slide-num">Slide 1 of 3</div>
+      <h2>Normal vs Abnormal Wear</h2>
+      
+<p>A worn-out pad isn't necessarily a worn-out pad. The wear PATTERN is what tells you whether the system is healthy:</p>
+<ul>
+  <li><strong>Even wear, both pads matched:</strong> normal. Caliper is doing its job.</li>
+  <li><strong>Inner pad worn more than outer:</strong> the piston side is the one pushing. Slides may be binding (outer pad isn't being pulled in).</li>
+  <li><strong>Outer pad worn more than inner:</strong> piston may be sticking, but the caliper is still floating against the outer pad.</li>
+  <li><strong>One wheel's pads worn faster than the other side:</strong> hydraulic imbalance or one-sided caliper issue.</li>
+</ul>
+    </div>
+    <div class="slide" id="slide-2" style="display:none;">
+      <div class="slide-num">Slide 2 of 3</div>
+      <h2>Tapered Wear</h2>
+      
+<p>Tapered wear means the pad is thicker on one end than the other. Causes:</p>
+<div class="callout"><strong>Inboard-outboard taper (one edge of the pad shorter):</strong> the rotor is not square to the caliper. Check for hub damage or bracket misalignment.</div>
+<div class="callout"><strong>Top-bottom taper:</strong> one slide pin is binding, allowing the caliper to twist as it engages.</div>
+<p>Tapered wear means parts are going to fail faster. Don't just replace the pads, find the cause.</p>
+    </div>
+    <div class="slide" id="slide-3" style="display:none;">
+      <div class="slide-num">Slide 3 of 3</div>
+      <h2>Glazing and Cracking</h2>
+      
+<p>Two surface conditions to watch for:</p>
+<ul>
+  <li><strong>Glazed pads:</strong> hard, shiny surface from overheating. Pads bake and harden, friction drops. Often from continuous light braking on a long downhill.</li>
+  <li><strong>Cracked pads:</strong> visible cracks across the friction surface. The pad has been overheated past its limit. Replace immediately.</li>
+</ul>
+<div class="callout-amber">Glazed or cracked pads point to either a sticking caliper, a hydraulic issue (residual pressure), or driver behavior. Investigate before just swapping pads.</div>
+    </div>
+
+  
+    <div class="question" id="question-1" style="display:none;">
+      <div class="slide-num">Knowledge Check 1 of 3</div>
+      <h2>You're inspecting a brake job and notice the inner pad on the right front is worn down to about 2mm while the outer pad still has 8mm of friction material. What is the most likely cause?</h2>
+      <div class="choices">
+        <button class="choice" onclick="answer(1,0,1)" id="q1-c0">The caliper piston is sticking and not releasing properly</button>
+        <button class="choice" onclick="answer(1,1,1)" id="q1-c1">The caliper slide pins are binding, preventing the outer pad from being pulled toward the rotor</button>
+        <button class="choice" onclick="answer(1,2,1)" id="q1-c2">The brake fluid is contaminated</button>
+        <button class="choice" onclick="answer(1,3,1)" id="q1-c3">The rotor is below minimum thickness</button>
+      </div>
+      <div class="feedback" id="feedback-1"></div>
+    </div>
+    <div class="question" id="question-2" style="display:none;">
+      <div class="slide-num">Knowledge Check 2 of 3</div>
+      <h2>A set of brake pads shows tapered wear from top to bottom. What is the most likely cause?</h2>
+      <div class="choices">
+        <button class="choice" onclick="answer(2,0,2)" id="q2-c0">Normal wear pattern</button>
+        <button class="choice" onclick="answer(2,1,2)" id="q2-c1">Brake fluid contamination</button>
+        <button class="choice" onclick="answer(2,2,2)" id="q2-c2">One slide pin binding, allowing the caliper to twist during application</button>
+        <button class="choice" onclick="answer(2,3,2)" id="q2-c3">Worn wheel bearing</button>
+      </div>
+      <div class="feedback" id="feedback-2"></div>
+    </div>
+    <div class="question" id="question-3" style="display:none;">
+      <div class="slide-num">Knowledge Check 3 of 3</div>
+      <h2>A customer brings in a vehicle with brake pads showing visible cracks across the friction surface. What should you do?</h2>
+      <div class="choices">
+        <button class="choice" onclick="answer(3,0,1)" id="q3-c0">Sand the surface smooth and reuse the pads</button>
+        <button class="choice" onclick="answer(3,1,1)" id="q3-c1">Replace the pads and investigate whether a sticking caliper or other issue caused the overheating</button>
+        <button class="choice" onclick="answer(3,2,1)" id="q3-c2">Apply brake-quiet to the pad backs</button>
+        <button class="choice" onclick="answer(3,3,1)" id="q3-c3">Machine the rotors to compensate</button>
+      </div>
+      <div class="feedback" id="feedback-3"></div>
+    </div>
+
+  <div class="complete-box" id="complete-box">
+    <h3>Lesson Complete!</h3>
+    <p>Nice work. You can replay the lesson with the Restart button, or close this tab and return to Canvas.</p>
+  </div>
+
+  <div class="nav">
+    <div class="nav-row">
+      <div class="nav-cell">
+        <button class="nav-btn" id="prev-btn" onclick="prevStep()" disabled>Back</button>
+      </div>
+      <div class="nav-cell right">
+        <button class="nav-btn" id="next-btn" onclick="nextStep()">Next</button>
+      </div>
+    </div>
+  </div>
+
+</div>
+
+<script>
+  const totalSteps = 6; // 3 slides + 3 questions
+  let current = 1;
+  const answered = [false, false, false];
+  const questionData = [{correct:1,text:"When the inner (piston-side) pad wears much faster than the outer, the slide pins are likely binding. The piston still pushes the inner pad, but the caliper isn't sliding freely to pull the outer pad in. Clean and lubricate the slides.",correctAnswer:'The caliper slide pins are binding, preventing the outer pad from being pulled toward the rotor'},{correct:2,text:'Top-to-bottom tapered wear typically indicates one slide pin is binding while the other moves freely. The caliper twists slightly each time it applies, wearing the pad unevenly along its length.',correctAnswer:'One slide pin binding, allowing the caliper to twist during application'},{correct:1,text:'Cracked pads have been overheated and must be replaced. But just replacing them ignores WHY they overheated. A sticking caliper, residual hydraulic pressure, or aggressive driving could all be the root cause. Find it before the new pads fail too.',correctAnswer:'Replace the pads and investigate whether a sticking caliper or other issue caused the overheating'}];
+
+  function show(step) {
+    document.querySelectorAll('.slide, .question').forEach(el => el.style.display = 'none');
+    if (step <= 3) {
+      document.getElementById('slide-' + step).style.display = 'block';
+    } else {
+      document.getElementById('question-' + (step - 3)).style.display = 'block';
+    }
+    document.getElementById('prev-btn').disabled = (step === 1);
+    const nextBtn = document.getElementById('next-btn');
+    if (step === totalSteps) {
+      nextBtn.textContent = 'Finish';
+    } else {
+      nextBtn.textContent = 'Next';
+    }
+    // For questions, disable Next until answered
+    if (step > 3 && !answered[step - 4]) {
+      nextBtn.disabled = true;
+    } else {
+      nextBtn.disabled = false;
+    }
+    updateProgress(step);
+  }
+
+  function updateProgress(step) {
+    const pct = Math.round((step / totalSteps) * 100);
+    document.getElementById('progress-fill').style.width = pct + '%';
+    document.getElementById('progress-pct').textContent = pct + '%';
+  }
+
+  function nextStep() {
+    if (current < totalSteps) {
+      current++;
+      show(current);
+    } else {
+      // Finished - show complete box if all questions answered
+      if (answered.every(a => a)) {
+        document.getElementById('complete-box').classList.add('show');
+        document.getElementById('next-btn').disabled = true;
+      }
+    }
+  }
+
+  function prevStep() {
+    if (current > 1) {
+      current--;
+      show(current);
+    }
+  }
+
+  function answer(qNum, choiceIdx, correctIdx) {
+    if (answered[qNum - 1]) return; // lock after first answer
+    answered[qNum - 1] = true;
+    const data = questionData[qNum - 1];
+    const buttons = document.querySelectorAll('#question-' + qNum + ' button.choice');
+    buttons.forEach((btn, i) => {
+      btn.disabled = true;
+      if (i === correctIdx) btn.classList.add('correct');
+      else if (i === choiceIdx) btn.classList.add('wrong');
+    });
+    const feedback = document.getElementById('feedback-' + qNum);
+    if (choiceIdx === correctIdx) {
+      feedback.className = 'feedback correct show';
+      feedback.innerHTML = '<strong>Correct!</strong> ' + data.text;
+    } else {
+      feedback.className = 'feedback wrong show';
+      feedback.innerHTML = '<strong>Not quite.</strong> The correct answer is: <em>' + data.correctAnswer + '</em>. ' + data.text;
+    }
+    // Enable next button now that question is answered
+    document.getElementById('next-btn').disabled = false;
+  }
+
+  // init
+  show(1);
+</script>
+
+</body>
+</html>
