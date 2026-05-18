@@ -1,0 +1,497 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Diagnosing Worn Shocks and Struts - AUTOA 123</title>
+<style>
+* { box-sizing: border-box; margin: 0; padding: 0; }
+body {
+  font-family: 'Source Sans 3', 'Source Sans Pro', Arial, sans-serif;
+  background: #f5f5f5;
+  color: #1a1a1a;
+  line-height: 1.5;
+  padding: 20px;
+}
+.container {
+  max-width: 800px;
+  margin: 0 auto;
+  background: #ffffff;
+  border-radius: 8px;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+  overflow: hidden;
+}
+
+/* Header */
+.lesson-header {
+  background: #1a1a1a;
+  padding: 18px 24px;
+  border-bottom: 4px solid #2a9d8f;
+}
+.lesson-eyebrow {
+  color: #2a9d8f;
+  font-size: 11px;
+  font-weight: bold;
+  letter-spacing: 2px;
+  text-transform: uppercase;
+  margin-bottom: 4px;
+}
+.lesson-title {
+  font-family: 'Oswald', Arial, sans-serif;
+  color: #ffffff;
+  font-size: 24px;
+  font-weight: bold;
+  line-height: 1.2;
+}
+.lesson-subtitle {
+  color: #cccccc;
+  font-size: 13px;
+  margin-top: 4px;
+}
+
+/* Progress bar */
+.progress-wrapper {
+  padding: 14px 24px 0 24px;
+  background: #ffffff;
+}
+.progress-label {
+  font-size: 11px;
+  font-weight: bold;
+  color: #555555;
+  letter-spacing: 1px;
+  text-transform: uppercase;
+  margin-bottom: 6px;
+}
+.progress-track {
+  width: 100%;
+  height: 6px;
+  background: #3a3a3a;
+  border-radius: 3px;
+  overflow: hidden;
+}
+.progress-fill {
+  height: 100%;
+  background: #e9a825;
+  width: 0%;
+  transition: width 0.3s ease;
+  border-radius: 3px;
+}
+
+/* Slides */
+.slide {
+  padding: 24px;
+  display: none;
+}
+.slide.active { display: block; }
+
+.slide-eyebrow {
+  color: #2a9d8f;
+  font-size: 11px;
+  font-weight: bold;
+  letter-spacing: 2px;
+  text-transform: uppercase;
+  margin-bottom: 8px;
+}
+.slide-title {
+  font-family: 'Oswald', Arial, sans-serif;
+  color: #1a1a1a;
+  font-size: 22px;
+  font-weight: bold;
+  margin-bottom: 14px;
+}
+.slide-body p {
+  font-size: 15px;
+  color: #1a1a1a;
+  margin-bottom: 12px;
+}
+.slide-body strong { color: #1a7a6e; }
+
+.callout {
+  background: #f0faf8;
+  border: 1px solid #d0ede9;
+  border-left: 5px solid #2a9d8f;
+  border-radius: 4px;
+  padding: 12px 16px;
+  margin: 14px 0;
+}
+.callout-label {
+  color: #1a7a6e;
+  font-size: 11px;
+  font-weight: bold;
+  letter-spacing: 2px;
+  text-transform: uppercase;
+  margin-bottom: 6px;
+}
+.callout p { margin-bottom: 0; font-size: 14px; }
+
+.warn {
+  background: #fffbf0;
+  border: 1px solid #fdf0c8;
+  border-left: 5px solid #e9a825;
+  border-radius: 4px;
+  padding: 12px 16px;
+  margin: 14px 0;
+}
+.warn-label {
+  color: #b07d00;
+  font-size: 11px;
+  font-weight: bold;
+  letter-spacing: 2px;
+  text-transform: uppercase;
+  margin-bottom: 6px;
+}
+.warn p { margin-bottom: 0; font-size: 14px; }
+
+.slide-list { margin: 8px 0 12px 0; padding-left: 22px; }
+.slide-list li { font-size: 15px; margin-bottom: 6px; }
+
+/* Knowledge check */
+.kc-slide { padding: 24px; display: none; }
+.kc-slide.active { display: block; }
+
+.kc-eyebrow {
+  color: #b07d00;
+  font-size: 11px;
+  font-weight: bold;
+  letter-spacing: 2px;
+  text-transform: uppercase;
+  margin-bottom: 8px;
+}
+.kc-question {
+  font-size: 17px;
+  font-weight: bold;
+  color: #1a1a1a;
+  margin-bottom: 18px;
+  line-height: 1.4;
+}
+.kc-answers { list-style: none; padding: 0; }
+.kc-answer {
+  background: #ffffff;
+  border: 2px solid #dddddd;
+  border-radius: 6px;
+  padding: 12px 16px;
+  margin-bottom: 10px;
+  cursor: pointer;
+  font-size: 15px;
+  color: #1a1a1a;
+  transition: all 0.15s ease;
+}
+.kc-answer:hover { border-color: #2a9d8f; background: #f0faf8; }
+.kc-answer.correct {
+  background: #d8f0eb;
+  border-color: #2a9d8f;
+  color: #1a7a6e;
+  font-weight: bold;
+}
+.kc-answer.wrong {
+  background: #fde5e5;
+  border-color: #c43030;
+  color: #8a1f1f;
+}
+.kc-answer.disabled { cursor: not-allowed; pointer-events: none; opacity: 0.6; }
+.kc-answer.disabled.correct { opacity: 1; }
+.kc-answer.disabled.wrong { opacity: 1; }
+
+.kc-feedback {
+  display: none;
+  margin-top: 16px;
+  padding: 14px 16px;
+  border-radius: 6px;
+  font-size: 14px;
+}
+.kc-feedback.correct {
+  display: block;
+  background: #f0faf8;
+  border: 1px solid #2a9d8f;
+  color: #1a7a6e;
+}
+.kc-feedback.wrong {
+  display: block;
+  background: #fde5e5;
+  border: 1px solid #c43030;
+  color: #8a1f1f;
+}
+.kc-feedback strong { display: block; margin-bottom: 4px; }
+
+/* Nav buttons */
+.nav-row {
+  padding: 16px 24px;
+  background: #f9f9f9;
+  border-top: 1px solid #e5e5e5;
+  text-align: right;
+}
+.nav-btn {
+  background: #2a9d8f;
+  color: #ffffff;
+  border: none;
+  padding: 10px 22px;
+  font-size: 13px;
+  font-weight: bold;
+  letter-spacing: 1px;
+  text-transform: uppercase;
+  border-radius: 4px;
+  cursor: pointer;
+  font-family: 'Source Sans 3', Arial, sans-serif;
+}
+.nav-btn:hover { background: #1a7a6e; }
+.nav-btn:disabled { background: #cccccc; cursor: not-allowed; }
+.nav-btn.prev { background: #888888; margin-right: 8px; }
+.nav-btn.prev:hover { background: #555555; }
+
+/* Completion */
+.complete-box {
+  display: none;
+  padding: 24px;
+  text-align: center;
+  background: #f0faf8;
+  border-top: 4px solid #2a9d8f;
+}
+.complete-box.active { display: block; }
+.complete-title {
+  font-family: 'Oswald', Arial, sans-serif;
+  color: #1a7a6e;
+  font-size: 22px;
+  font-weight: bold;
+  margin-bottom: 8px;
+}
+.complete-text {
+  color: #1a1a1a;
+  font-size: 15px;
+  margin-bottom: 14px;
+}
+.complete-stats {
+  display: inline-block;
+  background: #ffffff;
+  border: 1px solid #d0ede9;
+  border-radius: 4px;
+  padding: 8px 14px;
+  font-size: 13px;
+  color: #1a7a6e;
+  font-weight: bold;
+}
+</style>
+</head>
+<body>
+<div class="container">
+
+  <div class="lesson-header">
+    <div class="lesson-eyebrow">AUTOA 123 - Suspension Micro Lesson</div>
+    <div class="lesson-title">Diagnosing Worn Shocks and Struts</div>
+    <div class="lesson-subtitle">Symptoms, tests, and what to look for</div>
+  </div>
+
+  <div class="progress-wrapper">
+    <div class="progress-label">Progress - <span id="progressText">0%</span></div>
+    <div class="progress-track"><div id="progressFill" class="progress-fill"></div></div>
+  </div>
+
+  <div id="slide1" class="slide active">
+    <div class="slide-eyebrow">Slide 1 of 3</div>
+    <div class="slide-title">Symptoms of Worn Dampers</div>
+    <div class="slide-body">
+<p>Shocks and struts wear gradually. Drivers often don't notice until they're severely worn. Watch for:</p>
+<ul class="slide-list">
+  <li><strong>Excessive bouncing</strong> after going over bumps - 3+ bounces is a fail</li>
+  <li><strong>Nose-dive</strong> under braking - front end drops dramatically</li>
+  <li><strong>Body roll</strong> in corners worse than normal</li>
+  <li><strong>Cupped tire wear</strong> - scallops around the tread caused by the tire skipping</li>
+  <li><strong>Wandering</strong> at highway speeds</li>
+  <li><strong>Wet streaks</strong> down the shock or strut body - seal failure</li>
+</ul>
+<p>Any combination of these points to damper wear.</p>
+    </div>
+  </div>
+  <div id="slide2" class="slide">
+    <div class="slide-eyebrow">Slide 2 of 3</div>
+    <div class="slide-title">Tests You Can Do</div>
+    <div class="slide-body">
+<p>Three practical tests:</p>
+<ol class="slide-list">
+  <li><strong>Bounce test</strong> - push down hard on a corner, release, count bounces. Should settle in 1-2 cycles. 3+ is fail.</li>
+  <li><strong>Visual inspection</strong> - look for oil weeping at the seal, dented or rusted body, damaged or missing bump stops.</li>
+  <li><strong>Road test</strong> - hit a known bumpy section and pay attention to how the vehicle settles. Compare front to rear.</li>
+</ol>
+<div class="callout">
+  <div class="callout-label">Diagnostic tip</div>
+  <p>Cupped tire wear is one of the most reliable signs. If the tread shows scallops, the damper has been failing long enough that the tire was skipping off the road.</p>
+</div>
+    </div>
+  </div>
+  <div id="slide3" class="slide">
+    <div class="slide-eyebrow">Slide 3 of 3</div>
+    <div class="slide-title">When to Replace</div>
+    <div class="slide-body">
+<p>General guidelines for shock/strut replacement:</p>
+<ul class="slide-list">
+  <li>Any visible fluid leak - replace</li>
+  <li>Fails the bounce test - replace</li>
+  <li>Damaged body, bent shaft, or broken mount - replace</li>
+  <li>Vehicle has 100,000+ miles - inspect carefully even if no obvious failure</li>
+</ul>
+<div class="warn">
+  <div class="warn-label">Always replace in pairs</div>
+  <p>Replace both front shocks together or both rear shocks together. Mixing a new shock with an old one creates uneven damping and unpredictable handling.</p>
+</div>
+<p>After replacement, always re-check wheel alignment.</p>
+    </div>
+  </div>
+
+
+  <div id="kc1" class="kc-slide">
+    <div class="kc-eyebrow">Knowledge Check - Question 1 of 3</div>
+    <div class="kc-question">A vehicle bounces excessively after going over bumps, dives heavily under braking, and shows cupped tire wear. What is the MOST likely cause?</div>
+      <ul class="kc-answers">
+        <li class="kc-answer" data-correct="false" onclick="answer(0, false, this)">Worn ball joints</li>
+        <li class="kc-answer" data-correct="false" onclick="answer(0, false, this)">Bent steering knuckle</li>
+        <li class="kc-answer" data-correct="true" onclick="answer(0, true, this)">Worn shocks or struts</li>
+        <li class="kc-answer" data-correct="false" onclick="answer(0, false, this)">Loose lug nuts</li>
+      </ul>
+
+    <div id="feedback1-correct" class="kc-feedback correct">
+      <strong>Correct.</strong>
+      Excessive bouncing, nose-dive under braking, AND cupped tire wear are the classic three symptoms of worn dampers. The damper has lost the ability to control spring motion.
+    </div>
+    <div id="feedback1-wrong" class="kc-feedback wrong">
+      <strong>Not quite.</strong>
+      All three symptoms - bouncing, dive, cupped wear - point to the damper. Ball joints cause clunking. Bent knuckles cause uncorrectable alignment. Loose lug nuts cause vibration.
+    </div>
+  </div>
+  <div id="kc2" class="kc-slide">
+    <div class="kc-eyebrow">Knowledge Check - Question 2 of 3</div>
+    <div class="kc-question">What are FOUR symptoms of worn shock absorbers?</div>
+      <ul class="kc-answers">
+        <li class="kc-answer" data-correct="true" onclick="answer(1, true, this)">Bouncing, nose-dive under braking, cupped tire wear, wet streaks on the body</li>
+        <li class="kc-answer" data-correct="false" onclick="answer(1, false, this)">Tire feathering, brake pull, ABS warning light, low fuel economy</li>
+        <li class="kc-answer" data-correct="false" onclick="answer(1, false, this)">Steering wander, clunking on bumps, grinding when turning, brake noise</li>
+        <li class="kc-answer" data-correct="false" onclick="answer(1, false, this)">Low coolant, high RPM, hard shifting, dim headlights</li>
+      </ul>
+
+    <div id="feedback2-correct" class="kc-feedback correct">
+      <strong>Correct.</strong>
+      Bouncing (3+ cycles), nose-dive under braking, cupped/scalloped tire wear, and oil leakage on the shock body - these four together are the textbook list.
+    </div>
+    <div id="feedback2-wrong" class="kc-feedback wrong">
+      <strong>Not quite.</strong>
+      The textbook four are: excessive bouncing, nose-dive under braking, cupped tire wear, and oil leakage from the shock seal. The other answers mix in symptoms from unrelated systems.
+    </div>
+  </div>
+  <div id="kc3" class="kc-slide">
+    <div class="kc-eyebrow">Knowledge Check - Question 3 of 3</div>
+    <div class="kc-question">After replacing one front strut with a new one, you tell the customer the other side should also be replaced. Why?</div>
+      <ul class="kc-answers">
+        <li class="kc-answer" data-correct="false" onclick="answer(2, false, this)">Because the new strut has a 1-year warranty</li>
+        <li class="kc-answer" data-correct="true" onclick="answer(2, true, this)">Because uneven damping between sides creates unpredictable handling</li>
+        <li class="kc-answer" data-correct="false" onclick="answer(2, false, this)">Because the alignment can't be set otherwise</li>
+        <li class="kc-answer" data-correct="false" onclick="answer(2, false, this)">Because the wheel bearings will fail</li>
+      </ul>
+
+    <div id="feedback3-correct" class="kc-feedback correct">
+      <strong>Correct.</strong>
+      Mixing a new strut with an old, worn one creates different damping rates side to side. The vehicle pulls under braking, handles unpredictably in corners, and tire wear becomes uneven.
+    </div>
+    <div id="feedback3-wrong" class="kc-feedback wrong">
+      <strong>Not quite.</strong>
+      The reason to replace in pairs is matched damping. A new strut on one side and an old worn strut on the other = unbalanced suspension = poor handling and uneven tire wear.
+    </div>
+  </div>
+
+
+  <div id="completeBox" class="complete-box">
+    <div class="complete-title">Lesson Complete</div>
+    <div class="complete-text">You finished the Diagnosing Worn Shocks and Struts micro lesson.</div>
+    <div class="complete-stats">Score: <span id="finalScore">0</span> / 3</div>
+  </div>
+
+  <div class="nav-row">
+    <button id="prevBtn" class="nav-btn prev" onclick="prev()" disabled>Back</button>
+    <button id="nextBtn" class="nav-btn" onclick="next()">Next</button>
+  </div>
+
+</div>
+
+<script>
+const TOTAL_STEPS = 6;
+let currentStep = 0;
+let score = 0;
+let answered = [false, false, false];
+
+function updateProgress() {
+  const pct = Math.round((currentStep / TOTAL_STEPS) * 100);
+  document.getElementById('progressFill').style.width = pct + '%';
+  document.getElementById('progressText').textContent = pct + '%';
+}
+
+function showStep(idx) {
+  // Hide all slides and KC questions
+  document.querySelectorAll('.slide, .kc-slide').forEach(s => s.classList.remove('active'));
+  document.getElementById('completeBox').classList.remove('active');
+
+  if (idx < 3) {
+    document.getElementById('slide' + (idx + 1)).classList.add('active');
+  } else if (idx < 6) {
+    document.getElementById('kc' + (idx - 2)).classList.add('active');
+  } else {
+    // Complete
+    document.getElementById('completeBox').classList.add('active');
+    document.getElementById('finalScore').textContent = score;
+    document.getElementById('nextBtn').style.display = 'none';
+  }
+
+  document.getElementById('prevBtn').disabled = (idx === 0);
+  document.getElementById('nextBtn').textContent = (idx >= 5) ? 'Finish' : 'Next';
+
+  // For KC slides, disable Next until answered
+  if (idx >= 3 && idx < 6) {
+    const kcIdx = idx - 3;
+    document.getElementById('nextBtn').disabled = !answered[kcIdx];
+  } else {
+    document.getElementById('nextBtn').disabled = false;
+  }
+
+  updateProgress();
+}
+
+function next() {
+  if (currentStep < TOTAL_STEPS) {
+    currentStep++;
+    showStep(currentStep);
+  }
+}
+
+function prev() {
+  if (currentStep > 0) {
+    currentStep--;
+    showStep(currentStep);
+  }
+}
+
+function answer(qIdx, isCorrect, btn) {
+  if (answered[qIdx]) return;
+  answered[qIdx] = true;
+
+  const allAnswers = btn.parentElement.querySelectorAll('.kc-answer');
+  allAnswers.forEach(a => a.classList.add('disabled'));
+
+  if (isCorrect) {
+    btn.classList.add('correct');
+    score++;
+    document.getElementById('feedback' + (qIdx + 1) + '-correct').style.display = 'block';
+  } else {
+    btn.classList.add('wrong');
+    // Also highlight the correct one
+    allAnswers.forEach(a => {
+      if (a.getAttribute('data-correct') === 'true') {
+        a.classList.add('correct');
+      }
+    });
+    document.getElementById('feedback' + (qIdx + 1) + '-wrong').style.display = 'block';
+  }
+
+  document.getElementById('nextBtn').disabled = false;
+}
+
+// Init
+showStep(0);
+</script>
+</body>
+</html>

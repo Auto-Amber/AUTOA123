@@ -1,0 +1,488 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Ball Joint Inspection - AUTOA 123</title>
+<style>
+* { box-sizing: border-box; margin: 0; padding: 0; }
+body {
+  font-family: 'Source Sans 3', 'Source Sans Pro', Arial, sans-serif;
+  background: #f5f5f5;
+  color: #1a1a1a;
+  line-height: 1.5;
+  padding: 20px;
+}
+.container {
+  max-width: 800px;
+  margin: 0 auto;
+  background: #ffffff;
+  border-radius: 8px;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+  overflow: hidden;
+}
+
+/* Header */
+.lesson-header {
+  background: #1a1a1a;
+  padding: 18px 24px;
+  border-bottom: 4px solid #2a9d8f;
+}
+.lesson-eyebrow {
+  color: #2a9d8f;
+  font-size: 11px;
+  font-weight: bold;
+  letter-spacing: 2px;
+  text-transform: uppercase;
+  margin-bottom: 4px;
+}
+.lesson-title {
+  font-family: 'Oswald', Arial, sans-serif;
+  color: #ffffff;
+  font-size: 24px;
+  font-weight: bold;
+  line-height: 1.2;
+}
+.lesson-subtitle {
+  color: #cccccc;
+  font-size: 13px;
+  margin-top: 4px;
+}
+
+/* Progress bar */
+.progress-wrapper {
+  padding: 14px 24px 0 24px;
+  background: #ffffff;
+}
+.progress-label {
+  font-size: 11px;
+  font-weight: bold;
+  color: #555555;
+  letter-spacing: 1px;
+  text-transform: uppercase;
+  margin-bottom: 6px;
+}
+.progress-track {
+  width: 100%;
+  height: 6px;
+  background: #3a3a3a;
+  border-radius: 3px;
+  overflow: hidden;
+}
+.progress-fill {
+  height: 100%;
+  background: #e9a825;
+  width: 0%;
+  transition: width 0.3s ease;
+  border-radius: 3px;
+}
+
+/* Slides */
+.slide {
+  padding: 24px;
+  display: none;
+}
+.slide.active { display: block; }
+
+.slide-eyebrow {
+  color: #2a9d8f;
+  font-size: 11px;
+  font-weight: bold;
+  letter-spacing: 2px;
+  text-transform: uppercase;
+  margin-bottom: 8px;
+}
+.slide-title {
+  font-family: 'Oswald', Arial, sans-serif;
+  color: #1a1a1a;
+  font-size: 22px;
+  font-weight: bold;
+  margin-bottom: 14px;
+}
+.slide-body p {
+  font-size: 15px;
+  color: #1a1a1a;
+  margin-bottom: 12px;
+}
+.slide-body strong { color: #1a7a6e; }
+
+.callout {
+  background: #f0faf8;
+  border: 1px solid #d0ede9;
+  border-left: 5px solid #2a9d8f;
+  border-radius: 4px;
+  padding: 12px 16px;
+  margin: 14px 0;
+}
+.callout-label {
+  color: #1a7a6e;
+  font-size: 11px;
+  font-weight: bold;
+  letter-spacing: 2px;
+  text-transform: uppercase;
+  margin-bottom: 6px;
+}
+.callout p { margin-bottom: 0; font-size: 14px; }
+
+.warn {
+  background: #fffbf0;
+  border: 1px solid #fdf0c8;
+  border-left: 5px solid #e9a825;
+  border-radius: 4px;
+  padding: 12px 16px;
+  margin: 14px 0;
+}
+.warn-label {
+  color: #b07d00;
+  font-size: 11px;
+  font-weight: bold;
+  letter-spacing: 2px;
+  text-transform: uppercase;
+  margin-bottom: 6px;
+}
+.warn p { margin-bottom: 0; font-size: 14px; }
+
+.slide-list { margin: 8px 0 12px 0; padding-left: 22px; }
+.slide-list li { font-size: 15px; margin-bottom: 6px; }
+
+/* Knowledge check */
+.kc-slide { padding: 24px; display: none; }
+.kc-slide.active { display: block; }
+
+.kc-eyebrow {
+  color: #b07d00;
+  font-size: 11px;
+  font-weight: bold;
+  letter-spacing: 2px;
+  text-transform: uppercase;
+  margin-bottom: 8px;
+}
+.kc-question {
+  font-size: 17px;
+  font-weight: bold;
+  color: #1a1a1a;
+  margin-bottom: 18px;
+  line-height: 1.4;
+}
+.kc-answers { list-style: none; padding: 0; }
+.kc-answer {
+  background: #ffffff;
+  border: 2px solid #dddddd;
+  border-radius: 6px;
+  padding: 12px 16px;
+  margin-bottom: 10px;
+  cursor: pointer;
+  font-size: 15px;
+  color: #1a1a1a;
+  transition: all 0.15s ease;
+}
+.kc-answer:hover { border-color: #2a9d8f; background: #f0faf8; }
+.kc-answer.correct {
+  background: #d8f0eb;
+  border-color: #2a9d8f;
+  color: #1a7a6e;
+  font-weight: bold;
+}
+.kc-answer.wrong {
+  background: #fde5e5;
+  border-color: #c43030;
+  color: #8a1f1f;
+}
+.kc-answer.disabled { cursor: not-allowed; pointer-events: none; opacity: 0.6; }
+.kc-answer.disabled.correct { opacity: 1; }
+.kc-answer.disabled.wrong { opacity: 1; }
+
+.kc-feedback {
+  display: none;
+  margin-top: 16px;
+  padding: 14px 16px;
+  border-radius: 6px;
+  font-size: 14px;
+}
+.kc-feedback.correct {
+  display: block;
+  background: #f0faf8;
+  border: 1px solid #2a9d8f;
+  color: #1a7a6e;
+}
+.kc-feedback.wrong {
+  display: block;
+  background: #fde5e5;
+  border: 1px solid #c43030;
+  color: #8a1f1f;
+}
+.kc-feedback strong { display: block; margin-bottom: 4px; }
+
+/* Nav buttons */
+.nav-row {
+  padding: 16px 24px;
+  background: #f9f9f9;
+  border-top: 1px solid #e5e5e5;
+  text-align: right;
+}
+.nav-btn {
+  background: #2a9d8f;
+  color: #ffffff;
+  border: none;
+  padding: 10px 22px;
+  font-size: 13px;
+  font-weight: bold;
+  letter-spacing: 1px;
+  text-transform: uppercase;
+  border-radius: 4px;
+  cursor: pointer;
+  font-family: 'Source Sans 3', Arial, sans-serif;
+}
+.nav-btn:hover { background: #1a7a6e; }
+.nav-btn:disabled { background: #cccccc; cursor: not-allowed; }
+.nav-btn.prev { background: #888888; margin-right: 8px; }
+.nav-btn.prev:hover { background: #555555; }
+
+/* Completion */
+.complete-box {
+  display: none;
+  padding: 24px;
+  text-align: center;
+  background: #f0faf8;
+  border-top: 4px solid #2a9d8f;
+}
+.complete-box.active { display: block; }
+.complete-title {
+  font-family: 'Oswald', Arial, sans-serif;
+  color: #1a7a6e;
+  font-size: 22px;
+  font-weight: bold;
+  margin-bottom: 8px;
+}
+.complete-text {
+  color: #1a1a1a;
+  font-size: 15px;
+  margin-bottom: 14px;
+}
+.complete-stats {
+  display: inline-block;
+  background: #ffffff;
+  border: 1px solid #d0ede9;
+  border-radius: 4px;
+  padding: 8px 14px;
+  font-size: 13px;
+  color: #1a7a6e;
+  font-weight: bold;
+}
+</style>
+</head>
+<body>
+<div class="container">
+
+  <div class="lesson-header">
+    <div class="lesson-eyebrow">AUTOA 123 - Suspension Micro Lesson</div>
+    <div class="lesson-title">Ball Joint Inspection</div>
+    <div class="lesson-subtitle">Indicator vs non-indicator methods - load matters</div>
+  </div>
+
+  <div class="progress-wrapper">
+    <div class="progress-label">Progress - <span id="progressText">0%</span></div>
+    <div class="progress-track"><div id="progressFill" class="progress-fill"></div></div>
+  </div>
+
+  <div id="slide1" class="slide active">
+    <div class="slide-eyebrow">Slide 1 of 3</div>
+    <div class="slide-title">Two Types of Ball Joints</div>
+    <div class="slide-body">
+<p>Ball joints come in two main types based on how you check them:</p>
+<ul class="slide-list">
+  <li><strong>Indicator-type (wear indicator)</strong> - has a visible "tell" built into the joint. Often a grease fitting that recedes as the joint wears.</li>
+  <li><strong>Non-indicator type</strong> - no visible indicator. You must measure play with a dial indicator or pry bar.</li>
+</ul>
+<p>The inspection method is completely different for each type. Using the wrong method gives wrong results.</p>
+    </div>
+  </div>
+  <div id="slide2" class="slide">
+    <div class="slide-eyebrow">Slide 2 of 3</div>
+    <div class="slide-title">Indicator-Type Inspection</div>
+    <div class="slide-body">
+<p>For indicator ball joints, the manufacturer designed the joint so wear is visible WHILE the joint is loaded by vehicle weight.</p>
+<div class="callout">
+  <div class="callout-label">Indicator method</div>
+  <p>Vehicle on the ground (loaded). Inspect the grease fitting or the indicator. If it has receded into the housing, the joint is worn out.</p>
+</div>
+<p>This is fast and easy. No measurement needed - it's a pass/fail visual check.</p>
+<p>Some indicators are a wear groove on the boot side. Some are dimensions you can check with a depth gauge. Always reference the service manual procedure for the specific vehicle.</p>
+    </div>
+  </div>
+  <div id="slide3" class="slide">
+    <div class="slide-eyebrow">Slide 3 of 3</div>
+    <div class="slide-title">Non-Indicator Inspection</div>
+    <div class="slide-body">
+<p>For non-indicator joints, you must measure the actual play in the joint - and the joint must be UNLOADED to measure it accurately.</p>
+<div class="callout">
+  <div class="callout-label">Non-indicator method</div>
+  <p>Vehicle on a hoist. If the joint is load-carrying, place a jack stand under the lower control arm (close to the joint) to UNLOAD it. Then pry the wheel up and measure play with a dial indicator.</p>
+</div>
+<p>Typical specs: less than 0.050 inch of vertical play. Check the service manual for your vehicle.</p>
+<div class="warn">
+  <div class="warn-label">Critical</div>
+  <p>Loading vs unloading: indicator = LOADED. Non-indicator = UNLOADED. Mixing these up gives false readings every time.</p>
+</div>
+    </div>
+  </div>
+
+
+  <div id="kc1" class="kc-slide">
+    <div class="kc-eyebrow">Knowledge Check - Question 1 of 3</div>
+    <div class="kc-question">Two technicians are discussing non-indicator-type ball joint inspection. Tech A says the vehicle should be on the ground with the ball joints LOADED, then checked for free play. Tech B says the ball joints should be UNLOADED before checking for free play. Who is correct?</div>
+      <ul class="kc-answers">
+        <li class="kc-answer" data-correct="false" onclick="answer(0, false, this)">Tech A only</li>
+        <li class="kc-answer" data-correct="true" onclick="answer(0, true, this)">Tech B only</li>
+        <li class="kc-answer" data-correct="false" onclick="answer(0, false, this)">Both technicians</li>
+        <li class="kc-answer" data-correct="false" onclick="answer(0, false, this)">Neither technician</li>
+      </ul>
+
+    <div id="feedback1-correct" class="kc-feedback correct">
+      <strong>Correct.</strong>
+      Tech B is correct. Non-indicator joints must be UNLOADED to measure play. Tech A's procedure (loaded) is for INDICATOR-type joints, not non-indicator. The two statements describe opposite methods, so only one can apply to non-indicator joints.
+    </div>
+    <div id="feedback1-wrong" class="kc-feedback wrong">
+      <strong>Not quite.</strong>
+      Tech B is right. Non-indicator joints need to be unloaded so you can measure the play. Tech A described the loaded method, which is for INDICATOR-type joints. These two methods are opposites and only Tech B's applies here.
+    </div>
+  </div>
+  <div id="kc2" class="kc-slide">
+    <div class="kc-eyebrow">Knowledge Check - Question 2 of 3</div>
+    <div class="kc-question">How do you determine if a ball joint with a wear indicator is worn out?</div>
+      <ul class="kc-answers">
+        <li class="kc-answer" data-correct="false" onclick="answer(1, false, this)">Pry the joint with a bar and look for movement</li>
+        <li class="kc-answer" data-correct="false" onclick="answer(1, false, this)">Measure the joint with a micrometer</li>
+        <li class="kc-answer" data-correct="true" onclick="answer(1, true, this)">Inspect the indicator (grease fitting or wear line) with the vehicle loaded</li>
+        <li class="kc-answer" data-correct="false" onclick="answer(1, false, this)">Listen for clunking sounds</li>
+      </ul>
+
+    <div id="feedback2-correct" class="kc-feedback correct">
+      <strong>Correct.</strong>
+      Indicator-type joints are designed for visual check while LOADED. The grease fitting or wear indicator will be receded if the joint is worn beyond spec.
+    </div>
+    <div id="feedback2-wrong" class="kc-feedback wrong">
+      <strong>Not quite.</strong>
+      Indicator joints have a designed-in visual cue. Check it while the vehicle weight is on the joint (loaded). Prying and measuring are for NON-indicator types. Sound is helpful but not the official method.
+    </div>
+  </div>
+  <div id="kc3" class="kc-slide">
+    <div class="kc-eyebrow">Knowledge Check - Question 3 of 3</div>
+    <div class="kc-question">Why must a non-indicator ball joint be unloaded before checking for play?</div>
+      <ul class="kc-answers">
+        <li class="kc-answer" data-correct="false" onclick="answer(2, false, this)">Because the joint is too hot to touch when loaded</li>
+        <li class="kc-answer" data-correct="true" onclick="answer(2, true, this)">Because the vehicle weight holds the joint tight, hiding the actual play</li>
+        <li class="kc-answer" data-correct="false" onclick="answer(2, false, this)">Because the boot will tear if loaded</li>
+        <li class="kc-answer" data-correct="false" onclick="answer(2, false, this)">Non-indicator joints are checked loaded, not unloaded</li>
+      </ul>
+
+    <div id="feedback3-correct" class="kc-feedback correct">
+      <strong>Correct.</strong>
+      Vehicle weight on a load-carrying ball joint clamps it tight - any play is masked. Unloading the joint (jack stand under the LCA) lets the actual play show up when you pry.
+    </div>
+    <div id="feedback3-wrong" class="kc-feedback wrong">
+      <strong>Not quite.</strong>
+      Vehicle weight masks the play. The joint has to be unloaded so the slack can be felt. Place a jack stand under the lower control arm to take the load off, then check.
+    </div>
+  </div>
+
+
+  <div id="completeBox" class="complete-box">
+    <div class="complete-title">Lesson Complete</div>
+    <div class="complete-text">You finished the Ball Joint Inspection micro lesson.</div>
+    <div class="complete-stats">Score: <span id="finalScore">0</span> / 3</div>
+  </div>
+
+  <div class="nav-row">
+    <button id="prevBtn" class="nav-btn prev" onclick="prev()" disabled>Back</button>
+    <button id="nextBtn" class="nav-btn" onclick="next()">Next</button>
+  </div>
+
+</div>
+
+<script>
+const TOTAL_STEPS = 6;
+let currentStep = 0;
+let score = 0;
+let answered = [false, false, false];
+
+function updateProgress() {
+  const pct = Math.round((currentStep / TOTAL_STEPS) * 100);
+  document.getElementById('progressFill').style.width = pct + '%';
+  document.getElementById('progressText').textContent = pct + '%';
+}
+
+function showStep(idx) {
+  // Hide all slides and KC questions
+  document.querySelectorAll('.slide, .kc-slide').forEach(s => s.classList.remove('active'));
+  document.getElementById('completeBox').classList.remove('active');
+
+  if (idx < 3) {
+    document.getElementById('slide' + (idx + 1)).classList.add('active');
+  } else if (idx < 6) {
+    document.getElementById('kc' + (idx - 2)).classList.add('active');
+  } else {
+    // Complete
+    document.getElementById('completeBox').classList.add('active');
+    document.getElementById('finalScore').textContent = score;
+    document.getElementById('nextBtn').style.display = 'none';
+  }
+
+  document.getElementById('prevBtn').disabled = (idx === 0);
+  document.getElementById('nextBtn').textContent = (idx >= 5) ? 'Finish' : 'Next';
+
+  // For KC slides, disable Next until answered
+  if (idx >= 3 && idx < 6) {
+    const kcIdx = idx - 3;
+    document.getElementById('nextBtn').disabled = !answered[kcIdx];
+  } else {
+    document.getElementById('nextBtn').disabled = false;
+  }
+
+  updateProgress();
+}
+
+function next() {
+  if (currentStep < TOTAL_STEPS) {
+    currentStep++;
+    showStep(currentStep);
+  }
+}
+
+function prev() {
+  if (currentStep > 0) {
+    currentStep--;
+    showStep(currentStep);
+  }
+}
+
+function answer(qIdx, isCorrect, btn) {
+  if (answered[qIdx]) return;
+  answered[qIdx] = true;
+
+  const allAnswers = btn.parentElement.querySelectorAll('.kc-answer');
+  allAnswers.forEach(a => a.classList.add('disabled'));
+
+  if (isCorrect) {
+    btn.classList.add('correct');
+    score++;
+    document.getElementById('feedback' + (qIdx + 1) + '-correct').style.display = 'block';
+  } else {
+    btn.classList.add('wrong');
+    // Also highlight the correct one
+    allAnswers.forEach(a => {
+      if (a.getAttribute('data-correct') === 'true') {
+        a.classList.add('correct');
+      }
+    });
+    document.getElementById('feedback' + (qIdx + 1) + '-wrong').style.display = 'block';
+  }
+
+  document.getElementById('nextBtn').disabled = false;
+}
+
+// Init
+showStep(0);
+</script>
+</body>
+</html>

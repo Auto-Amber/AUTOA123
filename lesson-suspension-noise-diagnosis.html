@@ -1,0 +1,497 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Diagnosing Suspension Noises - AUTOA 123</title>
+<style>
+* { box-sizing: border-box; margin: 0; padding: 0; }
+body {
+  font-family: 'Source Sans 3', 'Source Sans Pro', Arial, sans-serif;
+  background: #f5f5f5;
+  color: #1a1a1a;
+  line-height: 1.5;
+  padding: 20px;
+}
+.container {
+  max-width: 800px;
+  margin: 0 auto;
+  background: #ffffff;
+  border-radius: 8px;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+  overflow: hidden;
+}
+
+/* Header */
+.lesson-header {
+  background: #1a1a1a;
+  padding: 18px 24px;
+  border-bottom: 4px solid #2a9d8f;
+}
+.lesson-eyebrow {
+  color: #2a9d8f;
+  font-size: 11px;
+  font-weight: bold;
+  letter-spacing: 2px;
+  text-transform: uppercase;
+  margin-bottom: 4px;
+}
+.lesson-title {
+  font-family: 'Oswald', Arial, sans-serif;
+  color: #ffffff;
+  font-size: 24px;
+  font-weight: bold;
+  line-height: 1.2;
+}
+.lesson-subtitle {
+  color: #cccccc;
+  font-size: 13px;
+  margin-top: 4px;
+}
+
+/* Progress bar */
+.progress-wrapper {
+  padding: 14px 24px 0 24px;
+  background: #ffffff;
+}
+.progress-label {
+  font-size: 11px;
+  font-weight: bold;
+  color: #555555;
+  letter-spacing: 1px;
+  text-transform: uppercase;
+  margin-bottom: 6px;
+}
+.progress-track {
+  width: 100%;
+  height: 6px;
+  background: #3a3a3a;
+  border-radius: 3px;
+  overflow: hidden;
+}
+.progress-fill {
+  height: 100%;
+  background: #e9a825;
+  width: 0%;
+  transition: width 0.3s ease;
+  border-radius: 3px;
+}
+
+/* Slides */
+.slide {
+  padding: 24px;
+  display: none;
+}
+.slide.active { display: block; }
+
+.slide-eyebrow {
+  color: #2a9d8f;
+  font-size: 11px;
+  font-weight: bold;
+  letter-spacing: 2px;
+  text-transform: uppercase;
+  margin-bottom: 8px;
+}
+.slide-title {
+  font-family: 'Oswald', Arial, sans-serif;
+  color: #1a1a1a;
+  font-size: 22px;
+  font-weight: bold;
+  margin-bottom: 14px;
+}
+.slide-body p {
+  font-size: 15px;
+  color: #1a1a1a;
+  margin-bottom: 12px;
+}
+.slide-body strong { color: #1a7a6e; }
+
+.callout {
+  background: #f0faf8;
+  border: 1px solid #d0ede9;
+  border-left: 5px solid #2a9d8f;
+  border-radius: 4px;
+  padding: 12px 16px;
+  margin: 14px 0;
+}
+.callout-label {
+  color: #1a7a6e;
+  font-size: 11px;
+  font-weight: bold;
+  letter-spacing: 2px;
+  text-transform: uppercase;
+  margin-bottom: 6px;
+}
+.callout p { margin-bottom: 0; font-size: 14px; }
+
+.warn {
+  background: #fffbf0;
+  border: 1px solid #fdf0c8;
+  border-left: 5px solid #e9a825;
+  border-radius: 4px;
+  padding: 12px 16px;
+  margin: 14px 0;
+}
+.warn-label {
+  color: #b07d00;
+  font-size: 11px;
+  font-weight: bold;
+  letter-spacing: 2px;
+  text-transform: uppercase;
+  margin-bottom: 6px;
+}
+.warn p { margin-bottom: 0; font-size: 14px; }
+
+.slide-list { margin: 8px 0 12px 0; padding-left: 22px; }
+.slide-list li { font-size: 15px; margin-bottom: 6px; }
+
+/* Knowledge check */
+.kc-slide { padding: 24px; display: none; }
+.kc-slide.active { display: block; }
+
+.kc-eyebrow {
+  color: #b07d00;
+  font-size: 11px;
+  font-weight: bold;
+  letter-spacing: 2px;
+  text-transform: uppercase;
+  margin-bottom: 8px;
+}
+.kc-question {
+  font-size: 17px;
+  font-weight: bold;
+  color: #1a1a1a;
+  margin-bottom: 18px;
+  line-height: 1.4;
+}
+.kc-answers { list-style: none; padding: 0; }
+.kc-answer {
+  background: #ffffff;
+  border: 2px solid #dddddd;
+  border-radius: 6px;
+  padding: 12px 16px;
+  margin-bottom: 10px;
+  cursor: pointer;
+  font-size: 15px;
+  color: #1a1a1a;
+  transition: all 0.15s ease;
+}
+.kc-answer:hover { border-color: #2a9d8f; background: #f0faf8; }
+.kc-answer.correct {
+  background: #d8f0eb;
+  border-color: #2a9d8f;
+  color: #1a7a6e;
+  font-weight: bold;
+}
+.kc-answer.wrong {
+  background: #fde5e5;
+  border-color: #c43030;
+  color: #8a1f1f;
+}
+.kc-answer.disabled { cursor: not-allowed; pointer-events: none; opacity: 0.6; }
+.kc-answer.disabled.correct { opacity: 1; }
+.kc-answer.disabled.wrong { opacity: 1; }
+
+.kc-feedback {
+  display: none;
+  margin-top: 16px;
+  padding: 14px 16px;
+  border-radius: 6px;
+  font-size: 14px;
+}
+.kc-feedback.correct {
+  display: block;
+  background: #f0faf8;
+  border: 1px solid #2a9d8f;
+  color: #1a7a6e;
+}
+.kc-feedback.wrong {
+  display: block;
+  background: #fde5e5;
+  border: 1px solid #c43030;
+  color: #8a1f1f;
+}
+.kc-feedback strong { display: block; margin-bottom: 4px; }
+
+/* Nav buttons */
+.nav-row {
+  padding: 16px 24px;
+  background: #f9f9f9;
+  border-top: 1px solid #e5e5e5;
+  text-align: right;
+}
+.nav-btn {
+  background: #2a9d8f;
+  color: #ffffff;
+  border: none;
+  padding: 10px 22px;
+  font-size: 13px;
+  font-weight: bold;
+  letter-spacing: 1px;
+  text-transform: uppercase;
+  border-radius: 4px;
+  cursor: pointer;
+  font-family: 'Source Sans 3', Arial, sans-serif;
+}
+.nav-btn:hover { background: #1a7a6e; }
+.nav-btn:disabled { background: #cccccc; cursor: not-allowed; }
+.nav-btn.prev { background: #888888; margin-right: 8px; }
+.nav-btn.prev:hover { background: #555555; }
+
+/* Completion */
+.complete-box {
+  display: none;
+  padding: 24px;
+  text-align: center;
+  background: #f0faf8;
+  border-top: 4px solid #2a9d8f;
+}
+.complete-box.active { display: block; }
+.complete-title {
+  font-family: 'Oswald', Arial, sans-serif;
+  color: #1a7a6e;
+  font-size: 22px;
+  font-weight: bold;
+  margin-bottom: 8px;
+}
+.complete-text {
+  color: #1a1a1a;
+  font-size: 15px;
+  margin-bottom: 14px;
+}
+.complete-stats {
+  display: inline-block;
+  background: #ffffff;
+  border: 1px solid #d0ede9;
+  border-radius: 4px;
+  padding: 8px 14px;
+  font-size: 13px;
+  color: #1a7a6e;
+  font-weight: bold;
+}
+</style>
+</head>
+<body>
+<div class="container">
+
+  <div class="lesson-header">
+    <div class="lesson-eyebrow">AUTOA 123 - Suspension Micro Lesson</div>
+    <div class="lesson-title">Diagnosing Suspension Noises</div>
+    <div class="lesson-subtitle">Matching the sound to the failed component</div>
+  </div>
+
+  <div class="progress-wrapper">
+    <div class="progress-label">Progress - <span id="progressText">0%</span></div>
+    <div class="progress-track"><div id="progressFill" class="progress-fill"></div></div>
+  </div>
+
+  <div id="slide1" class="slide active">
+    <div class="slide-eyebrow">Slide 1 of 3</div>
+    <div class="slide-title">Why It Matters</div>
+    <div class="slide-body">
+<p>"There's a noise from the front end" is one of the most common customer complaints. The noise itself tells you a lot if you know what to listen for.</p>
+<p>Suspension noises break into a few categories based on WHEN they happen:</p>
+<ul class="slide-list">
+  <li><strong>Over bumps</strong> - usually a joint or bushing</li>
+  <li><strong>While turning</strong> - usually a bearing, joint, or CV component</li>
+  <li><strong>At highway speed</strong> - usually a bearing or tire issue</li>
+  <li><strong>Under braking</strong> - usually a strut, mount, or brake-related</li>
+</ul>
+    </div>
+  </div>
+  <div id="slide2" class="slide">
+    <div class="slide-eyebrow">Slide 2 of 3</div>
+    <div class="slide-title">Common Sounds and Sources</div>
+    <div class="slide-body">
+<p>Match the sound to the part:</p>
+<ul class="slide-list">
+  <li><strong>Clunk over bumps</strong> - sway bar end link, ball joint, control arm bushing, strut mount</li>
+  <li><strong>Hum/growl that changes with vehicle speed</strong> - wheel bearing</li>
+  <li><strong>Click when turning</strong> - worn CV joint (outer)</li>
+  <li><strong>Grind when turning</strong> - upper strut bearing</li>
+  <li><strong>Squeak over slow bumps</strong> - dry control arm bushing or sway bar bushing</li>
+  <li><strong>Pop or knock under acceleration</strong> - inner CV joint or motor mount</li>
+</ul>
+<div class="callout">
+  <div class="callout-label">Test order</div>
+  <p>Always road test first, then dry park test, then visual inspection. Most noises reveal their source if you systematically work through these.</p>
+</div>
+    </div>
+  </div>
+  <div id="slide3" class="slide">
+    <div class="slide-eyebrow">Slide 3 of 3</div>
+    <div class="slide-title">When the Sound Lies</div>
+    <div class="slide-body">
+<p>Watch for these tricky situations:</p>
+<ul class="slide-list">
+  <li><strong>A collapsed motor mount</strong> can sound exactly like a worn ball joint</li>
+  <li><strong>A loose exhaust hanger</strong> can sound like a sway bar end link</li>
+  <li><strong>Worn brake hardware</strong> (clips, abutment shims) can mimic suspension clunks</li>
+  <li><strong>Worn shocks/struts</strong> can amplify other noises by letting components bottom out</li>
+</ul>
+<div class="warn">
+  <div class="warn-label">Diagnostic discipline</div>
+  <p>Always check the mounts (engine, trans, body). Always check the exhaust. Always check the brakes. Don't condemn a suspension part until you've ruled out look-alikes.</p>
+</div>
+    </div>
+  </div>
+
+
+  <div id="kc1" class="kc-slide">
+    <div class="kc-eyebrow">Knowledge Check - Question 1 of 3</div>
+    <div class="kc-question">Unusual noise during a test drive can be caused by:</div>
+      <ul class="kc-answers">
+        <li class="kc-answer" data-correct="false" onclick="answer(0, false, this)">Defective wheel bearing or stabilizer bar end link</li>
+        <li class="kc-answer" data-correct="false" onclick="answer(0, false, this)">Defective control arm bushing or ball joint</li>
+        <li class="kc-answer" data-correct="false" onclick="answer(0, false, this)">Worn CV joint</li>
+        <li class="kc-answer" data-correct="true" onclick="answer(0, true, this)">All of the above</li>
+      </ul>
+
+    <div id="feedback1-correct" class="kc-feedback correct">
+      <strong>Correct.</strong>
+      Suspension noise has many sources. Wheel bearings hum/growl, sway bar end links clunk in turns, control arm bushings squeak or thud, ball joints clunk over bumps, and worn CV joints click in turns. Always road test + dry park + inspect to isolate.
+    </div>
+    <div id="feedback1-wrong" class="kc-feedback wrong">
+      <strong>Not quite.</strong>
+      All of these can cause noise. That's the whole point - you need a systematic diagnosis (road test, dry park, visual inspection) because so many components can produce similar sounds.
+    </div>
+  </div>
+  <div id="kc2" class="kc-slide">
+    <div class="kc-eyebrow">Knowledge Check - Question 2 of 3</div>
+    <div class="kc-question">A customer complains of a hum that gets louder as the vehicle goes faster, and the pitch changes when they steer slightly. What is the most likely cause?</div>
+      <ul class="kc-answers">
+        <li class="kc-answer" data-correct="false" onclick="answer(1, false, this)">Worn shock absorber</li>
+        <li class="kc-answer" data-correct="true" onclick="answer(1, true, this)">Worn wheel bearing</li>
+        <li class="kc-answer" data-correct="false" onclick="answer(1, false, this)">Loose ball joint</li>
+        <li class="kc-answer" data-correct="false" onclick="answer(1, false, this)">Failed sway bar bushing</li>
+      </ul>
+
+    <div id="feedback2-correct" class="kc-feedback correct">
+      <strong>Correct.</strong>
+      A hum that changes with speed AND changes with steering input (load shift) is the classic wheel bearing signature. Steering loads or unloads the bearing, changing the noise.
+    </div>
+    <div id="feedback2-wrong" class="kc-feedback wrong">
+      <strong>Not quite.</strong>
+      Wheel bearings hum, and the hum changes when you steer because steering shifts the load on the bearing. Shocks bounce, ball joints clunk, sway bar bushings squeak. Only bearings produce a speed-related hum.
+    </div>
+  </div>
+  <div id="kc3" class="kc-slide">
+    <div class="kc-eyebrow">Knowledge Check - Question 3 of 3</div>
+    <div class="kc-question">What is the FIRST thing to do when a customer reports a suspension noise?</div>
+      <ul class="kc-answers">
+        <li class="kc-answer" data-correct="false" onclick="answer(2, false, this)">Replace the most common worn part</li>
+        <li class="kc-answer" data-correct="false" onclick="answer(2, false, this)">Quote the customer a complete suspension overhaul</li>
+        <li class="kc-answer" data-correct="true" onclick="answer(2, true, this)">Road test the vehicle to recreate and identify the noise</li>
+        <li class="kc-answer" data-correct="false" onclick="answer(2, false, this)">Check the air filter</li>
+      </ul>
+
+    <div id="feedback3-correct" class="kc-feedback correct">
+      <strong>Correct.</strong>
+      Always road test FIRST. Recreate the noise. Understand when it happens. Then move to the lift for a dry park test and visual inspection. Diagnose before you replace.
+    </div>
+    <div id="feedback3-wrong" class="kc-feedback wrong">
+      <strong>Not quite.</strong>
+      Diagnosis comes first. Road test to identify the noise and the conditions. Replacing parts without diagnosing leads to comebacks and unhappy customers.
+    </div>
+  </div>
+
+
+  <div id="completeBox" class="complete-box">
+    <div class="complete-title">Lesson Complete</div>
+    <div class="complete-text">You finished the Diagnosing Suspension Noises micro lesson.</div>
+    <div class="complete-stats">Score: <span id="finalScore">0</span> / 3</div>
+  </div>
+
+  <div class="nav-row">
+    <button id="prevBtn" class="nav-btn prev" onclick="prev()" disabled>Back</button>
+    <button id="nextBtn" class="nav-btn" onclick="next()">Next</button>
+  </div>
+
+</div>
+
+<script>
+const TOTAL_STEPS = 6;
+let currentStep = 0;
+let score = 0;
+let answered = [false, false, false];
+
+function updateProgress() {
+  const pct = Math.round((currentStep / TOTAL_STEPS) * 100);
+  document.getElementById('progressFill').style.width = pct + '%';
+  document.getElementById('progressText').textContent = pct + '%';
+}
+
+function showStep(idx) {
+  // Hide all slides and KC questions
+  document.querySelectorAll('.slide, .kc-slide').forEach(s => s.classList.remove('active'));
+  document.getElementById('completeBox').classList.remove('active');
+
+  if (idx < 3) {
+    document.getElementById('slide' + (idx + 1)).classList.add('active');
+  } else if (idx < 6) {
+    document.getElementById('kc' + (idx - 2)).classList.add('active');
+  } else {
+    // Complete
+    document.getElementById('completeBox').classList.add('active');
+    document.getElementById('finalScore').textContent = score;
+    document.getElementById('nextBtn').style.display = 'none';
+  }
+
+  document.getElementById('prevBtn').disabled = (idx === 0);
+  document.getElementById('nextBtn').textContent = (idx >= 5) ? 'Finish' : 'Next';
+
+  // For KC slides, disable Next until answered
+  if (idx >= 3 && idx < 6) {
+    const kcIdx = idx - 3;
+    document.getElementById('nextBtn').disabled = !answered[kcIdx];
+  } else {
+    document.getElementById('nextBtn').disabled = false;
+  }
+
+  updateProgress();
+}
+
+function next() {
+  if (currentStep < TOTAL_STEPS) {
+    currentStep++;
+    showStep(currentStep);
+  }
+}
+
+function prev() {
+  if (currentStep > 0) {
+    currentStep--;
+    showStep(currentStep);
+  }
+}
+
+function answer(qIdx, isCorrect, btn) {
+  if (answered[qIdx]) return;
+  answered[qIdx] = true;
+
+  const allAnswers = btn.parentElement.querySelectorAll('.kc-answer');
+  allAnswers.forEach(a => a.classList.add('disabled'));
+
+  if (isCorrect) {
+    btn.classList.add('correct');
+    score++;
+    document.getElementById('feedback' + (qIdx + 1) + '-correct').style.display = 'block';
+  } else {
+    btn.classList.add('wrong');
+    // Also highlight the correct one
+    allAnswers.forEach(a => {
+      if (a.getAttribute('data-correct') === 'true') {
+        a.classList.add('correct');
+      }
+    });
+    document.getElementById('feedback' + (qIdx + 1) + '-wrong').style.display = 'block';
+  }
+
+  document.getElementById('nextBtn').disabled = false;
+}
+
+// Init
+showStep(0);
+</script>
+</body>
+</html>

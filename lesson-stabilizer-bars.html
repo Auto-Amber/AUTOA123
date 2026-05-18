@@ -1,0 +1,489 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Stabilizer Bars - AUTOA 123</title>
+<style>
+* { box-sizing: border-box; margin: 0; padding: 0; }
+body {
+  font-family: 'Source Sans 3', 'Source Sans Pro', Arial, sans-serif;
+  background: #f5f5f5;
+  color: #1a1a1a;
+  line-height: 1.5;
+  padding: 20px;
+}
+.container {
+  max-width: 800px;
+  margin: 0 auto;
+  background: #ffffff;
+  border-radius: 8px;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+  overflow: hidden;
+}
+
+/* Header */
+.lesson-header {
+  background: #1a1a1a;
+  padding: 18px 24px;
+  border-bottom: 4px solid #2a9d8f;
+}
+.lesson-eyebrow {
+  color: #2a9d8f;
+  font-size: 11px;
+  font-weight: bold;
+  letter-spacing: 2px;
+  text-transform: uppercase;
+  margin-bottom: 4px;
+}
+.lesson-title {
+  font-family: 'Oswald', Arial, sans-serif;
+  color: #ffffff;
+  font-size: 24px;
+  font-weight: bold;
+  line-height: 1.2;
+}
+.lesson-subtitle {
+  color: #cccccc;
+  font-size: 13px;
+  margin-top: 4px;
+}
+
+/* Progress bar */
+.progress-wrapper {
+  padding: 14px 24px 0 24px;
+  background: #ffffff;
+}
+.progress-label {
+  font-size: 11px;
+  font-weight: bold;
+  color: #555555;
+  letter-spacing: 1px;
+  text-transform: uppercase;
+  margin-bottom: 6px;
+}
+.progress-track {
+  width: 100%;
+  height: 6px;
+  background: #3a3a3a;
+  border-radius: 3px;
+  overflow: hidden;
+}
+.progress-fill {
+  height: 100%;
+  background: #e9a825;
+  width: 0%;
+  transition: width 0.3s ease;
+  border-radius: 3px;
+}
+
+/* Slides */
+.slide {
+  padding: 24px;
+  display: none;
+}
+.slide.active { display: block; }
+
+.slide-eyebrow {
+  color: #2a9d8f;
+  font-size: 11px;
+  font-weight: bold;
+  letter-spacing: 2px;
+  text-transform: uppercase;
+  margin-bottom: 8px;
+}
+.slide-title {
+  font-family: 'Oswald', Arial, sans-serif;
+  color: #1a1a1a;
+  font-size: 22px;
+  font-weight: bold;
+  margin-bottom: 14px;
+}
+.slide-body p {
+  font-size: 15px;
+  color: #1a1a1a;
+  margin-bottom: 12px;
+}
+.slide-body strong { color: #1a7a6e; }
+
+.callout {
+  background: #f0faf8;
+  border: 1px solid #d0ede9;
+  border-left: 5px solid #2a9d8f;
+  border-radius: 4px;
+  padding: 12px 16px;
+  margin: 14px 0;
+}
+.callout-label {
+  color: #1a7a6e;
+  font-size: 11px;
+  font-weight: bold;
+  letter-spacing: 2px;
+  text-transform: uppercase;
+  margin-bottom: 6px;
+}
+.callout p { margin-bottom: 0; font-size: 14px; }
+
+.warn {
+  background: #fffbf0;
+  border: 1px solid #fdf0c8;
+  border-left: 5px solid #e9a825;
+  border-radius: 4px;
+  padding: 12px 16px;
+  margin: 14px 0;
+}
+.warn-label {
+  color: #b07d00;
+  font-size: 11px;
+  font-weight: bold;
+  letter-spacing: 2px;
+  text-transform: uppercase;
+  margin-bottom: 6px;
+}
+.warn p { margin-bottom: 0; font-size: 14px; }
+
+.slide-list { margin: 8px 0 12px 0; padding-left: 22px; }
+.slide-list li { font-size: 15px; margin-bottom: 6px; }
+
+/* Knowledge check */
+.kc-slide { padding: 24px; display: none; }
+.kc-slide.active { display: block; }
+
+.kc-eyebrow {
+  color: #b07d00;
+  font-size: 11px;
+  font-weight: bold;
+  letter-spacing: 2px;
+  text-transform: uppercase;
+  margin-bottom: 8px;
+}
+.kc-question {
+  font-size: 17px;
+  font-weight: bold;
+  color: #1a1a1a;
+  margin-bottom: 18px;
+  line-height: 1.4;
+}
+.kc-answers { list-style: none; padding: 0; }
+.kc-answer {
+  background: #ffffff;
+  border: 2px solid #dddddd;
+  border-radius: 6px;
+  padding: 12px 16px;
+  margin-bottom: 10px;
+  cursor: pointer;
+  font-size: 15px;
+  color: #1a1a1a;
+  transition: all 0.15s ease;
+}
+.kc-answer:hover { border-color: #2a9d8f; background: #f0faf8; }
+.kc-answer.correct {
+  background: #d8f0eb;
+  border-color: #2a9d8f;
+  color: #1a7a6e;
+  font-weight: bold;
+}
+.kc-answer.wrong {
+  background: #fde5e5;
+  border-color: #c43030;
+  color: #8a1f1f;
+}
+.kc-answer.disabled { cursor: not-allowed; pointer-events: none; opacity: 0.6; }
+.kc-answer.disabled.correct { opacity: 1; }
+.kc-answer.disabled.wrong { opacity: 1; }
+
+.kc-feedback {
+  display: none;
+  margin-top: 16px;
+  padding: 14px 16px;
+  border-radius: 6px;
+  font-size: 14px;
+}
+.kc-feedback.correct {
+  display: block;
+  background: #f0faf8;
+  border: 1px solid #2a9d8f;
+  color: #1a7a6e;
+}
+.kc-feedback.wrong {
+  display: block;
+  background: #fde5e5;
+  border: 1px solid #c43030;
+  color: #8a1f1f;
+}
+.kc-feedback strong { display: block; margin-bottom: 4px; }
+
+/* Nav buttons */
+.nav-row {
+  padding: 16px 24px;
+  background: #f9f9f9;
+  border-top: 1px solid #e5e5e5;
+  text-align: right;
+}
+.nav-btn {
+  background: #2a9d8f;
+  color: #ffffff;
+  border: none;
+  padding: 10px 22px;
+  font-size: 13px;
+  font-weight: bold;
+  letter-spacing: 1px;
+  text-transform: uppercase;
+  border-radius: 4px;
+  cursor: pointer;
+  font-family: 'Source Sans 3', Arial, sans-serif;
+}
+.nav-btn:hover { background: #1a7a6e; }
+.nav-btn:disabled { background: #cccccc; cursor: not-allowed; }
+.nav-btn.prev { background: #888888; margin-right: 8px; }
+.nav-btn.prev:hover { background: #555555; }
+
+/* Completion */
+.complete-box {
+  display: none;
+  padding: 24px;
+  text-align: center;
+  background: #f0faf8;
+  border-top: 4px solid #2a9d8f;
+}
+.complete-box.active { display: block; }
+.complete-title {
+  font-family: 'Oswald', Arial, sans-serif;
+  color: #1a7a6e;
+  font-size: 22px;
+  font-weight: bold;
+  margin-bottom: 8px;
+}
+.complete-text {
+  color: #1a1a1a;
+  font-size: 15px;
+  margin-bottom: 14px;
+}
+.complete-stats {
+  display: inline-block;
+  background: #ffffff;
+  border: 1px solid #d0ede9;
+  border-radius: 4px;
+  padding: 8px 14px;
+  font-size: 13px;
+  color: #1a7a6e;
+  font-weight: bold;
+}
+</style>
+</head>
+<body>
+<div class="container">
+
+  <div class="lesson-header">
+    <div class="lesson-eyebrow">AUTOA 123 - Suspension Micro Lesson</div>
+    <div class="lesson-title">Stabilizer Bars</div>
+    <div class="lesson-subtitle">How sway bars resist body roll in corners</div>
+  </div>
+
+  <div class="progress-wrapper">
+    <div class="progress-label">Progress - <span id="progressText">0%</span></div>
+    <div class="progress-track"><div id="progressFill" class="progress-fill"></div></div>
+  </div>
+
+  <div id="slide1" class="slide active">
+    <div class="slide-eyebrow">Slide 1 of 3</div>
+    <div class="slide-title">What It Does</div>
+    <div class="slide-body">
+<p>The <strong>stabilizer bar</strong> (also called a sway bar or anti-roll bar) is a torsion spring that connects the left and right suspension on the same axle.</p>
+<p>When both wheels move together (over a bump), the bar rotates as a unit and does nothing. But when one wheel moves and the other doesn't (body roll in a corner), the bar twists - and that twist resists the motion.</p>
+<div class="callout">
+  <div class="callout-label">In a corner</div>
+  <p>The outside suspension compresses, the inside extends. The bar links them. The twist resistance reduces how far the body leans, keeping the vehicle flatter through the turn.</p>
+</div>
+    </div>
+  </div>
+  <div id="slide2" class="slide">
+    <div class="slide-eyebrow">Slide 2 of 3</div>
+    <div class="slide-title">Components</div>
+    <div class="slide-body">
+<p>A typical stabilizer bar setup has these parts:</p>
+<ul class="slide-list">
+  <li><strong>The bar itself</strong> - hollow or solid steel, often coated</li>
+  <li><strong>Frame bushings</strong> - hold the bar to the chassis, allow it to rotate</li>
+  <li><strong>End links</strong> - connect each end of the bar to the suspension (usually the lower control arm or strut)</li>
+  <li><strong>End link bushings</strong> - allow articulation at the connections</li>
+</ul>
+<p>The end links are the most common failure point. They take repeated bending and the bushings wear out.</p>
+    </div>
+  </div>
+  <div id="slide3" class="slide">
+    <div class="slide-eyebrow">Slide 3 of 3</div>
+    <div class="slide-title">Diagnosing Sway Bar Issues</div>
+    <div class="slide-body">
+<p>Common symptoms:</p>
+<ul class="slide-list">
+  <li><strong>Clunk on bumps</strong> - usually a loose or cracked end link, or worn bushings</li>
+  <li><strong>Excessive body roll</strong> - broken bar, missing bar, or completely worn bushings</li>
+  <li><strong>Rattling over rough roads</strong> - loose end link, missing bushing</li>
+</ul>
+<div class="warn">
+  <div class="warn-label">Test it</div>
+  <p>With the vehicle on a hoist, grab the end link and try to wiggle it. Significant play = bushing or joint wear. Listen and feel for clicks. Compare both sides.</p>
+</div>
+    </div>
+  </div>
+
+
+  <div id="kc1" class="kc-slide">
+    <div class="kc-eyebrow">Knowledge Check - Question 1 of 3</div>
+    <div class="kc-question">Which suspension component counteracts body lean during cornering?</div>
+      <ul class="kc-answers">
+        <li class="kc-answer" data-correct="false" onclick="answer(0, false, this)">Control arm</li>
+        <li class="kc-answer" data-correct="false" onclick="answer(0, false, this)">Strut</li>
+        <li class="kc-answer" data-correct="true" onclick="answer(0, true, this)">Stabilizer bar</li>
+        <li class="kc-answer" data-correct="false" onclick="answer(0, false, this)">Torsion bar</li>
+      </ul>
+
+    <div id="feedback1-correct" class="kc-feedback correct">
+      <strong>Correct.</strong>
+      The stabilizer (sway) bar twists when one wheel moves differently from the other - that twist resists body roll in corners.
+    </div>
+    <div id="feedback1-wrong" class="kc-feedback wrong">
+      <strong>Not quite.</strong>
+      Stabilizer bars connect left to right and resist body roll specifically. Control arms locate the wheel. Struts handle vertical motion. Torsion bars work as primary springs.
+    </div>
+  </div>
+  <div id="kc2" class="kc-slide">
+    <div class="kc-eyebrow">Knowledge Check - Question 2 of 3</div>
+    <div class="kc-question">A customer complains of a 'clunk' when driving over bumps. The vehicle drives straight. What suspension component is most likely worn?</div>
+      <ul class="kc-answers">
+        <li class="kc-answer" data-correct="false" onclick="answer(1, false, this)">The coil spring</li>
+        <li class="kc-answer" data-correct="false" onclick="answer(1, false, this)">The wheel bearing</li>
+        <li class="kc-answer" data-correct="true" onclick="answer(1, true, this)">A stabilizer bar end link</li>
+        <li class="kc-answer" data-correct="false" onclick="answer(1, false, this)">The shock absorber</li>
+      </ul>
+
+    <div id="feedback2-correct" class="kc-feedback correct">
+      <strong>Correct.</strong>
+      End links are the most common source of clunking over bumps. The bushings wear, the ball stud loosens, and the link makes noise on every bump.
+    </div>
+    <div id="feedback2-wrong" class="kc-feedback wrong">
+      <strong>Not quite.</strong>
+      Springs don't clunk. Bearings hum or growl. Shocks usually clunk only when seriously damaged. End links are the #1 source of bump-clunk noise.
+    </div>
+  </div>
+  <div id="kc3" class="kc-slide">
+    <div class="kc-eyebrow">Knowledge Check - Question 3 of 3</div>
+    <div class="kc-question">What is the function of the stabilizer bar when both wheels hit a bump at the same time?</div>
+      <ul class="kc-answers">
+        <li class="kc-answer" data-correct="false" onclick="answer(2, false, this)">It maximizes the suspension travel</li>
+        <li class="kc-answer" data-correct="true" onclick="answer(2, true, this)">Nothing - it just rotates as a unit and does not twist</li>
+        <li class="kc-answer" data-correct="false" onclick="answer(2, false, this)">It absorbs the impact like a third spring</li>
+        <li class="kc-answer" data-correct="false" onclick="answer(2, false, this)">It locks the suspension to prevent motion</li>
+      </ul>
+
+    <div id="feedback3-correct" class="kc-feedback correct">
+      <strong>Correct.</strong>
+      When both wheels move equally, the bar rotates as a single unit with no twist - so it adds no resistance. Only differential motion (one wheel up, one not) makes it work.
+    </div>
+    <div id="feedback3-wrong" class="kc-feedback wrong">
+      <strong>Not quite.</strong>
+      The bar only resists DIFFERENTIAL motion between sides. Equal compression on both sides rotates the bar without twisting it, so it doesn't do anything in that case.
+    </div>
+  </div>
+
+
+  <div id="completeBox" class="complete-box">
+    <div class="complete-title">Lesson Complete</div>
+    <div class="complete-text">You finished the Stabilizer Bars micro lesson.</div>
+    <div class="complete-stats">Score: <span id="finalScore">0</span> / 3</div>
+  </div>
+
+  <div class="nav-row">
+    <button id="prevBtn" class="nav-btn prev" onclick="prev()" disabled>Back</button>
+    <button id="nextBtn" class="nav-btn" onclick="next()">Next</button>
+  </div>
+
+</div>
+
+<script>
+const TOTAL_STEPS = 6;
+let currentStep = 0;
+let score = 0;
+let answered = [false, false, false];
+
+function updateProgress() {
+  const pct = Math.round((currentStep / TOTAL_STEPS) * 100);
+  document.getElementById('progressFill').style.width = pct + '%';
+  document.getElementById('progressText').textContent = pct + '%';
+}
+
+function showStep(idx) {
+  // Hide all slides and KC questions
+  document.querySelectorAll('.slide, .kc-slide').forEach(s => s.classList.remove('active'));
+  document.getElementById('completeBox').classList.remove('active');
+
+  if (idx < 3) {
+    document.getElementById('slide' + (idx + 1)).classList.add('active');
+  } else if (idx < 6) {
+    document.getElementById('kc' + (idx - 2)).classList.add('active');
+  } else {
+    // Complete
+    document.getElementById('completeBox').classList.add('active');
+    document.getElementById('finalScore').textContent = score;
+    document.getElementById('nextBtn').style.display = 'none';
+  }
+
+  document.getElementById('prevBtn').disabled = (idx === 0);
+  document.getElementById('nextBtn').textContent = (idx >= 5) ? 'Finish' : 'Next';
+
+  // For KC slides, disable Next until answered
+  if (idx >= 3 && idx < 6) {
+    const kcIdx = idx - 3;
+    document.getElementById('nextBtn').disabled = !answered[kcIdx];
+  } else {
+    document.getElementById('nextBtn').disabled = false;
+  }
+
+  updateProgress();
+}
+
+function next() {
+  if (currentStep < TOTAL_STEPS) {
+    currentStep++;
+    showStep(currentStep);
+  }
+}
+
+function prev() {
+  if (currentStep > 0) {
+    currentStep--;
+    showStep(currentStep);
+  }
+}
+
+function answer(qIdx, isCorrect, btn) {
+  if (answered[qIdx]) return;
+  answered[qIdx] = true;
+
+  const allAnswers = btn.parentElement.querySelectorAll('.kc-answer');
+  allAnswers.forEach(a => a.classList.add('disabled'));
+
+  if (isCorrect) {
+    btn.classList.add('correct');
+    score++;
+    document.getElementById('feedback' + (qIdx + 1) + '-correct').style.display = 'block';
+  } else {
+    btn.classList.add('wrong');
+    // Also highlight the correct one
+    allAnswers.forEach(a => {
+      if (a.getAttribute('data-correct') === 'true') {
+        a.classList.add('correct');
+      }
+    });
+    document.getElementById('feedback' + (qIdx + 1) + '-wrong').style.display = 'block';
+  }
+
+  document.getElementById('nextBtn').disabled = false;
+}
+
+// Init
+showStep(0);
+</script>
+</body>
+</html>

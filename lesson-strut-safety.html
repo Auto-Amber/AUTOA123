@@ -1,0 +1,500 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Strut Spring Compressor Safety - AUTOA 123</title>
+<style>
+* { box-sizing: border-box; margin: 0; padding: 0; }
+body {
+  font-family: 'Source Sans 3', 'Source Sans Pro', Arial, sans-serif;
+  background: #f5f5f5;
+  color: #1a1a1a;
+  line-height: 1.5;
+  padding: 20px;
+}
+.container {
+  max-width: 800px;
+  margin: 0 auto;
+  background: #ffffff;
+  border-radius: 8px;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+  overflow: hidden;
+}
+
+/* Header */
+.lesson-header {
+  background: #1a1a1a;
+  padding: 18px 24px;
+  border-bottom: 4px solid #2a9d8f;
+}
+.lesson-eyebrow {
+  color: #2a9d8f;
+  font-size: 11px;
+  font-weight: bold;
+  letter-spacing: 2px;
+  text-transform: uppercase;
+  margin-bottom: 4px;
+}
+.lesson-title {
+  font-family: 'Oswald', Arial, sans-serif;
+  color: #ffffff;
+  font-size: 24px;
+  font-weight: bold;
+  line-height: 1.2;
+}
+.lesson-subtitle {
+  color: #cccccc;
+  font-size: 13px;
+  margin-top: 4px;
+}
+
+/* Progress bar */
+.progress-wrapper {
+  padding: 14px 24px 0 24px;
+  background: #ffffff;
+}
+.progress-label {
+  font-size: 11px;
+  font-weight: bold;
+  color: #555555;
+  letter-spacing: 1px;
+  text-transform: uppercase;
+  margin-bottom: 6px;
+}
+.progress-track {
+  width: 100%;
+  height: 6px;
+  background: #3a3a3a;
+  border-radius: 3px;
+  overflow: hidden;
+}
+.progress-fill {
+  height: 100%;
+  background: #e9a825;
+  width: 0%;
+  transition: width 0.3s ease;
+  border-radius: 3px;
+}
+
+/* Slides */
+.slide {
+  padding: 24px;
+  display: none;
+}
+.slide.active { display: block; }
+
+.slide-eyebrow {
+  color: #2a9d8f;
+  font-size: 11px;
+  font-weight: bold;
+  letter-spacing: 2px;
+  text-transform: uppercase;
+  margin-bottom: 8px;
+}
+.slide-title {
+  font-family: 'Oswald', Arial, sans-serif;
+  color: #1a1a1a;
+  font-size: 22px;
+  font-weight: bold;
+  margin-bottom: 14px;
+}
+.slide-body p {
+  font-size: 15px;
+  color: #1a1a1a;
+  margin-bottom: 12px;
+}
+.slide-body strong { color: #1a7a6e; }
+
+.callout {
+  background: #f0faf8;
+  border: 1px solid #d0ede9;
+  border-left: 5px solid #2a9d8f;
+  border-radius: 4px;
+  padding: 12px 16px;
+  margin: 14px 0;
+}
+.callout-label {
+  color: #1a7a6e;
+  font-size: 11px;
+  font-weight: bold;
+  letter-spacing: 2px;
+  text-transform: uppercase;
+  margin-bottom: 6px;
+}
+.callout p { margin-bottom: 0; font-size: 14px; }
+
+.warn {
+  background: #fffbf0;
+  border: 1px solid #fdf0c8;
+  border-left: 5px solid #e9a825;
+  border-radius: 4px;
+  padding: 12px 16px;
+  margin: 14px 0;
+}
+.warn-label {
+  color: #b07d00;
+  font-size: 11px;
+  font-weight: bold;
+  letter-spacing: 2px;
+  text-transform: uppercase;
+  margin-bottom: 6px;
+}
+.warn p { margin-bottom: 0; font-size: 14px; }
+
+.slide-list { margin: 8px 0 12px 0; padding-left: 22px; }
+.slide-list li { font-size: 15px; margin-bottom: 6px; }
+
+/* Knowledge check */
+.kc-slide { padding: 24px; display: none; }
+.kc-slide.active { display: block; }
+
+.kc-eyebrow {
+  color: #b07d00;
+  font-size: 11px;
+  font-weight: bold;
+  letter-spacing: 2px;
+  text-transform: uppercase;
+  margin-bottom: 8px;
+}
+.kc-question {
+  font-size: 17px;
+  font-weight: bold;
+  color: #1a1a1a;
+  margin-bottom: 18px;
+  line-height: 1.4;
+}
+.kc-answers { list-style: none; padding: 0; }
+.kc-answer {
+  background: #ffffff;
+  border: 2px solid #dddddd;
+  border-radius: 6px;
+  padding: 12px 16px;
+  margin-bottom: 10px;
+  cursor: pointer;
+  font-size: 15px;
+  color: #1a1a1a;
+  transition: all 0.15s ease;
+}
+.kc-answer:hover { border-color: #2a9d8f; background: #f0faf8; }
+.kc-answer.correct {
+  background: #d8f0eb;
+  border-color: #2a9d8f;
+  color: #1a7a6e;
+  font-weight: bold;
+}
+.kc-answer.wrong {
+  background: #fde5e5;
+  border-color: #c43030;
+  color: #8a1f1f;
+}
+.kc-answer.disabled { cursor: not-allowed; pointer-events: none; opacity: 0.6; }
+.kc-answer.disabled.correct { opacity: 1; }
+.kc-answer.disabled.wrong { opacity: 1; }
+
+.kc-feedback {
+  display: none;
+  margin-top: 16px;
+  padding: 14px 16px;
+  border-radius: 6px;
+  font-size: 14px;
+}
+.kc-feedback.correct {
+  display: block;
+  background: #f0faf8;
+  border: 1px solid #2a9d8f;
+  color: #1a7a6e;
+}
+.kc-feedback.wrong {
+  display: block;
+  background: #fde5e5;
+  border: 1px solid #c43030;
+  color: #8a1f1f;
+}
+.kc-feedback strong { display: block; margin-bottom: 4px; }
+
+/* Nav buttons */
+.nav-row {
+  padding: 16px 24px;
+  background: #f9f9f9;
+  border-top: 1px solid #e5e5e5;
+  text-align: right;
+}
+.nav-btn {
+  background: #2a9d8f;
+  color: #ffffff;
+  border: none;
+  padding: 10px 22px;
+  font-size: 13px;
+  font-weight: bold;
+  letter-spacing: 1px;
+  text-transform: uppercase;
+  border-radius: 4px;
+  cursor: pointer;
+  font-family: 'Source Sans 3', Arial, sans-serif;
+}
+.nav-btn:hover { background: #1a7a6e; }
+.nav-btn:disabled { background: #cccccc; cursor: not-allowed; }
+.nav-btn.prev { background: #888888; margin-right: 8px; }
+.nav-btn.prev:hover { background: #555555; }
+
+/* Completion */
+.complete-box {
+  display: none;
+  padding: 24px;
+  text-align: center;
+  background: #f0faf8;
+  border-top: 4px solid #2a9d8f;
+}
+.complete-box.active { display: block; }
+.complete-title {
+  font-family: 'Oswald', Arial, sans-serif;
+  color: #1a7a6e;
+  font-size: 22px;
+  font-weight: bold;
+  margin-bottom: 8px;
+}
+.complete-text {
+  color: #1a1a1a;
+  font-size: 15px;
+  margin-bottom: 14px;
+}
+.complete-stats {
+  display: inline-block;
+  background: #ffffff;
+  border: 1px solid #d0ede9;
+  border-radius: 4px;
+  padding: 8px 14px;
+  font-size: 13px;
+  color: #1a7a6e;
+  font-weight: bold;
+}
+</style>
+</head>
+<body>
+<div class="container">
+
+  <div class="lesson-header">
+    <div class="lesson-eyebrow">AUTOA 123 - Suspension Micro Lesson</div>
+    <div class="lesson-title">Strut Spring Compressor Safety</div>
+    <div class="lesson-subtitle">Stored energy can kill - how to do it right</div>
+  </div>
+
+  <div class="progress-wrapper">
+    <div class="progress-label">Progress - <span id="progressText">0%</span></div>
+    <div class="progress-track"><div id="progressFill" class="progress-fill"></div></div>
+  </div>
+
+  <div id="slide1" class="slide active">
+    <div class="slide-eyebrow">Slide 1 of 3</div>
+    <div class="slide-title">The Danger</div>
+    <div class="slide-body">
+<p>A coil spring on a strut stores enough energy to be <strong>fatal</strong> if released suddenly. A typical strut spring holds 40+ joules of stored energy under load.</p>
+<p>If a spring releases unexpectedly:</p>
+<ul class="slide-list">
+  <li>It can launch with enough velocity to penetrate the human body</li>
+  <li>It can reach speeds that exceed bullet velocities at close range</li>
+  <li>Even a "lucky" miss often damages walls, equipment, and other tools</li>
+</ul>
+<div class="warn">
+  <div class="warn-label">Real consequence</div>
+  <p>Search "strut spring injury" and you'll find documented fatalities and severe injuries. This is not theoretical. There is no second chance.</p>
+</div>
+    </div>
+  </div>
+  <div id="slide2" class="slide">
+    <div class="slide-eyebrow">Slide 2 of 3</div>
+    <div class="slide-title">Before You Start</div>
+    <div class="slide-body">
+<p>Required steps every time you compress a strut spring:</p>
+<ul class="slide-list">
+  <li><strong>Inspect the compressor</strong> - no cracks, no bent hooks, no missing parts</li>
+  <li><strong>Verify the rating</strong> - the compressor must be rated for the spring you're working on</li>
+  <li><strong>Use a strut cage when available</strong> - safer than open-style compressors</li>
+  <li><strong>Seat the hooks fully</strong> on spring coils - never partial</li>
+  <li><strong>Compress evenly</strong> - alternate sides so the spring doesn't skew or pop out</li>
+</ul>
+<div class="callout">
+  <div class="callout-label">Stop and ask</div>
+  <p>If anything doesn't look right, STOP. Ask your instructor. There are no points lost for asking. There are points lost - and worse - for guessing wrong on safety.</p>
+</div>
+    </div>
+  </div>
+  <div id="slide3" class="slide">
+    <div class="slide-eyebrow">Slide 3 of 3</div>
+    <div class="slide-title">Never Do These</div>
+    <div class="slide-body">
+<p>Things that will get you hurt or killed:</p>
+<ul class="slide-list">
+  <li><strong>Never</strong> disassemble a strut without compressing the spring first</li>
+  <li><strong>Never</strong> use a damaged or wrong-size compressor</li>
+  <li><strong>Never</strong> compress one side without alternating - the spring will skew and could shoot out</li>
+  <li><strong>Never</strong> stand in line with the spring's axis during compression</li>
+  <li><strong>Never</strong> walk away from a compressed spring - even for a minute</li>
+</ul>
+<div class="warn">
+  <div class="warn-label">Procedure for removal</div>
+  <p>Compress until the spring is loose at the top mount. Confirm it's loose by hand-rotating. Only then remove the top nut. After the strut is apart, store the compressed spring in a safe place.</p>
+</div>
+    </div>
+  </div>
+
+
+  <div id="kc1" class="kc-slide">
+    <div class="kc-eyebrow">Knowledge Check - Question 1 of 3</div>
+    <div class="kc-question">Before the strut insert (cartridge) can be removed from a typical MacPherson strut assembly, what operation is necessary to prevent personal injury?</div>
+      <ul class="kc-answers">
+        <li class="kc-answer" data-correct="false" onclick="answer(0, false, this)">Remove the brake caliper and hose from the strut housing</li>
+        <li class="kc-answer" data-correct="true" onclick="answer(0, true, this)">Compress the coil spring</li>
+        <li class="kc-answer" data-correct="false" onclick="answer(0, false, this)">Remove the upper strut mounting bolts</li>
+        <li class="kc-answer" data-correct="false" onclick="answer(0, false, this)">Remove the lower attaching bolts</li>
+      </ul>
+
+    <div id="feedback1-correct" class="kc-feedback correct">
+      <strong>Correct.</strong>
+      The coil spring stores enough energy to kill. Always compress the spring before removing the top nut or attempting any strut disassembly. The other steps don't address the stored spring energy.
+    </div>
+    <div id="feedback1-wrong" class="kc-feedback wrong">
+      <strong>Not quite.</strong>
+      The danger is stored spring energy. Compressing the spring relieves the load on the top nut so the strut can be safely disassembled. Removing mounting bolts doesn't reduce the spring's stored energy.
+    </div>
+  </div>
+  <div id="kc2" class="kc-slide">
+    <div class="kc-eyebrow">Knowledge Check - Question 2 of 3</div>
+    <div class="kc-question">Which of these is a SAFE practice when using a strut spring compressor?</div>
+      <ul class="kc-answers">
+        <li class="kc-answer" data-correct="false" onclick="answer(1, false, this)">Compressing one side fully before compressing the other side</li>
+        <li class="kc-answer" data-correct="false" onclick="answer(1, false, this)">Using a compressor rated for a smaller spring if it physically fits</li>
+        <li class="kc-answer" data-correct="true" onclick="answer(1, true, this)">Verifying the compressor is rated for the spring, seating hooks fully, and alternating sides</li>
+        <li class="kc-answer" data-correct="false" onclick="answer(1, false, this)">Standing in line with the spring axis to watch for slipping</li>
+      </ul>
+
+    <div id="feedback2-correct" class="kc-feedback correct">
+      <strong>Correct.</strong>
+      Verify the rating, seat the hooks fully, alternate sides. That's the safe practice. Each step prevents a specific failure mode.
+    </div>
+    <div id="feedback2-wrong" class="kc-feedback wrong">
+      <strong>Not quite.</strong>
+      Safe practice is: rated compressor, fully seated hooks, alternating sides. Compressing one side fully first skews the spring. Wrong-rated compressors fail. Standing in the line of fire is exactly what you don't do.
+    </div>
+  </div>
+  <div id="kc3" class="kc-slide">
+    <div class="kc-eyebrow">Knowledge Check - Question 3 of 3</div>
+    <div class="kc-question">You compressed the spring but can't tell if it's loose enough to safely remove the top nut. What should you do?</div>
+      <ul class="kc-answers">
+        <li class="kc-answer" data-correct="false" onclick="answer(2, false, this)">Try to remove the nut and see what happens</li>
+        <li class="kc-answer" data-correct="false" onclick="answer(2, false, this)">Tap the spring with a hammer to test</li>
+        <li class="kc-answer" data-correct="true" onclick="answer(2, true, this)">Compress further until you can rotate the spring by hand at the top mount</li>
+        <li class="kc-answer" data-correct="false" onclick="answer(2, false, this)">Loosen the nut slowly while staying close</li>
+      </ul>
+
+    <div id="feedback3-correct" class="kc-feedback correct">
+      <strong>Correct.</strong>
+      If you can rotate the spring at the top mount by hand, it's loose - the spring is no longer pushing against the top mount. Only then is it safe to remove the top nut.
+    </div>
+    <div id="feedback3-wrong" class="kc-feedback wrong">
+      <strong>Not quite.</strong>
+      The test is: can you rotate the spring by hand at the top mount? If yes, it's loose enough. If no, compress more. Guessing, hammering, or 'trying' the nut are all unsafe. Always verify the spring is fully relieved.
+    </div>
+  </div>
+
+
+  <div id="completeBox" class="complete-box">
+    <div class="complete-title">Lesson Complete</div>
+    <div class="complete-text">You finished the Strut Spring Compressor Safety micro lesson.</div>
+    <div class="complete-stats">Score: <span id="finalScore">0</span> / 3</div>
+  </div>
+
+  <div class="nav-row">
+    <button id="prevBtn" class="nav-btn prev" onclick="prev()" disabled>Back</button>
+    <button id="nextBtn" class="nav-btn" onclick="next()">Next</button>
+  </div>
+
+</div>
+
+<script>
+const TOTAL_STEPS = 6;
+let currentStep = 0;
+let score = 0;
+let answered = [false, false, false];
+
+function updateProgress() {
+  const pct = Math.round((currentStep / TOTAL_STEPS) * 100);
+  document.getElementById('progressFill').style.width = pct + '%';
+  document.getElementById('progressText').textContent = pct + '%';
+}
+
+function showStep(idx) {
+  // Hide all slides and KC questions
+  document.querySelectorAll('.slide, .kc-slide').forEach(s => s.classList.remove('active'));
+  document.getElementById('completeBox').classList.remove('active');
+
+  if (idx < 3) {
+    document.getElementById('slide' + (idx + 1)).classList.add('active');
+  } else if (idx < 6) {
+    document.getElementById('kc' + (idx - 2)).classList.add('active');
+  } else {
+    // Complete
+    document.getElementById('completeBox').classList.add('active');
+    document.getElementById('finalScore').textContent = score;
+    document.getElementById('nextBtn').style.display = 'none';
+  }
+
+  document.getElementById('prevBtn').disabled = (idx === 0);
+  document.getElementById('nextBtn').textContent = (idx >= 5) ? 'Finish' : 'Next';
+
+  // For KC slides, disable Next until answered
+  if (idx >= 3 && idx < 6) {
+    const kcIdx = idx - 3;
+    document.getElementById('nextBtn').disabled = !answered[kcIdx];
+  } else {
+    document.getElementById('nextBtn').disabled = false;
+  }
+
+  updateProgress();
+}
+
+function next() {
+  if (currentStep < TOTAL_STEPS) {
+    currentStep++;
+    showStep(currentStep);
+  }
+}
+
+function prev() {
+  if (currentStep > 0) {
+    currentStep--;
+    showStep(currentStep);
+  }
+}
+
+function answer(qIdx, isCorrect, btn) {
+  if (answered[qIdx]) return;
+  answered[qIdx] = true;
+
+  const allAnswers = btn.parentElement.querySelectorAll('.kc-answer');
+  allAnswers.forEach(a => a.classList.add('disabled'));
+
+  if (isCorrect) {
+    btn.classList.add('correct');
+    score++;
+    document.getElementById('feedback' + (qIdx + 1) + '-correct').style.display = 'block';
+  } else {
+    btn.classList.add('wrong');
+    // Also highlight the correct one
+    allAnswers.forEach(a => {
+      if (a.getAttribute('data-correct') === 'true') {
+        a.classList.add('correct');
+      }
+    });
+    document.getElementById('feedback' + (qIdx + 1) + '-wrong').style.display = 'block';
+  }
+
+  document.getElementById('nextBtn').disabled = false;
+}
+
+// Init
+showStep(0);
+</script>
+</body>
+</html>
