@@ -1,0 +1,168 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Metering Devices - HVAC Micro Lesson</title>
+<style>
+*{box-sizing:border-box;}
+body{margin:0;padding:10px;font-family:Arial, Helvetica, sans-serif;background:transparent;color:#1a1a1a;}
+.wrap{max-width:760px;margin:0 auto;}
+.card{border:1px solid #e2e2e2;border-radius:8px;overflow:hidden;background:#fff;}
+.hd{background:#1a1a1a;border-top:4px solid #2a9d8f;padding:14px 20px;}
+.hd .kicker{color:#2a9d8f;font-size:10px;font-weight:bold;letter-spacing:2px;text-transform:uppercase;}
+.hd .ttl{color:#fff;font-size:19px;font-weight:bold;margin-top:3px;}
+.prog{padding:12px 20px 0;}
+.prog-label{font-size:11px;color:#555555;text-transform:uppercase;letter-spacing:1px;font-weight:bold;margin-bottom:6px;}
+.track{height:6px;background:#3a3a3a;border-radius:3px;overflow:hidden;}
+.fill{height:6px;background:#e9a825;width:0;border-radius:3px;transition:width .3s ease;}
+.body{padding:18px 20px 20px;}
+.tag{color:#1a7a6e;font-size:11px;font-weight:bold;letter-spacing:1px;text-transform:uppercase;margin-bottom:6px;}
+.h{font-size:20px;font-weight:bold;color:#1a1a1a;margin:0 0 10px;}
+.p{font-size:15px;line-height:1.5;color:#1a1a1a;margin:0 0 10px;}
+.li{font-size:15px;line-height:1.45;color:#1a1a1a;margin:0 0 7px;padding-left:16px;position:relative;}
+.li:before{content:"";position:absolute;left:0;top:8px;width:6px;height:6px;background:#2a9d8f;border-radius:50%;}
+.note{background:#fffbf0;border-left:4px solid #e9a825;border-radius:0 6px 6px 0;padding:9px 12px;margin:10px 0 0;font-size:13px;color:#b07d00;}
+.q{font-size:16px;font-weight:bold;color:#1a1a1a;margin:0 0 12px;}
+.opt{display:block;width:100%;text-align:left;padding:11px 14px;border:1px solid #d5d5d5;border-radius:6px;margin-bottom:9px;background:#fff;font-size:14px;color:#1a1a1a;cursor:pointer;font-family:Arial, Helvetica, sans-serif;transition:background .15s,border-color .15s;}
+.opt:hover{border-color:#2a9d8f;}
+.opt.correct{background:#f0faf8;border-color:#2a9d8f;font-weight:bold;}
+.opt.wrong{background:#fdeaea;border-color:#cc0000;}
+.opt:disabled{cursor:default;}
+.mark{float:right;font-weight:bold;}
+.explain{display:none;border-radius:6px;padding:11px 14px;margin-top:4px;font-size:13.5px;line-height:1.45;}
+.explain.ok{background:#f0faf8;border:1px solid #d0ede8;color:#1a1a1a;}
+.explain.no{background:#fdeaea;border:1px solid #f3c2c2;color:#1a1a1a;}
+.explain b{color:#1a7a6e;}
+.nav{display:flex;justify-content:space-between;align-items:center;padding:14px 20px;border-top:1px solid #eee;background:#fafafa;}
+.btn{background:#2a9d8f;color:#fff;border:none;padding:10px 20px;border-radius:6px;font-size:13px;font-weight:bold;letter-spacing:.05em;text-transform:uppercase;cursor:pointer;font-family:Arial, Helvetica, sans-serif;}
+.btn:disabled{background:#cccccc;cursor:default;}
+.back{background:none;color:#555555;border:none;font-size:13px;cursor:pointer;font-family:Arial, Helvetica, sans-serif;font-weight:bold;}
+.back:disabled{color:#cccccc;cursor:default;}
+.complete{text-align:center;padding:8px 4px;}
+.complete .badge{display:inline-block;background:#2a9d8f;color:#fff;border-radius:50%;width:54px;height:54px;line-height:54px;font-size:26px;font-weight:bold;margin-bottom:10px;}
+.complete .ttl{font-size:22px;font-weight:bold;color:#1a1a1a;margin-bottom:6px;}
+.complete .score{font-size:15px;color:#555555;margin-bottom:14px;}
+.restart{background:none;border:1px solid #2a9d8f;color:#1a7a6e;padding:8px 16px;border-radius:6px;font-size:13px;font-weight:bold;cursor:pointer;font-family:Arial, Helvetica, sans-serif;}
+.panel{display:none;}
+.panel.show{display:block;}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <div class="card">
+    <div class="hd">
+      <div class="kicker">AUTOA 123 &middot; HVAC Micro Lesson</div>
+      <div class="ttl">Metering Devices</div>
+    </div>
+    <div class="prog">
+      <div class="prog-label" id="plabel">Progress - 0%</div>
+      <div class="track"><div class="fill" id="fill"></div></div>
+    </div>
+    <div class="body">
+<div class="panel" data-type="c">
+  <div class="tag">Slide 1 of 3</div>
+  <h2 class="h">Why Meter the Refrigerant</h2>
+  <div class="li">The metering device sits at the inlet of the evaporator.</div><div class="li">It controls how much refrigerant flows into the evaporator.</div><div class="li">It drops high pressure liquid down to low pressure so the refrigerant can boil and absorb heat.</div>
+  
+</div>
+<div class="panel" data-type="c">
+  <div class="tag">Slide 2 of 3</div>
+  <h2 class="h">Thermostatic Expansion Valve (TXV)</h2>
+  <div class="li">A TXV senses temperature at the evaporator outlet using a sensing bulb.</div><div class="li">When the outlet is warm the valve opens for more flow. When the outlet is cold it closes.</div><div class="li">It uses a pintle, which is a ball and seat valve, and it is paired with a receiver drier.</div>
+  
+</div>
+<div class="panel" data-type="c">
+  <div class="tag">Slide 3 of 3</div>
+  <h2 class="h">Orifice Tube (CCOT)</h2>
+  <div class="li">An orifice tube is a fixed opening. Refrigerant expands as it passes through.</div><div class="li">A low pressure switch cycles the compressor clutch to keep the evaporator from freezing.</div><div class="li">When pressure drops below specification the switch opens the circuit. It is paired with an accumulator.</div>
+  <div class="note">TXV pairs with a receiver drier. Orifice tube pairs with an accumulator.</div>
+</div>
+<div class="panel" data-type="q">
+  <div class="tag">Knowledge Check 1 of 3</div>
+  <p class="q">A thermostatic expansion valve controls refrigerant flow based on what?</p>
+  <button class="opt" data-correct="0">Engine speed<span class="mark"></span></button><button class="opt" data-correct="1">Temperature at the evaporator outlet<span class="mark"></span></button><button class="opt" data-correct="0">Outside air temperature<span class="mark"></span></button>
+  <div class="explain ok"><b>Answer: Temperature at the evaporator outlet.</b> The sensing bulb reads the evaporator outlet temperature and adjusts the valve.</div>
+</div>
+<div class="panel" data-type="q">
+  <div class="tag">Knowledge Check 2 of 3</div>
+  <p class="q">When the evaporator outlet is warm, the TXV:</p>
+  <button class="opt" data-correct="1">Opens for more flow<span class="mark"></span></button><button class="opt" data-correct="0">Closes off flow<span class="mark"></span></button><button class="opt" data-correct="0">Stays in one fixed position<span class="mark"></span></button>
+  <div class="explain ok"><b>Answer: Opens for more flow.</b> A warm outlet tells the valve more refrigerant is needed, so it opens.</div>
+</div>
+<div class="panel" data-type="q">
+  <div class="tag">Knowledge Check 3 of 3</div>
+  <p class="q">Which metering device is paired with an accumulator?</p>
+  <button class="opt" data-correct="0">Thermostatic expansion valve<span class="mark"></span></button><button class="opt" data-correct="1">Orifice tube<span class="mark"></span></button>
+  <div class="explain ok"><b>Answer: Orifice tube.</b> Orifice tube systems use an accumulator. TXV systems use a receiver drier.</div>
+</div>
+<div class="panel" data-type="done">
+  <div class="complete">
+    <div class="badge">&#10003;</div>
+    <div class="ttl">Lesson Complete</div>
+    <div class="score">You answered <strong id="scoretxt">0</strong> of 3 knowledge checks correctly.</div>
+    <button class="restart" id="restart">Start Over</button>
+  </div>
+</div>
+    </div>
+    <div class="nav">
+      <button class="back" id="back">Back</button>
+      <button class="btn" id="next">Next</button>
+    </div>
+  </div>
+</div>
+<script>
+(function(){
+  var panels=[].slice.call(document.querySelectorAll('.panel'));
+  var idx=0, total=panels.length, score=0;
+  var fill=document.getElementById('fill'), plabel=document.getElementById('plabel');
+  var next=document.getElementById('next'), back=document.getElementById('back');
+  function isQ(p){return p.getAttribute('data-type')==='q';}
+  function answered(p){return p.getAttribute('data-answered')==='1';}
+  function closestPanel(el){ while(el && !(el.classList && el.classList.contains('panel'))) el=el.parentNode; return el; }
+  function render(){
+    for(var i=0;i<panels.length;i++){ if(i===idx){panels[i].className='panel show';} else {panels[i].className='panel';} }
+    var pct=Math.round((idx/(total-1))*100);
+    fill.style.width=pct+'%'; plabel.textContent='Progress - '+pct+'%';
+    back.disabled=(idx===0);
+    var p=panels[idx];
+    next.disabled=(isQ(p)&&!answered(p));
+    if(idx===total-1){ next.style.visibility='hidden'; var sc=document.getElementById('scoretxt'); if(sc){sc.textContent=score;} }
+    else { next.style.visibility='visible'; }
+  }
+  var allopts=document.querySelectorAll('.opt');
+  for(var k=0;k<allopts.length;k++){
+    allopts[k].onclick=function(){
+      var panel=closestPanel(this);
+      if(answered(panel)) return;
+      panel.setAttribute('data-answered','1');
+      if(this.getAttribute('data-correct')==='1'){ score++; }
+      var os=panel.querySelectorAll('.opt');
+      for(var m=0;m<os.length;m++){
+        var o=os[m]; o.disabled=true;
+        var mk=o.getElementsByClassName('mark')[0];
+        if(o.getAttribute('data-correct')==='1'){ o.className='opt correct'; if(mk) mk.innerHTML='&#10003;'; }
+        else if(o===this){ o.className='opt wrong'; if(mk) mk.innerHTML='&#10007;'; }
+      }
+      panel.getElementsByClassName('explain')[0].style.display='block';
+      next.disabled=false;
+    };
+  }
+  next.onclick=function(){ if(idx<total-1){idx++;render();} };
+  back.onclick=function(){ if(idx>0){idx--;render();} };
+  var rb=document.getElementById('restart');
+  if(rb){ rb.onclick=function(){
+    score=0; idx=0;
+    for(var i=0;i<panels.length;i++){
+      var p=panels[i]; p.removeAttribute('data-answered');
+      var os=p.querySelectorAll('.opt');
+      for(var m=0;m<os.length;m++){ os[m].disabled=false; os[m].className='opt'; var mk=os[m].getElementsByClassName('mark')[0]; if(mk) mk.innerHTML=''; }
+      var e=p.getElementsByClassName('explain')[0]; if(e) e.style.display='none';
+    }
+    render();
+  };}
+  render();
+})();
+</script>
+</body>
+</html>
