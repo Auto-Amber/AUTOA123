@@ -1,0 +1,526 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Circuit Protection Devices - AUTOA 123</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Oswald:wght@400;600;700&family=Source+Sans+3:wght@400;600;700&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --dark: #1a1a1a;
+    --teal: #2a9d8f;
+    --tealdk: #1a7a6e;
+    --amber: #e9a825;
+    --amber-bg: #fffbf0;
+    --amber-inner: #fdf0c8;
+    --teal-bg: #f0faf8;
+    --teal-border: #d0ede9;
+    --subtext: #555555;
+    --correct: #1a7a6e;
+    --correct-bg: #e6f4f1;
+    --incorrect: #9b1c1c;
+    --incorrect-bg: #fde8e8;
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body {
+    font-family: 'Source Sans 3', sans-serif;
+    background: transparent;
+    color: var(--dark);
+    font-size: 15px;
+    line-height: 1.5;
+  }
+  .lesson-wrap { max-width: 720px; margin: 0 auto; padding: 16px; }
+
+  /* Header */
+  .lesson-header {
+    background: var(--dark);
+    border-radius: 8px 8px 0 0;
+    padding: 16px 20px 12px;
+    border-bottom: 4px solid var(--amber);
+  }
+  .lesson-label {
+    font-family: 'Oswald', sans-serif;
+    font-size: 11px;
+    color: var(--amber);
+    letter-spacing: 1.5px;
+    text-transform: uppercase;
+    margin-bottom: 4px;
+  }
+  .lesson-title {
+    font-family: 'Oswald', sans-serif;
+    font-size: 22px;
+    color: #ffffff;
+    font-weight: 600;
+  }
+  .lesson-subtitle {
+    font-size: 13px;
+    color: #cccccc;
+    margin-top: 4px;
+  }
+
+  /* Progress bar */
+  .progress-wrap { background: var(--dark); padding: 10px 20px 14px; }
+  .progress-label {
+    font-size: 11px;
+    color: #888888;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    margin-bottom: 5px;
+  }
+  .progress-track {
+    background: #3a3a3a;
+    border-radius: 4px;
+    height: 6px;
+    width: 100%;
+  }
+  .progress-fill {
+    background: var(--amber);
+    height: 6px;
+    border-radius: 4px;
+    transition: width 0.4s ease;
+  }
+
+  /* Slides */
+  .slide { display: none; }
+  .slide.active { display: block; }
+  .slide-card {
+    background: #ffffff;
+    border: 1px solid var(--teal-border);
+    border-radius: 0 0 8px 8px;
+    padding: 20px 24px;
+  }
+  .slide-num {
+    font-family: 'Oswald', sans-serif;
+    font-size: 11px;
+    color: var(--teal);
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    margin-bottom: 8px;
+  }
+  .slide-heading {
+    font-family: 'Oswald', sans-serif;
+    font-size: 19px;
+    color: var(--dark);
+    margin-bottom: 12px;
+    border-bottom: 2px solid var(--teal);
+    padding-bottom: 8px;
+  }
+  .slide-body { font-size: 14px; color: var(--dark); line-height: 1.6; }
+  .slide-body p { margin-bottom: 10px; }
+
+  /* Info callout */
+  .callout-teal {
+    background: var(--teal-bg);
+    border-left: 4px solid var(--teal);
+    border-radius: 0 6px 6px 0;
+    padding: 10px 14px;
+    margin: 12px 0;
+    font-size: 13px;
+  }
+  .callout-amber {
+    background: var(--amber-bg);
+    border-left: 4px solid var(--amber);
+    border-radius: 0 6px 6px 0;
+    padding: 10px 14px;
+    margin: 12px 0;
+    font-size: 13px;
+  }
+
+  /* Device comparison table */
+  .device-table { width: 100%; border-collapse: collapse; margin: 12px 0; font-size: 13px; }
+  .device-table th {
+    background: var(--dark);
+    color: #ffffff;
+    font-family: 'Oswald', sans-serif;
+    font-size: 12px;
+    letter-spacing: 0.5px;
+    padding: 8px 10px;
+    text-align: left;
+  }
+  .device-table td { padding: 8px 10px; border-bottom: 1px solid var(--teal-border); vertical-align: top; }
+  .device-table tr:nth-child(even) td { background: var(--teal-bg); }
+  .device-table tr:nth-child(odd) td { background: #ffffff; }
+  .device-name { font-weight: 700; color: var(--teal); }
+
+  /* SVG diagram area */
+  .diagram-wrap {
+    background: var(--dark);
+    border-radius: 6px;
+    padding: 16px;
+    margin: 14px 0;
+    text-align: center;
+  }
+  .diagram-wrap svg { max-width: 100%; }
+
+  /* Nav buttons */
+  .nav-row {
+    display: table;
+    width: 100%;
+    margin-top: 16px;
+  }
+  .nav-row-inner { display: table-row; }
+  .nav-cell { display: table-cell; vertical-align: middle; }
+  .nav-cell.right { text-align: right; }
+  .btn {
+    font-family: 'Oswald', sans-serif;
+    font-size: 13px;
+    letter-spacing: 0.5px;
+    font-weight: 600;
+    padding: 9px 18px;
+    border: none;
+    border-radius: 6px;
+    cursor: pointer;
+    transition: opacity 0.2s;
+    text-transform: uppercase;
+  }
+  .btn:hover { opacity: 0.85; }
+  .btn-teal { background: var(--teal); color: #ffffff; }
+  .btn-dark { background: var(--dark); color: #cccccc; }
+  .btn:disabled { opacity: 0.35; cursor: default; }
+
+  /* Quiz */
+  .quiz-section { margin-top: 20px; }
+  .quiz-q-label {
+    font-family: 'Oswald', sans-serif;
+    font-size: 11px;
+    color: var(--amber);
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    margin-bottom: 6px;
+  }
+  .quiz-question {
+    font-size: 15px;
+    font-weight: 600;
+    color: var(--dark);
+    margin-bottom: 12px;
+    line-height: 1.4;
+  }
+  .choice-btn {
+    display: block;
+    width: 100%;
+    text-align: left;
+    background: #f7f7f7;
+    border: 2px solid #dddddd;
+    border-radius: 6px;
+    padding: 10px 14px;
+    margin-bottom: 8px;
+    font-family: 'Source Sans 3', sans-serif;
+    font-size: 14px;
+    cursor: pointer;
+    transition: border-color 0.15s, background 0.15s;
+  }
+  .choice-btn:hover:not(:disabled) { border-color: var(--teal); background: var(--teal-bg); }
+  .choice-btn.correct { background: var(--correct-bg); border-color: var(--correct); color: var(--correct); font-weight: 700; }
+  .choice-btn.incorrect { background: var(--incorrect-bg); border-color: var(--incorrect); color: var(--incorrect); }
+  .choice-btn:disabled { cursor: default; }
+  .feedback-box {
+    display: none;
+    border-radius: 6px;
+    padding: 12px 14px;
+    margin-top: 10px;
+    font-size: 14px;
+    line-height: 1.5;
+  }
+  .feedback-box.correct { background: var(--correct-bg); border-left: 4px solid var(--correct); color: var(--correct); }
+  .feedback-box.incorrect { background: var(--incorrect-bg); border-left: 4px solid var(--incorrect); color: var(--incorrect); }
+  .feedback-box.show { display: block; }
+
+  /* Complete box */
+  .complete-box {
+    display: none;
+    background: var(--dark);
+    border: 2px solid var(--teal);
+    border-radius: 8px;
+    padding: 20px 24px;
+    text-align: center;
+    margin-top: 20px;
+  }
+  .complete-box.show { display: block; }
+  .complete-icon { font-size: 36px; margin-bottom: 8px; }
+  .complete-title { font-family: 'Oswald', sans-serif; font-size: 20px; color: var(--teal); margin-bottom: 6px; }
+  .complete-text { font-size: 14px; color: #cccccc; }
+</style>
+</head>
+<body>
+<div class="lesson-wrap">
+
+  <!-- Header -->
+  <div class="lesson-header">
+    <div class="lesson-label">Electrical Fundamentals &bull; AUTOA 123</div>
+    <div class="lesson-title">Circuit Protection Devices</div>
+    <div class="lesson-subtitle">Fuses, fusible links, and circuit breakers</div>
+  </div>
+
+  <!-- Progress bar -->
+  <div class="progress-wrap">
+    <div class="progress-label" id="progress-label">Progress - 0%</div>
+    <div class="progress-track"><div class="progress-fill" id="progress-fill" style="width:0%"></div></div>
+  </div>
+
+  <!-- ==================== SLIDE 1 ==================== -->
+  <div class="slide active" id="slide-1">
+    <div class="slide-card">
+      <div class="slide-num">Slide 1 of 3</div>
+      <div class="slide-heading">Why Circuits Need Protection</div>
+      <div class="slide-body">
+        <p>Every circuit in a vehicle carries a designed current level. When current exceeds that level -- due to a short, overload, or wiring fault -- heat builds in the wire faster than the insulation can handle. Without protection, that wire becomes a heating element inside a harness.</p>
+        <div class="callout-amber">
+          <strong>The job of a protection device:</strong> sacrifice itself to break the circuit before the wiring or component is damaged.
+        </div>
+        <p>There are three types used in modern vehicles, each with different response characteristics and service procedures.</p>
+        <table class="device-table">
+          <thead>
+            <tr>
+              <th>Device</th>
+              <th>How it breaks the circuit</th>
+              <th>Resettable?</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td><span class="device-name">Fuse</span></td>
+              <td>Metal element melts from heat of excess current</td>
+              <td>No -- replace</td>
+            </tr>
+            <tr>
+              <td><span class="device-name">Fusible Link</span></td>
+              <td>Short wire of smaller gauge melts inside insulation</td>
+              <td>No -- replace</td>
+            </tr>
+            <tr>
+              <td><span class="device-name">Circuit Breaker</span></td>
+              <td>Bimetal strip bends from heat and opens contact</td>
+              <td>Yes -- resets when cool</td>
+            </tr>
+          </tbody>
+        </table>
+        <div class="callout-teal">
+          <strong>ShopKey note:</strong> Fuse box location and ratings are in the Owner's Manual section and the Electrical Component Location diagram. Always verify the correct amperage before replacing a fuse.
+        </div>
+      </div>
+      <div class="nav-row"><div class="nav-row-inner">
+        <div class="nav-cell"><button class="btn btn-dark" disabled>Back</button></div>
+        <div class="nav-cell right"><button class="btn btn-teal" onclick="goSlide(2)">Next</button></div>
+      </div></div>
+    </div>
+  </div>
+
+  <!-- ==================== SLIDE 2 ==================== -->
+  <div class="slide" id="slide-2">
+    <div class="slide-card">
+      <div class="slide-num">Slide 2 of 3</div>
+      <div class="slide-heading">Fuses and Fusible Links in Detail</div>
+      <div class="slide-body">
+        <p><strong>Blade fuses</strong> are the standard type today. The color-coded body tells you the amperage rating -- you do not need to read the number to make a quick ID in the field.</p>
+
+        <!-- SVG fuse color chart -->
+        <div class="diagram-wrap">
+          <svg viewBox="0 0 540 130" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="Blade fuse color codes: tan 5A, brown 7.5A, red 10A, blue 15A, yellow 20A, clear 25A, green 30A">
+            <rect x="0" y="0" width="540" height="130" fill="#1a1a1a" rx="6"/>
+            <text x="270" y="20" text-anchor="middle" font-family="Oswald,sans-serif" font-size="13" fill="#e9a825" letter-spacing="1">BLADE FUSE COLOR CODES</text>
+            <!-- Fuse boxes -->
+            <!-- Tan 5A -->
+            <rect x="14" y="35" width="60" height="70" rx="4" fill="#d2b48c" stroke="#888" stroke-width="1"/>
+            <text x="44" y="110" text-anchor="middle" font-family="Source Sans 3,sans-serif" font-size="11" fill="#cccccc">5A</text>
+            <text x="44" y="122" text-anchor="middle" font-family="Source Sans 3,sans-serif" font-size="10" fill="#888">Tan</text>
+            <!-- Brown 7.5A -->
+            <rect x="84" y="35" width="60" height="70" rx="4" fill="#8b4513" stroke="#888" stroke-width="1"/>
+            <text x="114" y="110" text-anchor="middle" font-family="Source Sans 3,sans-serif" font-size="11" fill="#cccccc">7.5A</text>
+            <text x="114" y="122" text-anchor="middle" font-family="Source Sans 3,sans-serif" font-size="10" fill="#888">Brown</text>
+            <!-- Red 10A -->
+            <rect x="154" y="35" width="60" height="70" rx="4" fill="#cc3333" stroke="#888" stroke-width="1"/>
+            <text x="184" y="110" text-anchor="middle" font-family="Source Sans 3,sans-serif" font-size="11" fill="#cccccc">10A</text>
+            <text x="184" y="122" text-anchor="middle" font-family="Source Sans 3,sans-serif" font-size="10" fill="#888">Red</text>
+            <!-- Blue 15A -->
+            <rect x="224" y="35" width="60" height="70" rx="4" fill="#3355cc" stroke="#888" stroke-width="1"/>
+            <text x="254" y="110" text-anchor="middle" font-family="Source Sans 3,sans-serif" font-size="11" fill="#cccccc">15A</text>
+            <text x="254" y="122" text-anchor="middle" font-family="Source Sans 3,sans-serif" font-size="10" fill="#888">Blue</text>
+            <!-- Yellow 20A -->
+            <rect x="294" y="35" width="60" height="70" rx="4" fill="#ddcc00" stroke="#888" stroke-width="1"/>
+            <text x="324" y="110" text-anchor="middle" font-family="Source Sans 3,sans-serif" font-size="11" fill="#cccccc">20A</text>
+            <text x="324" y="122" text-anchor="middle" font-family="Source Sans 3,sans-serif" font-size="10" fill="#888">Yellow</text>
+            <!-- Clear 25A -->
+            <rect x="364" y="35" width="60" height="70" rx="4" fill="#eeeeee" stroke="#888" stroke-width="1"/>
+            <text x="394" y="110" text-anchor="middle" font-family="Source Sans 3,sans-serif" font-size="11" fill="#cccccc">25A</text>
+            <text x="394" y="122" text-anchor="middle" font-family="Source Sans 3,sans-serif" font-size="10" fill="#888">Clear</text>
+            <!-- Green 30A -->
+            <rect x="434" y="35" width="60" height="70" rx="4" fill="#228833" stroke="#888" stroke-width="1"/>
+            <text x="464" y="110" text-anchor="middle" font-family="Source Sans 3,sans-serif" font-size="11" fill="#cccccc">30A</text>
+            <text x="464" y="122" text-anchor="middle" font-family="Source Sans 3,sans-serif" font-size="10" fill="#888">Green</text>
+          </svg>
+        </div>
+
+        <p><strong>Fusible links</strong> are short sections of wire -- typically 4 gauges smaller than the circuit they protect -- spliced directly into the wiring harness near the battery or PDC. Because they are buried inside insulation, a blown fusible link may not be obvious. The insulation bubbles or gets hard and crumbly when it has opened.</p>
+        <div class="callout-amber">
+          <strong>Testing rule:</strong> Always test a suspected fusible link with a DVOM on voltage, not by visual inspection alone. A link can look intact and still be open.
+        </div>
+        <p>Fusible links protect high-current feeds: the main battery cable branch, alternator output wire, and ignition feed to the PDC are common locations.</p>
+      </div>
+      <div class="nav-row"><div class="nav-row-inner">
+        <div class="nav-cell"><button class="btn btn-dark" onclick="goSlide(1)">Back</button></div>
+        <div class="nav-cell right"><button class="btn btn-teal" onclick="goSlide(3)">Next</button></div>
+      </div></div>
+    </div>
+  </div>
+
+  <!-- ==================== SLIDE 3 ==================== -->
+  <div class="slide" id="slide-3">
+    <div class="slide-card">
+      <div class="slide-num">Slide 3 of 3</div>
+      <div class="slide-heading">Circuit Breakers and Replacement Rules</div>
+      <div class="slide-body">
+        <p><strong>Circuit breakers</strong> use a bimetal strip. When excess current heats the strip, it bends and opens the circuit. Most are <em>self-resetting</em> -- they cool down and close again. This is why an intermittent complaint like a power window that works after you wait a few minutes points toward an overloaded circuit, not a failed switch.</p>
+        <div class="callout-teal">
+          <strong>Two types of circuit breakers:</strong><br>
+          <strong>Type I (cycling):</strong> Opens and resets repeatedly until the fault is corrected or the circuit is de-energized. The load cycles on and off.<br>
+          <strong>Type II (non-cycling):</strong> Opens and stays open until manually reset or voltage is removed. More common in PDC applications.
+        </div>
+        <p><strong>Replacement rules that matter on the job:</strong></p>
+        <ul style="padding-left:18px; font-size:14px; line-height:1.8;">
+          <li>Never install a higher-rated fuse to fix a blowing fuse. Find and fix the fault first.</li>
+          <li>Never use aluminum foil, wire, or any improvised bypass. This is a fire hazard and a safety violation.</li>
+          <li>A fuse that blows immediately on replacement means there is still a hard fault in the circuit.</li>
+          <li>A fuse that blows after a delay means there is an overload condition -- something drawing more current than designed.</li>
+        </ul>
+        <div class="callout-amber">
+          <strong>Task list connection:</strong> ASE task VI.A-12 -- Inspect and test fusible links, circuit breakers, and fuses; determine needed action.
+        </div>
+      </div>
+      <div class="nav-row"><div class="nav-row-inner">
+        <div class="nav-cell"><button class="btn btn-dark" onclick="goSlide(2)">Back</button></div>
+        <div class="nav-cell right"><button class="btn btn-teal" onclick="goQuiz()">Knowledge Check</button></div>
+      </div></div>
+    </div>
+  </div>
+
+  <!-- ==================== QUIZ ==================== -->
+  <div class="slide" id="slide-quiz">
+    <div class="slide-card">
+      <div class="slide-num">Knowledge Check</div>
+      <div class="slide-heading">Check Your Understanding</div>
+
+      <!-- Q1 -->
+      <div class="quiz-section" id="q1-section">
+        <div class="quiz-q-label">Question 1 of 3</div>
+        <div class="quiz-question">A power window works fine after waiting 5 minutes but quits again under extended use. Which protection device behavior best explains this?</div>
+        <button class="choice-btn" onclick="answer(1,'a')">A. A blade fuse that is partially melted but not fully open</button>
+        <button class="choice-btn" onclick="answer(1,'b')">B. A self-resetting circuit breaker opening from heat and cycling</button>
+        <button class="choice-btn" onclick="answer(1,'c')">C. A fusible link that opens and then re-welds itself</button>
+        <button class="choice-btn" onclick="answer(1,'d')">D. A corroded fuse holder adding resistance to the circuit</button>
+        <div class="feedback-box" id="q1-feedback"></div>
+      </div>
+
+      <!-- Q2 -->
+      <div class="quiz-section" id="q2-section" style="display:none; margin-top:20px;">
+        <div class="quiz-q-label">Question 2 of 3</div>
+        <div class="quiz-question">You replace a 15A fuse for the horn and it blows again immediately. What is the correct next step?</div>
+        <button class="choice-btn" onclick="answer(2,'a')">A. Replace it with a 20A fuse to handle the higher current demand</button>
+        <button class="choice-btn" onclick="answer(2,'b')">B. Install a circuit breaker in place of the fuse temporarily</button>
+        <button class="choice-btn" onclick="answer(2,'c')">C. Diagnose the circuit for a short or fault before installing another fuse</button>
+        <button class="choice-btn" onclick="answer(2,'d')">D. Use a fused jumper wire to bypass the fuse while diagnosing</button>
+        <div class="feedback-box" id="q2-feedback"></div>
+      </div>
+
+      <!-- Q3 -->
+      <div class="quiz-section" id="q3-section" style="display:none; margin-top:20px;">
+        <div class="quiz-q-label">Question 3 of 3</div>
+        <div class="quiz-question">A fusible link protecting the alternator output wire looks intact but the charging system has no output. What is the correct test?</div>
+        <button class="choice-btn" onclick="answer(3,'a')">A. Wiggle the link and listen for crackling, which indicates a break</button>
+        <button class="choice-btn" onclick="answer(3,'b')">B. Cut the link open to inspect the conductor inside visually</button>
+        <button class="choice-btn" onclick="answer(3,'c')">C. Test voltage on both sides of the link with a DVOM under load</button>
+        <button class="choice-btn" onclick="answer(3,'d')">D. Replace the fusible link first and retest -- visual inspection is sufficient</button>
+        <div class="feedback-box" id="q3-feedback"></div>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- Complete box -->
+  <div class="complete-box" id="complete-box">
+    <div class="complete-icon">&#10003;</div>
+    <div class="complete-title">Lesson Complete</div>
+    <div class="complete-text">You covered fuses, fusible links, and circuit breakers -- how they work, how to identify them, and the replacement rules that matter on the job.</div>
+  </div>
+
+</div><!-- /lesson-wrap -->
+
+<script>
+  var currentSlide = 1;
+  var totalSteps = 6; // 3 slides + 3 questions
+  var completedSteps = 0;
+  var answered = [false, false, false];
+
+  var answers = {
+    1: { correct: 'b', explanation: 'Correct. A self-resetting (Type I) circuit breaker opens when it overheats and closes again after cooling. Power windows are a common application because the motor can draw high current under load.' },
+    2: { correct: 'c', explanation: 'Correct. A fuse that blows immediately means there is still a hard fault in the circuit. Installing a higher-rated fuse is a fire hazard and never acceptable. Diagnose first.' },
+    3: { correct: 'c', explanation: 'Correct. Fusible links can open internally while the insulation looks intact. Test voltage on both sides with a DVOM while the circuit is loaded. A reading on one side but not the other confirms an open link.' }
+  };
+
+  function updateProgress() {
+    var pct = Math.round((completedSteps / totalSteps) * 100);
+    document.getElementById('progress-fill').style.width = pct + '%';
+    document.getElementById('progress-label').textContent = 'Progress - ' + pct + '%';
+  }
+
+  function goSlide(n) {
+    document.getElementById('slide-' + currentSlide).classList.remove('active');
+    currentSlide = n;
+    document.getElementById('slide-' + n).classList.add('active');
+    if (n > completedSteps) {
+      completedSteps = n;
+      updateProgress();
+    }
+    window.scrollTo(0, 0);
+  }
+
+  function goQuiz() {
+    document.getElementById('slide-' + currentSlide).classList.remove('active');
+    currentSlide = 'quiz';
+    document.getElementById('slide-quiz').classList.add('active');
+    window.scrollTo(0, 0);
+  }
+
+  function answer(qNum, choice) {
+    if (answered[qNum - 1]) return;
+    answered[qNum - 1] = true;
+
+    var section = document.getElementById('q' + qNum + '-section');
+    var btns = section.querySelectorAll('.choice-btn');
+    var feedback = document.getElementById('q' + qNum + '-feedback');
+    var data = answers[qNum];
+    var isCorrect = (choice === data.correct);
+
+    for (var i = 0; i < btns.length; i++) {
+      btns[i].disabled = true;
+      var btnChoice = btns[i].getAttribute('onclick').match(/'([a-d])'\)/)[1];
+      if (btnChoice === data.correct) btns[i].classList.add('correct');
+      else if (btnChoice === choice && !isCorrect) btns[i].classList.add('incorrect');
+    }
+
+    feedback.className = 'feedback-box show ' + (isCorrect ? 'correct' : 'incorrect');
+    feedback.textContent = data.explanation;
+
+    completedSteps = Math.max(completedSteps, 3 + qNum);
+    updateProgress();
+
+    if (qNum < 3) {
+      var next = document.getElementById('q' + (qNum + 1) + '-section');
+      if (next) {
+        next.style.display = 'block';
+        setTimeout(function() { next.scrollIntoView({ behavior: 'smooth', block: 'start' }); }, 200);
+      }
+    }
+
+    if (qNum === 3) {
+      setTimeout(function() {
+        document.getElementById('complete-box').classList.add('show');
+        document.getElementById('complete-box').scrollIntoView({ behavior: 'smooth', block: 'start' });
+      }, 400);
+    }
+  }
+
+  updateProgress();
+</script>
+</body>
+</html>

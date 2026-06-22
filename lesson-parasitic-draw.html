@@ -1,0 +1,301 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Parasitic Draw - AUTOA 123</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Oswald:wght@400;600;700&family=Source+Sans+3:wght@400;600;700&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --dark: #1a1a1a; --teal: #2a9d8f; --tealdk: #1a7a6e; --amber: #e9a825;
+    --amber-bg: #fffbf0; --amber-inner: #fdf0c8; --teal-bg: #f0faf8; --teal-border: #d0ede9;
+    --subtext: #555555; --correct: #1a7a6e; --correct-bg: #e6f4f1; --incorrect: #9b1c1c; --incorrect-bg: #fde8e8;
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body { font-family: 'Source Sans 3', sans-serif; background: transparent; color: var(--dark); font-size: 15px; line-height: 1.5; }
+  .lesson-wrap { max-width: 720px; margin: 0 auto; padding: 16px; }
+  .lesson-header { background: var(--dark); border-radius: 8px 8px 0 0; padding: 16px 20px 12px; border-bottom: 4px solid var(--amber); }
+  .lesson-label { font-family: 'Oswald', sans-serif; font-size: 11px; color: var(--amber); letter-spacing: 1.5px; text-transform: uppercase; margin-bottom: 4px; }
+  .lesson-title { font-family: 'Oswald', sans-serif; font-size: 22px; color: #ffffff; font-weight: 600; }
+  .lesson-subtitle { font-size: 13px; color: #cccccc; margin-top: 4px; }
+  .progress-wrap { background: var(--dark); padding: 10px 20px 14px; }
+  .progress-label { font-size: 11px; color: #888888; text-transform: uppercase; letter-spacing: 1px; margin-bottom: 5px; }
+  .progress-track { background: #3a3a3a; border-radius: 4px; height: 6px; width: 100%; }
+  .progress-fill { background: var(--amber); height: 6px; border-radius: 4px; transition: width 0.4s ease; }
+  .slide { display: none; }
+  .slide.active { display: block; }
+  .slide-card { background: #ffffff; border: 1px solid var(--teal-border); border-radius: 0 0 8px 8px; padding: 20px 24px; }
+  .slide-num { font-family: 'Oswald', sans-serif; font-size: 11px; color: var(--teal); text-transform: uppercase; letter-spacing: 1px; margin-bottom: 8px; }
+  .slide-heading { font-family: 'Oswald', sans-serif; font-size: 19px; color: var(--dark); margin-bottom: 12px; border-bottom: 2px solid var(--teal); padding-bottom: 8px; }
+  .slide-body { font-size: 14px; color: var(--dark); line-height: 1.6; }
+  .slide-body p { margin-bottom: 10px; }
+  .callout-teal { background: var(--teal-bg); border-left: 4px solid var(--teal); border-radius: 0 6px 6px 0; padding: 10px 14px; margin: 12px 0; font-size: 13px; }
+  .callout-amber { background: var(--amber-bg); border-left: 4px solid var(--amber); border-radius: 0 6px 6px 0; padding: 10px 14px; margin: 12px 0; font-size: 13px; }
+  .diagram-wrap { background: var(--dark); border-radius: 6px; padding: 16px; margin: 14px 0; text-align: center; }
+  .step-list { padding: 0; margin: 10px 0; list-style: none; }
+  .step-list li { display: table; width: 100%; margin-bottom: 8px; }
+  .step-num { display: table-cell; width: 28px; height: 28px; background: var(--teal); color: #ffffff; font-family: 'Oswald', sans-serif; font-size: 14px; font-weight: 700; text-align: center; vertical-align: middle; border-radius: 50%; }
+  .step-text { display: table-cell; vertical-align: middle; padding-left: 10px; font-size: 14px; line-height: 1.4; }
+  .nav-row { display: table; width: 100%; margin-top: 16px; }
+  .nav-row-inner { display: table-row; }
+  .nav-cell { display: table-cell; vertical-align: middle; }
+  .nav-cell.right { text-align: right; }
+  .btn { font-family: 'Oswald', sans-serif; font-size: 13px; letter-spacing: 0.5px; font-weight: 600; padding: 9px 18px; border: none; border-radius: 6px; cursor: pointer; transition: opacity 0.2s; text-transform: uppercase; }
+  .btn:hover { opacity: 0.85; }
+  .btn-teal { background: var(--teal); color: #ffffff; }
+  .btn-dark { background: var(--dark); color: #cccccc; }
+  .btn:disabled { opacity: 0.35; cursor: default; }
+  .quiz-section { margin-top: 20px; }
+  .quiz-q-label { font-family: 'Oswald', sans-serif; font-size: 11px; color: var(--amber); text-transform: uppercase; letter-spacing: 1px; margin-bottom: 6px; }
+  .quiz-question { font-size: 15px; font-weight: 600; color: var(--dark); margin-bottom: 12px; line-height: 1.4; }
+  .choice-btn { display: block; width: 100%; text-align: left; background: #f7f7f7; border: 2px solid #dddddd; border-radius: 6px; padding: 10px 14px; margin-bottom: 8px; font-family: 'Source Sans 3', sans-serif; font-size: 14px; cursor: pointer; transition: border-color 0.15s, background 0.15s; }
+  .choice-btn:hover:not(:disabled) { border-color: var(--teal); background: var(--teal-bg); }
+  .choice-btn.correct { background: var(--correct-bg); border-color: var(--correct); color: var(--correct); font-weight: 700; }
+  .choice-btn.incorrect { background: var(--incorrect-bg); border-color: var(--incorrect); color: var(--incorrect); }
+  .choice-btn:disabled { cursor: default; }
+  .feedback-box { display: none; border-radius: 6px; padding: 12px 14px; margin-top: 10px; font-size: 14px; line-height: 1.5; }
+  .feedback-box.correct { background: var(--correct-bg); border-left: 4px solid var(--correct); color: var(--correct); }
+  .feedback-box.incorrect { background: var(--incorrect-bg); border-left: 4px solid var(--incorrect); color: var(--incorrect); }
+  .feedback-box.show { display: block; }
+  .complete-box { display: none; background: var(--dark); border: 2px solid var(--teal); border-radius: 8px; padding: 20px 24px; text-align: center; margin-top: 20px; }
+  .complete-box.show { display: block; }
+  .complete-icon { font-size: 36px; margin-bottom: 8px; }
+  .complete-title { font-family: 'Oswald', sans-serif; font-size: 20px; color: var(--teal); margin-bottom: 6px; }
+  .complete-text { font-size: 14px; color: #cccccc; }
+</style>
+</head>
+<body>
+<div class="lesson-wrap">
+
+  <div class="lesson-header">
+    <div class="lesson-label">Electrical Fundamentals &bull; AUTOA 123</div>
+    <div class="lesson-title">Parasitic Draw</div>
+    <div class="lesson-subtitle">Normal vs. excessive current drain, and the pull-fuse isolation method</div>
+  </div>
+
+  <div class="progress-wrap">
+    <div class="progress-label" id="progress-label">Progress - 0%</div>
+    <div class="progress-track"><div class="progress-fill" id="progress-fill" style="width:0%"></div></div>
+  </div>
+
+  <!-- ==================== SLIDE 1 ==================== -->
+  <div class="slide active" id="slide-1">
+    <div class="slide-card">
+      <div class="slide-num">Slide 1 of 3</div>
+      <div class="slide-heading">What Is Parasitic Draw?</div>
+      <div class="slide-body">
+        <p>Even with the ignition off and all doors closed, a modern vehicle draws a small amount of current from the battery. This is normal -- the ECM, BCM, alarm system, and other modules stay in a low-power "sleep" state waiting for a wake-up signal. This normal background current is called <strong>quiescent current</strong> or parasitic draw.</p>
+        <div class="callout-teal">
+          <strong>Normal quiescent draw:</strong> 25 to 50 milliamps (mA) is typical for a modern vehicle after all modules have gone to sleep. Some manufacturers specify up to 80 mA. Always look up the vehicle-specific spec in ShopKey before condemning a reading.
+        </div>
+        <p>When draw exceeds the spec, something is staying awake that should be asleep -- or a component has a fault that keeps it powered when it should not be. Over days, excessive draw drains the battery enough to cause a no-start.</p>
+        <div class="diagram-wrap">
+          <svg viewBox="0 0 480 110" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="Parasitic draw scale: 25-50mA normal range, 80mA manufacturer max typical, over 100mA investigate">
+            <rect x="0" y="0" width="480" height="110" fill="#1a1a1a" rx="6"/>
+            <text x="240" y="20" text-anchor="middle" font-family="Oswald,sans-serif" font-size="13" fill="#e9a825" letter-spacing="1">QUIESCENT DRAW REFERENCE</text>
+            <!-- Scale bar -->
+            <rect x="20" y="40" width="280" height="20" rx="4" fill="#228833"/>
+            <rect x="300" y="40" width="80" height="20" rx="0" fill="#e9a825"/>
+            <rect x="380" y="40" width="80" height="20" rx="0 4 4 0" fill="#cc3333"/>
+            <!-- Labels -->
+            <text x="160" y="54" text-anchor="middle" font-family="Oswald,sans-serif" font-size="11" fill="#ffffff">NORMAL  25-50 mA</text>
+            <text x="340" y="54" text-anchor="middle" font-family="Oswald,sans-serif" font-size="11" fill="#1a1a1a">VERIFY</text>
+            <text x="420" y="54" text-anchor="middle" font-family="Oswald,sans-serif" font-size="11" fill="#ffffff">FAULT</text>
+            <!-- Tick marks -->
+            <line x1="20" y1="65" x2="20" y2="75" stroke="#888" stroke-width="1"/>
+            <text x="20" y="86" text-anchor="middle" font-family="Source Sans 3,sans-serif" font-size="10" fill="#888">0 mA</text>
+            <line x1="160" y1="65" x2="160" y2="75" stroke="#888" stroke-width="1"/>
+            <text x="160" y="86" text-anchor="middle" font-family="Source Sans 3,sans-serif" font-size="10" fill="#888">50 mA</text>
+            <line x1="300" y1="65" x2="300" y2="75" stroke="#888" stroke-width="1"/>
+            <text x="300" y="86" text-anchor="middle" font-family="Source Sans 3,sans-serif" font-size="10" fill="#888">80 mA</text>
+            <line x1="380" y1="65" x2="380" y2="75" stroke="#888" stroke-width="1"/>
+            <text x="380" y="86" text-anchor="middle" font-family="Source Sans 3,sans-serif" font-size="10" fill="#888">100 mA</text>
+            <line x1="460" y1="65" x2="460" y2="75" stroke="#888" stroke-width="1"/>
+            <text x="460" y="86" text-anchor="middle" font-family="Source Sans 3,sans-serif" font-size="10" fill="#888">150+ mA</text>
+            <text x="240" y="105" text-anchor="middle" font-family="Source Sans 3,sans-serif" font-size="10" fill="#555">Always verify against vehicle-specific spec in ShopKey</text>
+          </svg>
+        </div>
+        <div class="callout-amber">
+          <strong>Battery drain complaint:</strong> The customer says the battery is dead after sitting for a few days. Parasitic draw is the first electrical cause to rule out after confirming battery and charging system health.
+        </div>
+      </div>
+      <div class="nav-row"><div class="nav-row-inner">
+        <div class="nav-cell"><button class="btn btn-dark" disabled>Back</button></div>
+        <div class="nav-cell right"><button class="btn btn-teal" onclick="goSlide(2)">Next</button></div>
+      </div></div>
+    </div>
+  </div>
+
+  <!-- ==================== SLIDE 2 ==================== -->
+  <div class="slide" id="slide-2">
+    <div class="slide-card">
+      <div class="slide-num">Slide 2 of 3</div>
+      <div class="slide-heading">Setting Up the Parasitic Draw Test</div>
+      <div class="slide-body">
+        <p>The test measures milliamps of current flowing through the battery negative circuit with everything off. Setup is critical -- mistakes at this step produce false readings or damage the DVOM.</p>
+        <ul class="step-list">
+          <li><span class="step-num">1</span><span class="step-text">Confirm the battery is fully charged and the charging system is good before starting. A low battery can cause modules to stay awake.</span></li>
+          <li><span class="step-num">2</span><span class="step-text">Set the DVOM to DC Amps (milliamp range if available). Connect the meter IN SERIES between the battery negative cable and the negative post -- never in parallel.</span></li>
+          <li><span class="step-num">3</span><span class="step-text">Close all doors, lock the vehicle, and wait for all modules to enter sleep mode. This can take 10 to 45 minutes depending on the vehicle. Do not open a door or touch the vehicle during this wait -- it will wake the modules and restart the timer.</span></li>
+          <li><span class="step-num">4</span><span class="step-text">Read the stabilized current draw and compare to the vehicle spec.</span></li>
+        </ul>
+        <div class="callout-amber">
+          <strong>DVOM protection:</strong> Before disconnecting the battery negative cable to insert the meter, have a memory saver connected or be aware that modules will lose their learned values. Never open the circuit without the meter in place -- an unexpected current spike can blow the DVOM fuse.
+        </div>
+        <div class="callout-teal">
+          <strong>Clamp-on ammeter alternative:</strong> A quality low-current clamp meter (like the Fluke i1010 or equivalent) can measure milliamp draw without breaking the circuit. This is the preferred method because it does not interrupt power to the modules and avoids the memory/wake-up issue.
+        </div>
+      </div>
+      <div class="nav-row"><div class="nav-row-inner">
+        <div class="nav-cell"><button class="btn btn-dark" onclick="goSlide(1)">Back</button></div>
+        <div class="nav-cell right"><button class="btn btn-teal" onclick="goSlide(3)">Next</button></div>
+      </div></div>
+    </div>
+  </div>
+
+  <!-- ==================== SLIDE 3 ==================== -->
+  <div class="slide" id="slide-3">
+    <div class="slide-card">
+      <div class="slide-num">Slide 3 of 3</div>
+      <div class="slide-heading">Isolating the Circuit with Excessive Draw</div>
+      <div class="slide-body">
+        <p>If draw exceeds spec, you need to identify which circuit is responsible. The <strong>pull-fuse method</strong> is the standard isolation technique.</p>
+        <ul class="step-list">
+          <li><span class="step-num">1</span><span class="step-text">With the meter reading excessive draw and modules fully asleep, pull fuses one at a time from the fuse box.</span></li>
+          <li><span class="step-num">2</span><span class="step-text">Watch the meter. When draw drops significantly after pulling a fuse, that circuit contains the source.</span></li>
+          <li><span class="step-num">3</span><span class="step-text">Reinstall the fuse and use the wiring diagram to identify all components on that circuit. Look for components that should not be powered with the key off.</span></li>
+          <li><span class="step-num">4</span><span class="step-text">Isolate the individual component by unplugging connectors while monitoring draw.</span></li>
+        </ul>
+        <div class="callout-amber">
+          <strong>Pull-fuse caution:</strong> Pulling a fuse that powers the BCM, ECM, or a security module can wake those modules and restart the sleep timer. Pull the high-current, non-module fuses first (power windows, seats, sunroof, audio amplifiers). Leave module power fuses for last.
+        </div>
+        <p>Common sources of excessive parasitic draw: aftermarket audio amplifiers, trunk/glove box lights with failed switches, sticking relays in the PDC, and modules with software faults that prevent sleep.</p>
+        <div class="callout-teal">
+          <strong>Task list connection:</strong> ASE task VI.A-11 -- Perform a battery drain/parasitic draw test; determine needed action.
+        </div>
+      </div>
+      <div class="nav-row"><div class="nav-row-inner">
+        <div class="nav-cell"><button class="btn btn-dark" onclick="goSlide(2)">Back</button></div>
+        <div class="nav-cell right"><button class="btn btn-teal" onclick="goQuiz()">Knowledge Check</button></div>
+      </div></div>
+    </div>
+  </div>
+
+  <!-- ==================== QUIZ ==================== -->
+  <div class="slide" id="slide-quiz">
+    <div class="slide-card">
+      <div class="slide-num">Knowledge Check</div>
+      <div class="slide-heading">Check Your Understanding</div>
+
+      <!-- Q1 -->
+      <div class="quiz-section" id="q1-section">
+        <div class="quiz-q-label">Question 1 of 3</div>
+        <div class="quiz-question">After setting up a parasitic draw test, you need to wait up to 45 minutes before reading the meter. Why?</div>
+        <button class="choice-btn" onclick="answer(1,'a')">A. The battery needs time to reach full charge before the test is valid</button>
+        <button class="choice-btn" onclick="answer(1,'b')">B. The DVOM needs a warm-up period to stabilize its milliamp reading</button>
+        <button class="choice-btn" onclick="answer(1,'c')">C. Modules must complete their sleep cycle before quiescent draw stabilizes</button>
+        <button class="choice-btn" onclick="answer(1,'d')">D. The fuse box cools down and reduces thermal current variation</button>
+        <div class="feedback-box" id="q1-feedback"></div>
+      </div>
+
+      <!-- Q2 -->
+      <div class="quiz-section" id="q2-section" style="display:none; margin-top:20px;">
+        <div class="quiz-q-label">Question 2 of 3</div>
+        <div class="quiz-question">You are measuring parasitic draw and the meter reads 210 mA after all modules have gone to sleep. The spec is 50 mA max. You start pulling fuses and draw drops to 48 mA when you pull the fuse for the audio amplifier circuit. What do you do next?</div>
+        <button class="choice-btn" onclick="answer(2,'a')">A. Replace the audio amplifier -- it is confirmed as the source</button>
+        <button class="choice-btn" onclick="answer(2,'b')">B. Reinstall the fuse, use the wiring diagram to find all components on that circuit, then unplug connectors to isolate the specific component</button>
+        <button class="choice-btn" onclick="answer(2,'c')">C. Leave the fuse out and advise the customer the audio system needs replacement</button>
+        <button class="choice-btn" onclick="answer(2,'d')">D. Pull the next fuse in sequence to see if draw drops further</button>
+        <div class="feedback-box" id="q2-feedback"></div>
+      </div>
+
+      <!-- Q3 -->
+      <div class="quiz-section" id="q3-section" style="display:none; margin-top:20px;">
+        <div class="quiz-q-label">Question 3 of 3</div>
+        <div class="quiz-question">What is the advantage of using a low-current clamp-on ammeter instead of putting a DVOM in series to measure parasitic draw?</div>
+        <button class="choice-btn" onclick="answer(3,'a')">A. Clamp meters read higher current values and are more accurate above 1 amp</button>
+        <button class="choice-btn" onclick="answer(3,'b')">B. The clamp method does not interrupt circuit power, so modules stay asleep and memory is preserved</button>
+        <button class="choice-btn" onclick="answer(3,'c')">C. Clamp meters are required by ASE for all parasitic draw testing procedures</button>
+        <button class="choice-btn" onclick="answer(3,'d')">D. The DVOM method cannot read below 100 mA accurately on most meters</button>
+        <div class="feedback-box" id="q3-feedback"></div>
+      </div>
+
+    </div>
+  </div>
+
+  <div class="complete-box" id="complete-box">
+    <div class="complete-icon">&#10003;</div>
+    <div class="complete-title">Lesson Complete</div>
+    <div class="complete-text">You covered normal vs. excessive parasitic draw, how to set up the test correctly, and how to use the pull-fuse method to isolate the source.</div>
+  </div>
+
+</div>
+
+<script>
+  var currentSlide = 1;
+  var totalSteps = 6;
+  var completedSteps = 0;
+  var answered = [false, false, false];
+
+  var answers = {
+    1: { correct: 'c', explanation: 'Correct. Modern vehicles have multiple modules that take time to complete their shutdown routines and enter sleep mode. Reading the meter before all modules are asleep gives you an inflated number. The wait time varies by vehicle -- look it up in ShopKey.' },
+    2: { correct: 'b', explanation: 'Correct. Pulling the fuse identified the circuit, not the specific component. Reinstall the fuse, pull up the wiring diagram, find every component on that circuit, and unplug them one at a time while watching the meter. The component that drops draw when unplugged is the source.' },
+    3: { correct: 'b', explanation: 'Correct. Inserting a DVOM in series requires breaking the circuit at the battery, which can wake modules, reset relearn values, and trigger security systems. A clamp meter reads current without breaking the circuit, so modules stay asleep and the test setup is cleaner.' }
+  };
+
+  function updateProgress() {
+    var pct = Math.round((completedSteps / totalSteps) * 100);
+    document.getElementById('progress-fill').style.width = pct + '%';
+    document.getElementById('progress-label').textContent = 'Progress - ' + pct + '%';
+  }
+
+  function goSlide(n) {
+    document.getElementById('slide-' + currentSlide).classList.remove('active');
+    currentSlide = n;
+    document.getElementById('slide-' + n).classList.add('active');
+    if (n > completedSteps) { completedSteps = n; updateProgress(); }
+    window.scrollTo(0, 0);
+  }
+
+  function goQuiz() {
+    document.getElementById('slide-' + currentSlide).classList.remove('active');
+    currentSlide = 'quiz';
+    document.getElementById('slide-quiz').classList.add('active');
+    window.scrollTo(0, 0);
+  }
+
+  function answer(qNum, choice) {
+    if (answered[qNum - 1]) return;
+    answered[qNum - 1] = true;
+    var section = document.getElementById('q' + qNum + '-section');
+    var btns = section.querySelectorAll('.choice-btn');
+    var feedback = document.getElementById('q' + qNum + '-feedback');
+    var data = answers[qNum];
+    var isCorrect = (choice === data.correct);
+    for (var i = 0; i < btns.length; i++) {
+      btns[i].disabled = true;
+      var btnChoice = btns[i].getAttribute('onclick').match(/'([a-d])'\)/)[1];
+      if (btnChoice === data.correct) btns[i].classList.add('correct');
+      else if (btnChoice === choice && !isCorrect) btns[i].classList.add('incorrect');
+    }
+    feedback.className = 'feedback-box show ' + (isCorrect ? 'correct' : 'incorrect');
+    feedback.textContent = data.explanation;
+    completedSteps = Math.max(completedSteps, 3 + qNum);
+    updateProgress();
+    if (qNum < 3) {
+      var next = document.getElementById('q' + (qNum + 1) + '-section');
+      if (next) { next.style.display = 'block'; setTimeout(function() { next.scrollIntoView({ behavior: 'smooth', block: 'start' }); }, 200); }
+    }
+    if (qNum === 3) {
+      setTimeout(function() {
+        document.getElementById('complete-box').classList.add('show');
+        document.getElementById('complete-box').scrollIntoView({ behavior: 'smooth', block: 'start' });
+      }, 400);
+    }
+  }
+
+  updateProgress();
+</script>
+</body>
+</html>

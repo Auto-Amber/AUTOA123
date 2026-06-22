@@ -1,0 +1,328 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Grounds and Ground Circuit Diagnosis - AUTOA 123</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Oswald:wght@400;600;700&family=Source+Sans+3:wght@400;600;700&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --dark: #1a1a1a;
+    --teal: #2a9d8f;
+    --tealdk: #1a7a6e;
+    --amber: #e9a825;
+    --amber-bg: #fffbf0;
+    --amber-inner: #fdf0c8;
+    --teal-bg: #f0faf8;
+    --teal-border: #d0ede9;
+    --subtext: #555555;
+    --correct: #1a7a6e;
+    --correct-bg: #e6f4f1;
+    --incorrect: #9b1c1c;
+    --incorrect-bg: #fde8e8;
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body { font-family: 'Source Sans 3', sans-serif; background: transparent; color: var(--dark); font-size: 15px; line-height: 1.5; }
+  .lesson-wrap { max-width: 720px; margin: 0 auto; padding: 16px; }
+  .lesson-header { background: var(--dark); border-radius: 8px 8px 0 0; padding: 16px 20px 12px; border-bottom: 4px solid var(--amber); }
+  .lesson-label { font-family: 'Oswald', sans-serif; font-size: 11px; color: var(--amber); letter-spacing: 1.5px; text-transform: uppercase; margin-bottom: 4px; }
+  .lesson-title { font-family: 'Oswald', sans-serif; font-size: 22px; color: #ffffff; font-weight: 600; }
+  .lesson-subtitle { font-size: 13px; color: #cccccc; margin-top: 4px; }
+  .progress-wrap { background: var(--dark); padding: 10px 20px 14px; }
+  .progress-label { font-size: 11px; color: #888888; text-transform: uppercase; letter-spacing: 1px; margin-bottom: 5px; }
+  .progress-track { background: #3a3a3a; border-radius: 4px; height: 6px; width: 100%; }
+  .progress-fill { background: var(--amber); height: 6px; border-radius: 4px; transition: width 0.4s ease; }
+  .slide { display: none; }
+  .slide.active { display: block; }
+  .slide-card { background: #ffffff; border: 1px solid var(--teal-border); border-radius: 0 0 8px 8px; padding: 20px 24px; }
+  .slide-num { font-family: 'Oswald', sans-serif; font-size: 11px; color: var(--teal); text-transform: uppercase; letter-spacing: 1px; margin-bottom: 8px; }
+  .slide-heading { font-family: 'Oswald', sans-serif; font-size: 19px; color: var(--dark); margin-bottom: 12px; border-bottom: 2px solid var(--teal); padding-bottom: 8px; }
+  .slide-body { font-size: 14px; color: var(--dark); line-height: 1.6; }
+  .slide-body p { margin-bottom: 10px; }
+  .callout-teal { background: var(--teal-bg); border-left: 4px solid var(--teal); border-radius: 0 6px 6px 0; padding: 10px 14px; margin: 12px 0; font-size: 13px; }
+  .callout-amber { background: var(--amber-bg); border-left: 4px solid var(--amber); border-radius: 0 6px 6px 0; padding: 10px 14px; margin: 12px 0; font-size: 13px; }
+  .diagram-wrap { background: var(--dark); border-radius: 6px; padding: 16px; margin: 14px 0; text-align: center; }
+  .symptom-table { width: 100%; border-collapse: collapse; margin: 12px 0; font-size: 13px; }
+  .symptom-table th { background: var(--dark); color: #ffffff; font-family: 'Oswald', sans-serif; font-size: 12px; padding: 8px 10px; text-align: left; }
+  .symptom-table td { padding: 8px 10px; border-bottom: 1px solid var(--teal-border); vertical-align: top; }
+  .symptom-table tr:nth-child(even) td { background: var(--teal-bg); }
+  .symptom-table tr:nth-child(odd) td { background: #ffffff; }
+  .nav-row { display: table; width: 100%; margin-top: 16px; }
+  .nav-row-inner { display: table-row; }
+  .nav-cell { display: table-cell; vertical-align: middle; }
+  .nav-cell.right { text-align: right; }
+  .btn { font-family: 'Oswald', sans-serif; font-size: 13px; letter-spacing: 0.5px; font-weight: 600; padding: 9px 18px; border: none; border-radius: 6px; cursor: pointer; transition: opacity 0.2s; text-transform: uppercase; }
+  .btn:hover { opacity: 0.85; }
+  .btn-teal { background: var(--teal); color: #ffffff; }
+  .btn-dark { background: var(--dark); color: #cccccc; }
+  .btn:disabled { opacity: 0.35; cursor: default; }
+  .quiz-section { margin-top: 20px; }
+  .quiz-q-label { font-family: 'Oswald', sans-serif; font-size: 11px; color: var(--amber); text-transform: uppercase; letter-spacing: 1px; margin-bottom: 6px; }
+  .quiz-question { font-size: 15px; font-weight: 600; color: var(--dark); margin-bottom: 12px; line-height: 1.4; }
+  .choice-btn { display: block; width: 100%; text-align: left; background: #f7f7f7; border: 2px solid #dddddd; border-radius: 6px; padding: 10px 14px; margin-bottom: 8px; font-family: 'Source Sans 3', sans-serif; font-size: 14px; cursor: pointer; transition: border-color 0.15s, background 0.15s; }
+  .choice-btn:hover:not(:disabled) { border-color: var(--teal); background: var(--teal-bg); }
+  .choice-btn.correct { background: var(--correct-bg); border-color: var(--correct); color: var(--correct); font-weight: 700; }
+  .choice-btn.incorrect { background: var(--incorrect-bg); border-color: var(--incorrect); color: var(--incorrect); }
+  .choice-btn:disabled { cursor: default; }
+  .feedback-box { display: none; border-radius: 6px; padding: 12px 14px; margin-top: 10px; font-size: 14px; line-height: 1.5; }
+  .feedback-box.correct { background: var(--correct-bg); border-left: 4px solid var(--correct); color: var(--correct); }
+  .feedback-box.incorrect { background: var(--incorrect-bg); border-left: 4px solid var(--incorrect); color: var(--incorrect); }
+  .feedback-box.show { display: block; }
+  .complete-box { display: none; background: var(--dark); border: 2px solid var(--teal); border-radius: 8px; padding: 20px 24px; text-align: center; margin-top: 20px; }
+  .complete-box.show { display: block; }
+  .complete-icon { font-size: 36px; margin-bottom: 8px; }
+  .complete-title { font-family: 'Oswald', sans-serif; font-size: 20px; color: var(--teal); margin-bottom: 6px; }
+  .complete-text { font-size: 14px; color: #cccccc; }
+</style>
+</head>
+<body>
+<div class="lesson-wrap">
+
+  <div class="lesson-header">
+    <div class="lesson-label">Electrical Fundamentals &bull; AUTOA 123</div>
+    <div class="lesson-title">Grounds and Ground Circuit Diagnosis</div>
+    <div class="lesson-subtitle">High resistance grounds, symptoms, and DVOM testing</div>
+  </div>
+
+  <div class="progress-wrap">
+    <div class="progress-label" id="progress-label">Progress - 0%</div>
+    <div class="progress-track"><div class="progress-fill" id="progress-fill" style="width:0%"></div></div>
+  </div>
+
+  <!-- ==================== SLIDE 1 ==================== -->
+  <div class="slide active" id="slide-1">
+    <div class="slide-card">
+      <div class="slide-num">Slide 1 of 3</div>
+      <div class="slide-heading">Grounds Complete the Circuit</div>
+      <div class="slide-body">
+        <p>Every circuit needs a return path back to the battery negative terminal. In automotive wiring, most of that return path runs through the vehicle body and engine block rather than a dedicated wire back to the battery. This is called the <strong>chassis ground</strong> system.</p>
+        <div class="diagram-wrap">
+          <svg viewBox="0 0 500 160" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="Ground path diagram: battery negative to body ground strap to chassis, then to headlight housing ground, blower motor ground, and ECM ground">
+            <rect x="0" y="0" width="500" height="160" fill="#1a1a1a" rx="6"/>
+            <!-- Battery -->
+            <rect x="20" y="55" width="70" height="50" rx="4" fill="#2a2a2a" stroke="#e9a825" stroke-width="2"/>
+            <text x="55" y="78" text-anchor="middle" font-family="Oswald,sans-serif" font-size="12" fill="#e9a825">BATTERY</text>
+            <text x="55" y="96" text-anchor="middle" font-family="Source Sans 3,sans-serif" font-size="11" fill="#888">12V</text>
+            <!-- Neg terminal -->
+            <text x="55" y="120" text-anchor="middle" font-family="Oswald,sans-serif" font-size="14" fill="#cccccc">(-)</text>
+            <!-- Body strap -->
+            <line x1="90" y1="105" x2="160" y2="130" stroke="#2a9d8f" stroke-width="3"/>
+            <text x="125" y="148" text-anchor="middle" font-family="Source Sans 3,sans-serif" font-size="10" fill="#2a9d8f">Body strap</text>
+            <!-- Chassis bar -->
+            <rect x="160" y="125" width="280" height="10" rx="2" fill="#555555"/>
+            <text x="300" y="152" text-anchor="middle" font-family="Oswald,sans-serif" font-size="11" fill="#888888">CHASSIS / BODY</text>
+            <!-- Ground points -->
+            <line x1="200" y1="125" x2="200" y2="90" stroke="#cccccc" stroke-width="2"/>
+            <rect x="175" y="70" width="50" height="20" rx="3" fill="#2a2a2a" stroke="#888" stroke-width="1"/>
+            <text x="200" y="84" text-anchor="middle" font-family="Source Sans 3,sans-serif" font-size="10" fill="#cccccc">Headlight</text>
+            <line x1="300" y1="125" x2="300" y2="90" stroke="#cccccc" stroke-width="2"/>
+            <rect x="272" y="70" width="56" height="20" rx="3" fill="#2a2a2a" stroke="#888" stroke-width="1"/>
+            <text x="300" y="84" text-anchor="middle" font-family="Source Sans 3,sans-serif" font-size="10" fill="#cccccc">Blower Mtr</text>
+            <line x1="400" y1="125" x2="400" y2="90" stroke="#cccccc" stroke-width="2"/>
+            <rect x="375" y="70" width="50" height="20" rx="3" fill="#2a2a2a" stroke="#888" stroke-width="1"/>
+            <text x="400" y="84" text-anchor="middle" font-family="Source Sans 3,sans-serif" font-size="10" fill="#cccccc">ECM</text>
+          </svg>
+        </div>
+        <p>The ground path includes: battery negative cable, the battery-to-body ground strap, body/frame metal, and individual ground wires from components to the chassis. Any resistance introduced anywhere in that path affects every component sharing that ground.</p>
+        <div class="callout-teal">
+          <strong>Key concept:</strong> Ground-side resistance causes the same voltage drop symptoms as supply-side resistance. Technicians who only check the positive side miss half the circuit.
+        </div>
+      </div>
+      <div class="nav-row"><div class="nav-row-inner">
+        <div class="nav-cell"><button class="btn btn-dark" disabled>Back</button></div>
+        <div class="nav-cell right"><button class="btn btn-teal" onclick="goSlide(2)">Next</button></div>
+      </div></div>
+    </div>
+  </div>
+
+  <!-- ==================== SLIDE 2 ==================== -->
+  <div class="slide" id="slide-2">
+    <div class="slide-card">
+      <div class="slide-num">Slide 2 of 3</div>
+      <div class="slide-heading">Symptoms of a Bad Ground</div>
+      <div class="slide-body">
+        <p>High resistance in a ground circuit does not just make one thing work poorly -- it can cause multiple unrelated-looking complaints on the same vehicle simultaneously. This is the hallmark of a shared ground problem.</p>
+        <table class="symptom-table">
+          <thead>
+            <tr><th>Symptom</th><th>Why a bad ground causes it</th></tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td>Component runs slow or dim</td>
+              <td>Voltage drop across the bad ground reduces available voltage at the component</td>
+            </tr>
+            <tr>
+              <td>Two components interact when only one is on</td>
+              <td>Shared ground path -- current from one component creates voltage across the resistance that feeds into the other</td>
+            </tr>
+            <tr>
+              <td>Gauge reads wrong only when another load is on</td>
+              <td>Ground offset shifts the sensor signal reference voltage</td>
+            </tr>
+            <tr>
+              <td>Intermittent warning lights or DTCs</td>
+              <td>Ground corrosion resistance changes with temperature and vibration</td>
+            </tr>
+            <tr>
+              <td>ECM or module communication faults</td>
+              <td>Modules use the chassis as a signal reference -- a noisy or resistive ground corrupts data</td>
+            </tr>
+          </tbody>
+        </table>
+        <div class="callout-amber">
+          <strong>Shop tip:</strong> When two unrelated systems act up at the same time, look for a shared ground connection. Check the wiring diagram for components that share a ground splice or stud.
+        </div>
+      </div>
+      <div class="nav-row"><div class="nav-row-inner">
+        <div class="nav-cell"><button class="btn btn-dark" onclick="goSlide(1)">Back</button></div>
+        <div class="nav-cell right"><button class="btn btn-teal" onclick="goSlide(3)">Next</button></div>
+      </div></div>
+    </div>
+  </div>
+
+  <!-- ==================== SLIDE 3 ==================== -->
+  <div class="slide" id="slide-3">
+    <div class="slide-card">
+      <div class="slide-num">Slide 3 of 3</div>
+      <div class="slide-heading">Testing Ground Circuits with a DVOM</div>
+      <div class="slide-body">
+        <p>Ground circuit testing uses <strong>voltage drop testing</strong>, not resistance testing. You test the voltage drop across the ground path <em>while current is flowing</em>. Resistance-only testing (Ohms) with the circuit de-energized is unreliable because corrosion resistance can be load-dependent.</p>
+        <div class="callout-teal">
+          <strong>Voltage drop test procedure for a ground circuit:</strong><br>
+          1. Turn on the load (the component being tested must be operating)<br>
+          2. Place DVOM red lead on the component chassis ground terminal<br>
+          3. Place DVOM black lead on battery negative post<br>
+          4. Read the voltage drop across the ground path<br>
+          <strong>Spec: 0.1V or less on most ground circuits. Over 0.2V = high resistance fault.</strong>
+        </div>
+        <p>If you find high drop, move the meter leads closer to the battery to isolate which segment of the ground path has the resistance. Work from the component toward the battery one connection at a time.</p>
+        <div class="callout-amber">
+          <strong>Common ground failure locations:</strong> battery negative cable ends (corrosion under the terminal), body-to-battery strap bolt (paint or rust at the mounting point), component ground wire eyelet (loose or corroded at the body stud), and engine-to-body strap (often overlooked when replacing engines).
+        </div>
+        <p>After finding the high-resistance point, clean or replace the connection. Retest to confirm drop is within spec before returning the vehicle.</p>
+      </div>
+      <div class="nav-row"><div class="nav-row-inner">
+        <div class="nav-cell"><button class="btn btn-dark" onclick="goSlide(2)">Back</button></div>
+        <div class="nav-cell right"><button class="btn btn-teal" onclick="goQuiz()">Knowledge Check</button></div>
+      </div></div>
+    </div>
+  </div>
+
+  <!-- ==================== QUIZ ==================== -->
+  <div class="slide" id="slide-quiz">
+    <div class="slide-card">
+      <div class="slide-num">Knowledge Check</div>
+      <div class="slide-heading">Check Your Understanding</div>
+
+      <!-- Q1 -->
+      <div class="quiz-section" id="q1-section">
+        <div class="quiz-q-label">Question 1 of 3</div>
+        <div class="quiz-question">A customer complains the heater blower runs slow AND the fuel gauge reads high only when the blower is on. These two complaints most likely share what root cause?</div>
+        <button class="choice-btn" onclick="answer(1,'a')">A. A faulty blower motor resistor limiting current to both circuits</button>
+        <button class="choice-btn" onclick="answer(1,'b')">B. A shared high-resistance ground connection affecting both components</button>
+        <button class="choice-btn" onclick="answer(1,'c')">C. Low battery voltage causing both systems to operate incorrectly</button>
+        <button class="choice-btn" onclick="answer(1,'d')">D. A blown fuse that is causing partial current flow to both loads</button>
+        <div class="feedback-box" id="q1-feedback"></div>
+      </div>
+
+      <!-- Q2 -->
+      <div class="quiz-section" id="q2-section" style="display:none; margin-top:20px;">
+        <div class="quiz-q-label">Question 2 of 3</div>
+        <div class="quiz-question">When performing a voltage drop test on a ground circuit, where do you place the DVOM leads?</div>
+        <button class="choice-btn" onclick="answer(2,'a')">A. Red on battery positive, black on battery negative -- measure total system voltage</button>
+        <button class="choice-btn" onclick="answer(2,'b')">B. Red on component ground terminal, black on battery negative -- circuit must be loaded</button>
+        <button class="choice-btn" onclick="answer(2,'c')">C. Red on battery negative, black on component ground terminal -- circuit must be off</button>
+        <button class="choice-btn" onclick="answer(2,'d')">D. Red and black both on battery negative -- check for AC ripple in the ground</button>
+        <div class="feedback-box" id="q2-feedback"></div>
+      </div>
+
+      <!-- Q3 -->
+      <div class="quiz-section" id="q3-section" style="display:none; margin-top:20px;">
+        <div class="quiz-q-label">Question 3 of 3</div>
+        <div class="quiz-question">You measure 0.45V drop across a headlight ground circuit under load. The spec is 0.1V max. What is the correct next step?</div>
+        <button class="choice-btn" onclick="answer(3,'a')">A. The reading is close enough -- voltage drop specs have a wide tolerance for lighting circuits</button>
+        <button class="choice-btn" onclick="answer(3,'b')">B. Move the DVOM leads progressively toward the battery to isolate which segment has the resistance</button>
+        <button class="choice-btn" onclick="answer(3,'c')">C. Replace the headlight assembly -- the drop indicates a faulty bulb socket</button>
+        <button class="choice-btn" onclick="answer(3,'d')">D. Retest with the circuit off using the Ohms setting to confirm the resistance value</button>
+        <div class="feedback-box" id="q3-feedback"></div>
+      </div>
+
+    </div>
+  </div>
+
+  <div class="complete-box" id="complete-box">
+    <div class="complete-icon">&#10003;</div>
+    <div class="complete-title">Lesson Complete</div>
+    <div class="complete-text">You covered how the chassis ground system works, the symptoms of high-resistance grounds, and how to perform a voltage drop test on a ground circuit under load.</div>
+  </div>
+
+</div>
+
+<script>
+  var currentSlide = 1;
+  var totalSteps = 6;
+  var completedSteps = 0;
+  var answered = [false, false, false];
+
+  var answers = {
+    1: { correct: 'b', explanation: 'Correct. When two unrelated systems misbehave at the same time -- especially if one affects the other -- a shared ground path is the first thing to investigate. The blower current flowing through the resistive ground creates a voltage offset that shifts the fuel sender signal.' },
+    2: { correct: 'b', explanation: 'Correct. Red lead on the component ground terminal, black lead on battery negative, with the circuit loaded. The DVOM reads the voltage drop across the entire ground path while current is flowing. Testing with the circuit off using Ohms is unreliable for this type of fault.' },
+    3: { correct: 'b', explanation: 'Correct. 0.45V is well above the 0.1V spec. Move the leads step by step toward the battery -- component ground eyelet to body stud, body stud to chassis, chassis to battery cable end. The segment where the voltage drops the most is where the resistance is located.' }
+  };
+
+  function updateProgress() {
+    var pct = Math.round((completedSteps / totalSteps) * 100);
+    document.getElementById('progress-fill').style.width = pct + '%';
+    document.getElementById('progress-label').textContent = 'Progress - ' + pct + '%';
+  }
+
+  function goSlide(n) {
+    document.getElementById('slide-' + currentSlide).classList.remove('active');
+    currentSlide = n;
+    document.getElementById('slide-' + n).classList.add('active');
+    if (n > completedSteps) { completedSteps = n; updateProgress(); }
+    window.scrollTo(0, 0);
+  }
+
+  function goQuiz() {
+    document.getElementById('slide-' + currentSlide).classList.remove('active');
+    currentSlide = 'quiz';
+    document.getElementById('slide-quiz').classList.add('active');
+    window.scrollTo(0, 0);
+  }
+
+  function answer(qNum, choice) {
+    if (answered[qNum - 1]) return;
+    answered[qNum - 1] = true;
+    var section = document.getElementById('q' + qNum + '-section');
+    var btns = section.querySelectorAll('.choice-btn');
+    var feedback = document.getElementById('q' + qNum + '-feedback');
+    var data = answers[qNum];
+    var isCorrect = (choice === data.correct);
+    for (var i = 0; i < btns.length; i++) {
+      btns[i].disabled = true;
+      var btnChoice = btns[i].getAttribute('onclick').match(/'([a-d])'\)/)[1];
+      if (btnChoice === data.correct) btns[i].classList.add('correct');
+      else if (btnChoice === choice && !isCorrect) btns[i].classList.add('incorrect');
+    }
+    feedback.className = 'feedback-box show ' + (isCorrect ? 'correct' : 'incorrect');
+    feedback.textContent = data.explanation;
+    completedSteps = Math.max(completedSteps, 3 + qNum);
+    updateProgress();
+    if (qNum < 3) {
+      var next = document.getElementById('q' + (qNum + 1) + '-section');
+      if (next) { next.style.display = 'block'; setTimeout(function() { next.scrollIntoView({ behavior: 'smooth', block: 'start' }); }, 200); }
+    }
+    if (qNum === 3) {
+      setTimeout(function() {
+        document.getElementById('complete-box').classList.add('show');
+        document.getElementById('complete-box').scrollIntoView({ behavior: 'smooth', block: 'start' });
+      }, 400);
+    }
+  }
+
+  updateProgress();
+</script>
+</body>
+</html>

@@ -1,0 +1,325 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Wiring Diagram Interpretation - AUTOA 123</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Oswald:wght@400;600;700&family=Source+Sans+3:wght@400;600;700&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --dark: #1a1a1a; --teal: #2a9d8f; --tealdk: #1a7a6e; --amber: #e9a825;
+    --amber-bg: #fffbf0; --amber-inner: #fdf0c8; --teal-bg: #f0faf8; --teal-border: #d0ede9;
+    --subtext: #555555; --correct: #1a7a6e; --correct-bg: #e6f4f1; --incorrect: #9b1c1c; --incorrect-bg: #fde8e8;
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body { font-family: 'Source Sans 3', sans-serif; background: transparent; color: var(--dark); font-size: 15px; line-height: 1.5; }
+  .lesson-wrap { max-width: 720px; margin: 0 auto; padding: 16px; }
+  .lesson-header { background: var(--dark); border-radius: 8px 8px 0 0; padding: 16px 20px 12px; border-bottom: 4px solid var(--amber); }
+  .lesson-label { font-family: 'Oswald', sans-serif; font-size: 11px; color: var(--amber); letter-spacing: 1.5px; text-transform: uppercase; margin-bottom: 4px; }
+  .lesson-title { font-family: 'Oswald', sans-serif; font-size: 22px; color: #ffffff; font-weight: 600; }
+  .lesson-subtitle { font-size: 13px; color: #cccccc; margin-top: 4px; }
+  .progress-wrap { background: var(--dark); padding: 10px 20px 14px; }
+  .progress-label { font-size: 11px; color: #888888; text-transform: uppercase; letter-spacing: 1px; margin-bottom: 5px; }
+  .progress-track { background: #3a3a3a; border-radius: 4px; height: 6px; width: 100%; }
+  .progress-fill { background: var(--amber); height: 6px; border-radius: 4px; transition: width 0.4s ease; }
+  .slide { display: none; }
+  .slide.active { display: block; }
+  .slide-card { background: #ffffff; border: 1px solid var(--teal-border); border-radius: 0 0 8px 8px; padding: 20px 24px; }
+  .slide-num { font-family: 'Oswald', sans-serif; font-size: 11px; color: var(--teal); text-transform: uppercase; letter-spacing: 1px; margin-bottom: 8px; }
+  .slide-heading { font-family: 'Oswald', sans-serif; font-size: 19px; color: var(--dark); margin-bottom: 12px; border-bottom: 2px solid var(--teal); padding-bottom: 8px; }
+  .slide-body { font-size: 14px; color: var(--dark); line-height: 1.6; }
+  .slide-body p { margin-bottom: 10px; }
+  .callout-teal { background: var(--teal-bg); border-left: 4px solid var(--teal); border-radius: 0 6px 6px 0; padding: 10px 14px; margin: 12px 0; font-size: 13px; }
+  .callout-amber { background: var(--amber-bg); border-left: 4px solid var(--amber); border-radius: 0 6px 6px 0; padding: 10px 14px; margin: 12px 0; font-size: 13px; }
+  .diagram-wrap { background: var(--dark); border-radius: 6px; padding: 16px; margin: 14px 0; text-align: center; }
+  .symbol-table { width: 100%; border-collapse: collapse; margin: 12px 0; font-size: 13px; }
+  .symbol-table th { background: var(--dark); color: #ffffff; font-family: 'Oswald', sans-serif; font-size: 12px; padding: 8px 10px; text-align: left; }
+  .symbol-table td { padding: 8px 10px; border-bottom: 1px solid var(--teal-border); vertical-align: middle; }
+  .symbol-table tr:nth-child(even) td { background: var(--teal-bg); }
+  .symbol-table tr:nth-child(odd) td { background: #ffffff; }
+  .sym-cell { text-align: center; font-size: 18px; }
+  .nav-row { display: table; width: 100%; margin-top: 16px; }
+  .nav-row-inner { display: table-row; }
+  .nav-cell { display: table-cell; vertical-align: middle; }
+  .nav-cell.right { text-align: right; }
+  .btn { font-family: 'Oswald', sans-serif; font-size: 13px; letter-spacing: 0.5px; font-weight: 600; padding: 9px 18px; border: none; border-radius: 6px; cursor: pointer; transition: opacity 0.2s; text-transform: uppercase; }
+  .btn:hover { opacity: 0.85; }
+  .btn-teal { background: var(--teal); color: #ffffff; }
+  .btn-dark { background: var(--dark); color: #cccccc; }
+  .btn:disabled { opacity: 0.35; cursor: default; }
+  .quiz-section { margin-top: 20px; }
+  .quiz-q-label { font-family: 'Oswald', sans-serif; font-size: 11px; color: var(--amber); text-transform: uppercase; letter-spacing: 1px; margin-bottom: 6px; }
+  .quiz-question { font-size: 15px; font-weight: 600; color: var(--dark); margin-bottom: 12px; line-height: 1.4; }
+  .choice-btn { display: block; width: 100%; text-align: left; background: #f7f7f7; border: 2px solid #dddddd; border-radius: 6px; padding: 10px 14px; margin-bottom: 8px; font-family: 'Source Sans 3', sans-serif; font-size: 14px; cursor: pointer; transition: border-color 0.15s, background 0.15s; }
+  .choice-btn:hover:not(:disabled) { border-color: var(--teal); background: var(--teal-bg); }
+  .choice-btn.correct { background: var(--correct-bg); border-color: var(--correct); color: var(--correct); font-weight: 700; }
+  .choice-btn.incorrect { background: var(--incorrect-bg); border-color: var(--incorrect); color: var(--incorrect); }
+  .choice-btn:disabled { cursor: default; }
+  .feedback-box { display: none; border-radius: 6px; padding: 12px 14px; margin-top: 10px; font-size: 14px; line-height: 1.5; }
+  .feedback-box.correct { background: var(--correct-bg); border-left: 4px solid var(--correct); color: var(--correct); }
+  .feedback-box.incorrect { background: var(--incorrect-bg); border-left: 4px solid var(--incorrect); color: var(--incorrect); }
+  .feedback-box.show { display: block; }
+  .complete-box { display: none; background: var(--dark); border: 2px solid var(--teal); border-radius: 8px; padding: 20px 24px; text-align: center; margin-top: 20px; }
+  .complete-box.show { display: block; }
+  .complete-icon { font-size: 36px; margin-bottom: 8px; }
+  .complete-title { font-family: 'Oswald', sans-serif; font-size: 20px; color: var(--teal); margin-bottom: 6px; }
+  .complete-text { font-size: 14px; color: #cccccc; }
+</style>
+</head>
+<body>
+<div class="lesson-wrap">
+
+  <div class="lesson-header">
+    <div class="lesson-label">Electrical Fundamentals &bull; AUTOA 123</div>
+    <div class="lesson-title">Wiring Diagram Interpretation</div>
+    <div class="lesson-subtitle">Reading symbols, tracing circuits, and using ShopKey diagrams</div>
+  </div>
+
+  <div class="progress-wrap">
+    <div class="progress-label" id="progress-label">Progress - 0%</div>
+    <div class="progress-track"><div class="progress-fill" id="progress-fill" style="width:0%"></div></div>
+  </div>
+
+  <!-- ==================== SLIDE 1 ==================== -->
+  <div class="slide active" id="slide-1">
+    <div class="slide-card">
+      <div class="slide-num">Slide 1 of 3</div>
+      <div class="slide-heading">Common Symbols and What They Mean</div>
+      <div class="slide-body">
+        <p>A wiring diagram is a map of a circuit drawn in a standard way so any technician can follow it. Before you can trace a circuit, you need to recognize the symbols. ShopKey uses ISO/SAE standard symbols for most domestic and import vehicles.</p>
+        <table class="symbol-table">
+          <thead><tr><th>Symbol (text)</th><th>Component</th><th>What to know</th></tr></thead>
+          <tbody>
+            <tr><td class="sym-cell">---/---</td><td>Switch (open)</td><td>Gap = open = no current flow. Closed switch = line through both contacts.</td></tr>
+            <tr><td class="sym-cell">~M~</td><td>Motor</td><td>Circle with M. Two wires: supply and ground. Some show a third for feedback.</td></tr>
+            <tr><td class="sym-cell">|||||</td><td>Ground symbol</td><td>Lines narrowing to a point. Connects to chassis. Number after G identifies the ground splice (G101, G201, etc.)</td></tr>
+            <tr><td class="sym-cell">--[R]--</td><td>Resistor / Bulb</td><td>Rectangle or zigzag. Bulb is a circle with a filament symbol inside.</td></tr>
+            <tr><td class="sym-cell">--(K)--</td><td>Relay</td><td>Coil + contact symbol. 85/86 = coil. 30 = common. 87/87a = normally open/closed.</td></tr>
+            <tr><td class="sym-cell">--[F]--</td><td>Fuse</td><td>Rectangle with a curved line inside. Amperage rating labeled next to it.</td></tr>
+            <tr><td class="sym-cell">--.--</td><td>Connector</td><td>Dot at the junction = wires are connected. Crossing lines without a dot = wires cross but do NOT connect.</td></tr>
+          </tbody>
+        </table>
+        <div class="callout-amber">
+          <strong>Dot vs. no dot:</strong> This is the most common misread. Two wires crossing WITH a dot are connected at a splice. Two wires crossing WITHOUT a dot pass over each other with no connection.
+        </div>
+      </div>
+      <div class="nav-row"><div class="nav-row-inner">
+        <div class="nav-cell"><button class="btn btn-dark" disabled>Back</button></div>
+        <div class="nav-cell right"><button class="btn btn-teal" onclick="goSlide(2)">Next</button></div>
+      </div></div>
+    </div>
+  </div>
+
+  <!-- ==================== SLIDE 2 ==================== -->
+  <div class="slide" id="slide-2">
+    <div class="slide-card">
+      <div class="slide-num">Slide 2 of 3</div>
+      <div class="slide-heading">How to Trace a Circuit</div>
+      <div class="slide-body">
+        <p>Every circuit in a wiring diagram flows from a power source (battery or fuse) through a load (motor, lamp, solenoid) and back to ground. To trace a circuit correctly, always start at the power source and follow the current path.</p>
+        <div class="diagram-wrap">
+          <svg viewBox="0 0 500 140" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="Circuit trace example: battery positive to fuse to switch to motor load to ground symbol">
+            <rect x="0" y="0" width="500" height="140" fill="#1a1a1a" rx="6"/>
+            <text x="250" y="18" text-anchor="middle" font-family="Oswald,sans-serif" font-size="12" fill="#e9a825" letter-spacing="1">CIRCUIT TRACE -- FOLLOW CURRENT FLOW</text>
+            <!-- Power rail -->
+            <line x1="20" y1="70" x2="60" y2="70" stroke="#e9a825" stroke-width="3"/>
+            <!-- Battery symbol -->
+            <rect x="20" y="55" width="40" height="30" rx="3" fill="#2a2a2a" stroke="#e9a825" stroke-width="1.5"/>
+            <text x="40" y="74" text-anchor="middle" font-family="Oswald,sans-serif" font-size="10" fill="#e9a825">BAT+</text>
+            <!-- Fuse -->
+            <line x1="60" y1="70" x2="95" y2="70" stroke="#e9a825" stroke-width="3"/>
+            <rect x="95" y="60" width="40" height="20" rx="3" fill="#2a2a2a" stroke="#2a9d8f" stroke-width="1.5"/>
+            <text x="115" y="74" text-anchor="middle" font-family="Oswald,sans-serif" font-size="10" fill="#2a9d8f">15A</text>
+            <!-- Switch -->
+            <line x1="135" y1="70" x2="175" y2="70" stroke="#e9a825" stroke-width="3"/>
+            <rect x="175" y="60" width="40" height="20" rx="3" fill="#2a2a2a" stroke="#cccccc" stroke-width="1.5"/>
+            <text x="195" y="74" text-anchor="middle" font-family="Oswald,sans-serif" font-size="10" fill="#cccccc">SW</text>
+            <!-- Motor -->
+            <line x1="215" y1="70" x2="260" y2="70" stroke="#e9a825" stroke-width="3"/>
+            <circle cx="280" cy="70" r="20" fill="#2a2a2a" stroke="#2a9d8f" stroke-width="1.5"/>
+            <text x="280" y="74" text-anchor="middle" font-family="Oswald,sans-serif" font-size="13" fill="#2a9d8f">M</text>
+            <!-- Return wire -->
+            <line x1="300" y1="70" x2="360" y2="70" stroke="#cccccc" stroke-width="2"/>
+            <line x1="360" y1="70" x2="360" y2="100" stroke="#cccccc" stroke-width="2"/>
+            <!-- Ground symbol -->
+            <line x1="340" y1="100" x2="380" y2="100" stroke="#cccccc" stroke-width="2"/>
+            <line x1="347" y1="107" x2="373" y2="107" stroke="#cccccc" stroke-width="2"/>
+            <line x1="354" y1="114" x2="366" y2="114" stroke="#cccccc" stroke-width="2"/>
+            <!-- Labels -->
+            <text x="40" y="115" text-anchor="middle" font-family="Source Sans 3,sans-serif" font-size="10" fill="#e9a825">1. Power</text>
+            <text x="115" y="115" text-anchor="middle" font-family="Source Sans 3,sans-serif" font-size="10" fill="#2a9d8f">2. Fuse</text>
+            <text x="195" y="115" text-anchor="middle" font-family="Source Sans 3,sans-serif" font-size="10" fill="#cccccc">3. Switch</text>
+            <text x="280" y="115" text-anchor="middle" font-family="Source Sans 3,sans-serif" font-size="10" fill="#2a9d8f">4. Load</text>
+            <text x="360" y="130" text-anchor="middle" font-family="Source Sans 3,sans-serif" font-size="10" fill="#cccccc">5. Ground</text>
+            <!-- Arrow -->
+            <text x="440" y="60" font-family="Oswald,sans-serif" font-size="11" fill="#e9a825">Current</text>
+            <text x="440" y="74" font-family="Oswald,sans-serif" font-size="11" fill="#e9a825">flows</text>
+            <text x="440" y="88" font-family="Oswald,sans-serif" font-size="11" fill="#888">left to right</text>
+          </svg>
+        </div>
+        <div class="callout-teal">
+          <strong>Wire code reading (ShopKey):</strong> Wire labels include color and circuit number. Example: <strong>18 DK GRN/WHT 240</strong> = 18-gauge wire, dark green with white tracer, circuit 240. The circuit number links to the system it belongs to in the diagram index.
+        </div>
+        <p>When a diagram spans multiple pages, ShopKey uses <strong>connector references</strong> to show where a wire continues. A flag with a letter (C102, C205) refers to a connector shown on another page. The connector view shows pin positions and wire colors entering each side.</p>
+        <div class="callout-amber">
+          <strong>Diagnostic use:</strong> Before probing anything on the vehicle, use the diagram to identify the best test points -- where you expect to find voltage, where ground should be present, and what pin number on the connector to access. This prevents unnecessary disassembly.
+        </div>
+      </div>
+      <div class="nav-row"><div class="nav-row-inner">
+        <div class="nav-cell"><button class="btn btn-dark" onclick="goSlide(1)">Back</button></div>
+        <div class="nav-cell right"><button class="btn btn-teal" onclick="goSlide(3)">Next</button></div>
+      </div></div>
+    </div>
+  </div>
+
+  <!-- ==================== SLIDE 3 ==================== -->
+  <div class="slide" id="slide-3">
+    <div class="slide-card">
+      <div class="slide-num">Slide 3 of 3</div>
+      <div class="slide-heading">Using ShopKey Diagrams for Diagnosis</div>
+      <div class="slide-body">
+        <p>ShopKey (Mitchell 1) organizes wiring diagrams by system. Start with the symptom, go to the relevant system diagram, and build a mental model of the circuit before you touch the vehicle.</p>
+        <div class="callout-teal">
+          <strong>ShopKey diagram workflow:</strong><br>
+          1. Select year/make/model<br>
+          2. Go to Electrical &gt; Wiring Diagrams &gt; select the system (Battery, Starting, Charging, Lighting, etc.)<br>
+          3. Identify the circuit components on the diagram<br>
+          4. Locate the fuse, the ground reference (G-number), and the connector IDs<br>
+          5. Use the Component Location views to find physical locations on the vehicle
+        </div>
+        <p>The diagram tells you what <em>should</em> be present at each point. Your DVOM tells you what <em>is</em> present. The gap between expected and measured is where the fault lives.</p>
+        <p><strong>Two things diagrams cannot tell you:</strong></p>
+        <ul style="padding-left:18px; font-size:14px; line-height:1.9;">
+          <li>Whether a connector is corroded or a terminal has backed out of the housing</li>
+          <li>Whether a wire has chafed against a chassis component and grounded internally</li>
+        </ul>
+        <p>Those require physical inspection alongside the diagram work. The diagram narrows your search to the right connector and wire; your eyes and hands complete the diagnosis.</p>
+        <div class="callout-amber">
+          <strong>Task list connection:</strong> ASE task VI.A-10 -- Use wiring diagrams during diagnosis of electrical circuit problems. This task applies to nearly every lab in the course.
+        </div>
+      </div>
+      <div class="nav-row"><div class="nav-row-inner">
+        <div class="nav-cell"><button class="btn btn-dark" onclick="goSlide(2)">Back</button></div>
+        <div class="nav-cell right"><button class="btn btn-teal" onclick="goQuiz()">Knowledge Check</button></div>
+      </div></div>
+    </div>
+  </div>
+
+  <!-- ==================== QUIZ ==================== -->
+  <div class="slide" id="slide-quiz">
+    <div class="slide-card">
+      <div class="slide-num">Knowledge Check</div>
+      <div class="slide-heading">Check Your Understanding</div>
+
+      <!-- Q1 -->
+      <div class="quiz-section" id="q1-section">
+        <div class="quiz-q-label">Question 1 of 3</div>
+        <div class="quiz-question">On a wiring diagram, two wires cross each other. There is NO dot at the crossing point. What does this mean?</div>
+        <button class="choice-btn" onclick="answer(1,'a')">A. The wires are connected at a splice junction</button>
+        <button class="choice-btn" onclick="answer(1,'b')">B. The wires share the same color code and are interchangeable</button>
+        <button class="choice-btn" onclick="answer(1,'c')">C. The wires cross physically but are not electrically connected</button>
+        <button class="choice-btn" onclick="answer(1,'d')">D. One wire is the supply and the other is the return for the same component</button>
+        <div class="feedback-box" id="q1-feedback"></div>
+      </div>
+
+      <!-- Q2 -->
+      <div class="quiz-section" id="q2-section" style="display:none; margin-top:20px;">
+        <div class="quiz-q-label">Question 2 of 3</div>
+        <div class="quiz-question">A wiring diagram shows the left front window motor connected to ground reference G201. The window is inoperative. You find 12V at the motor supply terminal but the motor does not run. What should you check next using the diagram?</div>
+        <button class="choice-btn" onclick="answer(2,'a')">A. Replace the motor -- supply voltage is present so the motor has failed</button>
+        <button class="choice-btn" onclick="answer(2,'b')">B. Locate G201 on the component location view and test the ground circuit with a voltage drop test</button>
+        <button class="choice-btn" onclick="answer(2,'c')">C. Check all other windows to see if the problem is in the master switch</button>
+        <button class="choice-btn" onclick="answer(2,'d')">D. Pull the fuse for the window circuit and inspect it for damage</button>
+        <div class="feedback-box" id="q2-feedback"></div>
+      </div>
+
+      <!-- Q3 -->
+      <div class="quiz-section" id="q3-section" style="display:none; margin-top:20px;">
+        <div class="quiz-q-label">Question 3 of 3</div>
+        <div class="quiz-question">A diagram shows a wire labeled "12 LT BLU 340". What information does this wire label give you?</div>
+        <button class="choice-btn" onclick="answer(3,'a')">A. The wire is 12 volts, light blue color, located in harness section 340</button>
+        <button class="choice-btn" onclick="answer(3,'b')">B. The wire is 12-gauge, light blue color, part of circuit number 340</button>
+        <button class="choice-btn" onclick="answer(3,'c')">C. The wire connects terminal 12 to connector B, light blue color, at 340 ohms resistance</button>
+        <button class="choice-btn" onclick="answer(3,'d')">D. The wire carries 12 amps, is blue, and is located on page 340 of the diagram</button>
+        <div class="feedback-box" id="q3-feedback"></div>
+      </div>
+
+    </div>
+  </div>
+
+  <div class="complete-box" id="complete-box">
+    <div class="complete-icon">&#10003;</div>
+    <div class="complete-title">Lesson Complete</div>
+    <div class="complete-text">You covered common wiring diagram symbols, how to trace a circuit from power to ground, and how to use ShopKey diagrams as a diagnostic tool before touching the vehicle.</div>
+  </div>
+
+</div>
+
+<script>
+  var currentSlide = 1;
+  var totalSteps = 6;
+  var completedSteps = 0;
+  var answered = [false, false, false];
+
+  var answers = {
+    1: { correct: 'c', explanation: 'Correct. A dot at the crossing means the wires are connected (splice). No dot means the wires cross over each other in the drawing but have no electrical connection. Misreading this is one of the most common wiring diagram mistakes.' },
+    2: { correct: 'b', explanation: 'Correct. Supply voltage is present but the motor does not run -- the fault is on the ground side. The diagram tells you the ground reference is G201. Use the component location view to find G201 physically, then do a voltage drop test on the ground circuit under load.' },
+    3: { correct: 'b', explanation: 'Correct. Wire labels in ShopKey follow the format: gauge (12) -- color (LT BLU, light blue) -- circuit number (340). The circuit number links to the system index and helps you identify all components in the same circuit when tracing a fault.' }
+  };
+
+  function updateProgress() {
+    var pct = Math.round((completedSteps / totalSteps) * 100);
+    document.getElementById('progress-fill').style.width = pct + '%';
+    document.getElementById('progress-label').textContent = 'Progress - ' + pct + '%';
+  }
+
+  function goSlide(n) {
+    document.getElementById('slide-' + currentSlide).classList.remove('active');
+    currentSlide = n;
+    document.getElementById('slide-' + n).classList.add('active');
+    if (n > completedSteps) { completedSteps = n; updateProgress(); }
+    window.scrollTo(0, 0);
+  }
+
+  function goQuiz() {
+    document.getElementById('slide-' + currentSlide).classList.remove('active');
+    currentSlide = 'quiz';
+    document.getElementById('slide-quiz').classList.add('active');
+    window.scrollTo(0, 0);
+  }
+
+  function answer(qNum, choice) {
+    if (answered[qNum - 1]) return;
+    answered[qNum - 1] = true;
+    var section = document.getElementById('q' + qNum + '-section');
+    var btns = section.querySelectorAll('.choice-btn');
+    var feedback = document.getElementById('q' + qNum + '-feedback');
+    var data = answers[qNum];
+    var isCorrect = (choice === data.correct);
+    for (var i = 0; i < btns.length; i++) {
+      btns[i].disabled = true;
+      var btnChoice = btns[i].getAttribute('onclick').match(/'([a-d])'\)/)[1];
+      if (btnChoice === data.correct) btns[i].classList.add('correct');
+      else if (btnChoice === choice && !isCorrect) btns[i].classList.add('incorrect');
+    }
+    feedback.className = 'feedback-box show ' + (isCorrect ? 'correct' : 'incorrect');
+    feedback.textContent = data.explanation;
+    completedSteps = Math.max(completedSteps, 3 + qNum);
+    updateProgress();
+    if (qNum < 3) {
+      var next = document.getElementById('q' + (qNum + 1) + '-section');
+      if (next) { next.style.display = 'block'; setTimeout(function() { next.scrollIntoView({ behavior: 'smooth', block: 'start' }); }, 200); }
+    }
+    if (qNum === 3) {
+      setTimeout(function() {
+        document.getElementById('complete-box').classList.add('show');
+        document.getElementById('complete-box').scrollIntoView({ behavior: 'smooth', block: 'start' });
+      }, 400);
+    }
+  }
+
+  updateProgress();
+</script>
+</body>
+</html>
