@@ -1,0 +1,249 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>A/C System Components - AUTOA 123</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Oswald:wght@400;600;700&family=Source+Sans+3:wght@400;600;700&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --dark: #1a1a1a; --teal: #2a9d8f; --tealdk: #1a7a6e; --amber: #e9a825;
+    --amber-bg: #fffbf0; --teal-bg: #f0faf8; --teal-border: #d0ede9;
+    --correct: #1a7a6e; --correct-bg: #e6f4f1;
+    --incorrect: #9b1c1c; --incorrect-bg: #fde8e8;
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body { font-family: 'Source Sans 3', sans-serif; background: transparent; color: var(--dark); font-size: 15px; line-height: 1.5; }
+  .lesson-wrap { max-width: 720px; margin: 0 auto; padding: 16px; }
+  .lesson-header { background: var(--dark); border-radius: 8px 8px 0 0; padding: 16px 20px 12px; border-bottom: 4px solid var(--amber); }
+  .lesson-label { font-family: 'Oswald', sans-serif; font-size: 11px; color: var(--amber); letter-spacing: 1.5px; text-transform: uppercase; margin-bottom: 4px; }
+  .lesson-title { font-family: 'Oswald', sans-serif; font-size: 22px; color: #ffffff; font-weight: 600; }
+  .lesson-subtitle { font-size: 13px; color: #cccccc; margin-top: 4px; }
+  .progress-wrap { background: var(--dark); padding: 10px 20px 14px; }
+  .progress-label { font-size: 11px; color: #888; text-transform: uppercase; letter-spacing: 1px; margin-bottom: 5px; }
+  .progress-track { background: #3a3a3a; border-radius: 4px; height: 6px; width: 100%; }
+  .progress-fill { background: var(--amber); height: 6px; border-radius: 4px; transition: width 0.4s ease; }
+  .slide { display: none; }
+  .slide.active { display: block; }
+  .slide-card { background: #ffffff; border: 1px solid var(--teal-border); border-radius: 0 0 8px 8px; padding: 20px 24px; }
+  .slide-num { font-family: 'Oswald', sans-serif; font-size: 11px; color: var(--teal); text-transform: uppercase; letter-spacing: 1px; margin-bottom: 8px; }
+  .slide-heading { font-family: 'Oswald', sans-serif; font-size: 19px; color: var(--dark); margin-bottom: 12px; border-bottom: 2px solid var(--teal); padding-bottom: 8px; }
+  .slide-body { font-size: 14px; color: var(--dark); line-height: 1.6; }
+  .slide-body p { margin-bottom: 10px; }
+  .callout-teal { background: var(--teal-bg); border-left: 4px solid var(--teal); border-radius: 0 6px 6px 0; padding: 10px 14px; margin: 12px 0; font-size: 13px; }
+  .callout-amber { background: var(--amber-bg); border-left: 4px solid var(--amber); border-radius: 0 6px 6px 0; padding: 10px 14px; margin: 12px 0; font-size: 13px; }
+  .diagram-wrap { background: var(--dark); border-radius: 6px; padding: 16px; margin: 14px 0; text-align: center; }
+  .data-table { width: 100%; border-collapse: collapse; margin: 12px 0; font-size: 13px; }
+  .data-table th { background: var(--dark); color: #fff; font-family: 'Oswald', sans-serif; font-size: 12px; padding: 8px 10px; text-align: left; }
+  .data-table td { padding: 8px 10px; border-bottom: 1px solid var(--teal-border); vertical-align: top; }
+  .data-table tr:nth-child(even) td { background: var(--teal-bg); }
+  .data-table tr:nth-child(odd) td { background: #fff; }
+  .nav-row { display: table; width: 100%; margin-top: 16px; }
+  .nav-row-inner { display: table-row; }
+  .nav-cell { display: table-cell; vertical-align: middle; }
+  .nav-cell.right { text-align: right; }
+  .btn { font-family: 'Oswald', sans-serif; font-size: 13px; letter-spacing: 0.5px; font-weight: 600; padding: 9px 18px; border: none; border-radius: 6px; cursor: pointer; transition: opacity 0.2s; text-transform: uppercase; }
+  .btn:hover { opacity: 0.85; }
+  .btn-teal { background: var(--teal); color: #fff; }
+  .btn-dark { background: var(--dark); color: #ccc; }
+  .btn:disabled { opacity: 0.35; cursor: default; }
+  .quiz-section { margin-top: 20px; }
+  .quiz-q-label { font-family: 'Oswald', sans-serif; font-size: 11px; color: var(--amber); text-transform: uppercase; letter-spacing: 1px; margin-bottom: 6px; }
+  .quiz-question { font-size: 15px; font-weight: 600; color: var(--dark); margin-bottom: 12px; line-height: 1.4; }
+  .choice-btn { display: block; width: 100%; text-align: left; background: #f7f7f7; border: 2px solid #ddd; border-radius: 6px; padding: 10px 14px; margin-bottom: 8px; font-family: 'Source Sans 3', sans-serif; font-size: 14px; cursor: pointer; transition: border-color 0.15s, background 0.15s; }
+  .choice-btn:hover:not(:disabled) { border-color: var(--teal); background: var(--teal-bg); }
+  .choice-btn.correct { background: var(--correct-bg); border-color: var(--correct); color: var(--correct); font-weight: 700; }
+  .choice-btn.incorrect { background: var(--incorrect-bg); border-color: var(--incorrect); color: var(--incorrect); }
+  .choice-btn:disabled { cursor: default; }
+  .feedback-box { display: none; border-radius: 6px; padding: 12px 14px; margin-top: 10px; font-size: 14px; line-height: 1.5; }
+  .feedback-box.correct { background: var(--correct-bg); border-left: 4px solid var(--correct); color: var(--correct); }
+  .feedback-box.incorrect { background: var(--incorrect-bg); border-left: 4px solid var(--incorrect); color: var(--incorrect); }
+  .feedback-box.show { display: block; }
+  .complete-box { display: none; background: var(--dark); border: 2px solid var(--teal); border-radius: 8px; padding: 20px 24px; text-align: center; margin-top: 20px; }
+  .complete-box.show { display: block; }
+  .complete-icon { font-size: 36px; margin-bottom: 8px; }
+  .complete-title { font-family: 'Oswald', sans-serif; font-size: 20px; color: var(--teal); margin-bottom: 6px; }
+  .complete-text { font-size: 14px; color: #ccc; }
+</style>
+</head>
+<body>
+<div class="lesson-wrap">
+  <div class="lesson-header">
+    <div class="lesson-label">HVAC &bull; AUTOA 123</div>
+    <div class="lesson-title">A/C System Components</div>
+    <div class="lesson-subtitle">Compressor, condenser, evaporator -- construction and function</div>
+  </div>
+  <div class="progress-wrap">
+    <div class="progress-label" id="progress-label">Progress - 0%</div>
+    <div class="progress-track"><div class="progress-fill" id="progress-fill" style="width:0%"></div></div>
+  </div>
+
+  <div class="slide active" id="slide-1">
+    <div class="slide-card">
+      <div class="slide-num">Slide 1 of 3</div>
+      <div class="slide-heading">Compressor -- The Heart of the System</div>
+      <div class="slide-body"><p>The compressor does two things: it pumps refrigerant around the system and it raises refrigerant pressure so it can condense at outdoor temperatures. Without high pressure on the discharge side, the condenser could not release heat into ambient air.</p>
+<p><strong>Common compressor types:</strong></p>
+<ul style="padding-left:18px; font-size:14px; line-height:1.9;">
+  <li><strong>Swash plate (piston):</strong> most common on older vehicles; variable displacement versions adjust stroke based on load.</li>
+  <li><strong>Scroll:</strong> common on newer vehicles; two spiral elements mesh together to compress vapor; quieter and more efficient.</li>
+  <li><strong>Electric compressor (EV/hybrid):</strong> runs independently of the engine; requires HV-rated oil and HV safety precautions.</li>
+</ul>
+<div class="callout-teal"><strong>Compressor clutch:</strong> On belt-driven compressors, an electromagnetic clutch engages the drive plate to the compressor body when the A/C is requested. A failed clutch (no gap, incorrect gap, coil open) is a common cause of no-cool complaints. Gap spec is typically 0.015-0.040 in -- check the service manual.</div>
+<div class="callout-amber"><strong>Oil charge:</strong> Every time a component is replaced, the correct amount of new compressor oil must be added. Too little oil destroys the compressor. Too much oil reduces heat transfer and can cause slugging. Always look up the spec by component.</div></div>
+      <div class="nav-row"><div class="nav-row-inner">
+        <div class="nav-cell"><button class="btn btn-dark" disabled>Back</button></div>
+        <div class="nav-cell right"><button class="btn btn-teal" onclick="goSlide(2)">Next</button></div>
+      </div></div>
+    </div>
+  </div>
+  <div class="slide " id="slide-2">
+    <div class="slide-card">
+      <div class="slide-num">Slide 2 of 3</div>
+      <div class="slide-heading">Condenser and Evaporator</div>
+      <div class="slide-body"><p>Both the condenser and evaporator are heat exchangers -- finned-tube assemblies that allow heat to transfer between the refrigerant inside and the air flowing across the fins. The direction of heat flow is opposite at each one.</p>
+<table class="data-table">
+  <thead><tr><th></th><th>Condenser</th><th>Evaporator</th></tr></thead>
+  <tbody>
+    <tr><td>Location</td><td>In front of the radiator (outside the cabin)</td><td>Inside the HVAC box behind the dash</td></tr>
+    <tr><td>Refrigerant state in</td><td>Hot high-pressure vapor</td><td>Cold low-pressure liquid/mixture</td></tr>
+    <tr><td>Refrigerant state out</td><td>High-pressure liquid</td><td>Low-pressure vapor</td></tr>
+    <tr><td>Heat direction</td><td>Refrigerant releases heat to outside air</td><td>Refrigerant absorbs heat from cabin air</td></tr>
+    <tr><td>Air across fins feels</td><td>Hot (you can feel the heat in front of the car)</td><td>Cold (this is what the vents blow)</td></tr>
+  </tbody>
+</table>
+<p><strong>Condenser service notes:</strong> Bugs, leaves, and road debris reduce airflow and cause high-side pressure to spike. Always inspect and clean the condenser before condemning other components. Bent fins can be straightened with a fin comb.</p>
+<p><strong>Evaporator service notes:</strong> The evaporator naturally collects moisture from the cabin air -- the drain tube must be clear or water will drip on the floor mat. Evaporator replacement requires significant disassembly and is one of the most labor-intensive A/C jobs.</p></div>
+      <div class="nav-row"><div class="nav-row-inner">
+        <div class="nav-cell"><button class="btn btn-dark" onclick="goSlide(1)">Back</button></div>
+        <div class="nav-cell right"><button class="btn btn-teal" onclick="goSlide(3)">Next</button></div>
+      </div></div>
+    </div>
+  </div>
+  <div class="slide " id="slide-3">
+    <div class="slide-card">
+      <div class="slide-num">Slide 3 of 3</div>
+      <div class="slide-heading">Pressure Switches and A/C Controls</div>
+      <div class="slide-body"><p>A/C systems use pressure switches to protect components and control compressor operation. Knowing which switch does what is essential for electrical diagnosis.</p>
+<table class="data-table">
+  <thead><tr><th>Switch/Sensor</th><th>Location</th><th>What it does</th></tr></thead>
+  <tbody>
+    <tr><td>Low pressure switch</td><td>Low side</td><td>Opens compressor clutch circuit if pressure drops too low (refrigerant loss, restriction). Prevents compressor damage from running dry.</td></tr>
+    <tr><td>High pressure switch</td><td>High side</td><td>Opens compressor clutch circuit if pressure exceeds safe limit (condenser blockage, overcharge). Prevents system rupture.</td></tr>
+    <tr><td>Pressure cycling switch (OT systems)</td><td>Low side</td><td>Cycles compressor clutch on/off to control evaporator temperature and prevent freeze-up.</td></tr>
+    <tr><td>Ambient temp sensor</td><td>Front of vehicle</td><td>Inhibits A/C operation when outside temp is too cold (below approx. 35 degrees F) -- refrigerant pressure too low for safe operation.</td></tr>
+  </tbody>
+</table>
+<div class="callout-teal"><strong>Diagnosis shortcut:</strong> No compressor clutch engagement with A/C requested? Check power at the clutch coil first (jumper test), then work backward through the pressure switches and relay. A low-side pressure switch open from low refrigerant is one of the most common "no A/C" causes.</div></div>
+      <div class="nav-row"><div class="nav-row-inner">
+        <div class="nav-cell"><button class="btn btn-dark" onclick="goSlide(2)">Back</button></div>
+        <div class="nav-cell right"><button class="btn btn-teal" onclick="goQuiz()">Knowledge Check</button></div>
+      </div></div>
+    </div>
+  </div>
+  <div class="slide" id="slide-quiz">
+    <div class="slide-card">
+      <div class="slide-num">Knowledge Check</div>
+      <div class="slide-heading">Check Your Understanding</div>
+
+      <div class="quiz-section" id="q1-section">
+        <div class="quiz-q-label">Question 1 of 3</div>
+        <div class="quiz-question">A vehicle has no A/C compressor clutch engagement when A/C is selected. A technician applies 12V directly to the compressor clutch coil and it engages. What is the correct next step?</div>
+        <button class="choice-btn" onclick="answer(1,'a')">A. Replace the compressor -- the clutch is weak and needs direct power to engage</button>
+<button class="choice-btn" onclick="answer(1,'b')">B. Trace back through the A/C circuit: check the relay, pressure switches, and A/C control signals for the open</button>
+<button class="choice-btn" onclick="answer(1,'c')">C. Recharge the system -- low refrigerant is always the cause when the clutch will not engage</button>
+<button class="choice-btn" onclick="answer(1,'d')">D. Replace the A/C control head -- it is not sending the enable signal</button>
+
+        <div class="feedback-box" id="q1-feedback"></div>
+      </div>
+      <div class="quiz-section" id="q2-section" style="display:none;">
+        <div class="quiz-q-label">Question 2 of 3</div>
+        <div class="quiz-question">An evaporator drain tube is plugged. What symptom will the customer most likely notice?</div>
+        <button class="choice-btn" onclick="answer(2,'a')">A. A/C blows warm -- condensate is blocking refrigerant flow through the evaporator</button>
+<button class="choice-btn" onclick="answer(2,'b')">B. Water dripping from the dash onto the floor mat or carpet</button>
+<button class="choice-btn" onclick="answer(2,'c')">C. High-side pressure spikes causing the compressor to cycle off repeatedly</button>
+<button class="choice-btn" onclick="answer(2,'d')">D. Frost buildup on the condenser fins reducing airflow</button>
+
+        <div class="feedback-box" id="q2-feedback"></div>
+      </div>
+      <div class="quiz-section" id="q3-section" style="display:none;">
+        <div class="quiz-q-label">Question 3 of 3</div>
+        <div class="quiz-question">A condenser is completely clogged with debris. Before attempting any repair, what symptom would the technician most likely see on the gauges?</div>
+        <button class="choice-btn" onclick="answer(3,'a')">A. Low suction pressure and low discharge pressure</button>
+<button class="choice-btn" onclick="answer(3,'b')">B. Normal suction pressure and normal discharge pressure</button>
+<button class="choice-btn" onclick="answer(3,'c')">C. High discharge (high-side) pressure with normal or slightly elevated suction pressure</button>
+<button class="choice-btn" onclick="answer(3,'d')">D. Low discharge pressure and high suction pressure</button>
+
+        <div class="feedback-box" id="q3-feedback"></div>
+      </div>
+    </div>
+  </div>
+  <div class="complete-box" id="complete-box">
+    <div class="complete-icon">&#10003;</div>
+    <div class="complete-title">Lesson Complete</div>
+    <div class="complete-text">You covered compressor types and clutch operation, condenser vs evaporator function, and how pressure switches protect and control the system.</div>
+  </div>
+</div>
+<script>
+  var currentSlide = 1;
+  var totalSteps = 6;
+  var completedSteps = 0;
+  var answered = [false, false, false];
+  var answers = {
+    1: {correct:'b', explanation:'Correct. The clutch coil works -- the problem is in the control circuit. The next step is systematic diagnosis: check for power and ground at the relay, verify pressure switch continuity, and check for the A/C enable signal from the control module. Do not assume refrigerant level without checking pressure.'},
+    2: {correct:'b', explanation:'Correct. The evaporator removes moisture from cabin air during normal operation. That condensate drains out through a tube to the outside of the vehicle. A plugged drain causes water to overflow inside the HVAC box and drip into the footwell.'},
+    3: {correct:'c', explanation:'Correct. A blocked condenser cannot reject heat, so the refrigerant stays hot and compressed -- high-side pressure rises well above normal. The low side is less affected. The high-pressure switch may trip repeatedly, causing the compressor to cycle off.'}
+  };
+
+  function updateProgress() {
+    var pct = Math.round((completedSteps / totalSteps) * 100);
+    document.getElementById('progress-fill').style.width = pct + '%';
+    document.getElementById('progress-label').textContent = 'Progress - ' + pct + '%';
+  }
+  function goSlide(n) {
+    document.getElementById('slide-' + currentSlide).classList.remove('active');
+    currentSlide = n;
+    document.getElementById('slide-' + n).classList.add('active');
+    if (n > completedSteps) { completedSteps = n; updateProgress(); }
+    window.scrollTo(0, 0);
+  }
+  function goQuiz() {
+    document.getElementById('slide-' + currentSlide).classList.remove('active');
+    currentSlide = 'quiz';
+    document.getElementById('slide-quiz').classList.add('active');
+    window.scrollTo(0, 0);
+  }
+  function answer(qNum, choice) {
+    if (answered[qNum - 1]) return;
+    answered[qNum - 1] = true;
+    var section = document.getElementById('q' + qNum + '-section');
+    var btns = section.querySelectorAll('.choice-btn');
+    var feedback = document.getElementById('q' + qNum + '-feedback');
+    var data = answers[qNum];
+    var isCorrect = (choice === data.correct);
+    for (var i = 0; i < btns.length; i++) {
+      btns[i].disabled = true;
+      var bc = btns[i].getAttribute('onclick').match(/'([a-d])'\)/)[1];
+      if (bc === data.correct) btns[i].classList.add('correct');
+      else if (bc === choice && !isCorrect) btns[i].classList.add('incorrect');
+    }
+    feedback.className = 'feedback-box show ' + (isCorrect ? 'correct' : 'incorrect');
+    feedback.textContent = data.explanation;
+    completedSteps = Math.max(completedSteps, 3 + qNum);
+    updateProgress();
+    if (qNum < 3) {
+      var next = document.getElementById('q' + (qNum + 1) + '-section');
+      if (next) { next.style.display = 'block'; setTimeout(function() { next.scrollIntoView({behavior:'smooth',block:'start'}); }, 200); }
+    }
+    if (qNum === 3) {
+      setTimeout(function() {
+        document.getElementById('complete-box').classList.add('show');
+        document.getElementById('complete-box').scrollIntoView({behavior:'smooth',block:'start'});
+      }, 400);
+    }
+  }
+  updateProgress();
+</script>
+</body>
+</html>

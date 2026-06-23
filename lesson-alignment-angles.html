@@ -1,0 +1,236 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Wheel Alignment Angles - AUTOA 123</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Oswald:wght@400;600;700&family=Source+Sans+3:wght@400;600;700&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --dark: #1a1a1a; --teal: #2a9d8f; --tealdk: #1a7a6e; --amber: #e9a825;
+    --amber-bg: #fffbf0; --teal-bg: #f0faf8; --teal-border: #d0ede9;
+    --correct: #1a7a6e; --correct-bg: #e6f4f1;
+    --incorrect: #9b1c1c; --incorrect-bg: #fde8e8;
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body { font-family: 'Source Sans 3', sans-serif; background: transparent; color: var(--dark); font-size: 15px; line-height: 1.5; }
+  .lesson-wrap { max-width: 720px; margin: 0 auto; padding: 16px; }
+  .lesson-header { background: var(--dark); border-radius: 8px 8px 0 0; padding: 16px 20px 12px; border-bottom: 4px solid var(--amber); }
+  .lesson-label { font-family: 'Oswald', sans-serif; font-size: 11px; color: var(--amber); letter-spacing: 1.5px; text-transform: uppercase; margin-bottom: 4px; }
+  .lesson-title { font-family: 'Oswald', sans-serif; font-size: 22px; color: #ffffff; font-weight: 600; }
+  .lesson-subtitle { font-size: 13px; color: #cccccc; margin-top: 4px; }
+  .progress-wrap { background: var(--dark); padding: 10px 20px 14px; }
+  .progress-label { font-size: 11px; color: #888; text-transform: uppercase; letter-spacing: 1px; margin-bottom: 5px; }
+  .progress-track { background: #3a3a3a; border-radius: 4px; height: 6px; width: 100%; }
+  .progress-fill { background: var(--amber); height: 6px; border-radius: 4px; transition: width 0.4s ease; }
+  .slide { display: none; }
+  .slide.active { display: block; }
+  .slide-card { background: #ffffff; border: 1px solid var(--teal-border); border-radius: 0 0 8px 8px; padding: 20px 24px; }
+  .slide-num { font-family: 'Oswald', sans-serif; font-size: 11px; color: var(--teal); text-transform: uppercase; letter-spacing: 1px; margin-bottom: 8px; }
+  .slide-heading { font-family: 'Oswald', sans-serif; font-size: 19px; color: var(--dark); margin-bottom: 12px; border-bottom: 2px solid var(--teal); padding-bottom: 8px; }
+  .slide-body { font-size: 14px; color: var(--dark); line-height: 1.6; }
+  .slide-body p { margin-bottom: 10px; }
+  .callout-teal { background: var(--teal-bg); border-left: 4px solid var(--teal); border-radius: 0 6px 6px 0; padding: 10px 14px; margin: 12px 0; font-size: 13px; }
+  .callout-amber { background: var(--amber-bg); border-left: 4px solid var(--amber); border-radius: 0 6px 6px 0; padding: 10px 14px; margin: 12px 0; font-size: 13px; }
+  .diagram-wrap { background: var(--dark); border-radius: 6px; padding: 16px; margin: 14px 0; text-align: center; }
+  .data-table { width: 100%; border-collapse: collapse; margin: 12px 0; font-size: 13px; }
+  .data-table th { background: var(--dark); color: #fff; font-family: 'Oswald', sans-serif; font-size: 12px; padding: 8px 10px; text-align: left; }
+  .data-table td { padding: 8px 10px; border-bottom: 1px solid var(--teal-border); vertical-align: top; }
+  .data-table tr:nth-child(even) td { background: var(--teal-bg); }
+  .data-table tr:nth-child(odd) td { background: #fff; }
+  .nav-row { display: table; width: 100%; margin-top: 16px; }
+  .nav-row-inner { display: table-row; }
+  .nav-cell { display: table-cell; vertical-align: middle; }
+  .nav-cell.right { text-align: right; }
+  .btn { font-family: 'Oswald', sans-serif; font-size: 13px; letter-spacing: 0.5px; font-weight: 600; padding: 9px 18px; border: none; border-radius: 6px; cursor: pointer; transition: opacity 0.2s; text-transform: uppercase; }
+  .btn:hover { opacity: 0.85; }
+  .btn-teal { background: var(--teal); color: #fff; }
+  .btn-dark { background: var(--dark); color: #ccc; }
+  .btn:disabled { opacity: 0.35; cursor: default; }
+  .quiz-section { margin-top: 20px; }
+  .quiz-q-label { font-family: 'Oswald', sans-serif; font-size: 11px; color: var(--amber); text-transform: uppercase; letter-spacing: 1px; margin-bottom: 6px; }
+  .quiz-question { font-size: 15px; font-weight: 600; color: var(--dark); margin-bottom: 12px; line-height: 1.4; }
+  .choice-btn { display: block; width: 100%; text-align: left; background: #f7f7f7; border: 2px solid #ddd; border-radius: 6px; padding: 10px 14px; margin-bottom: 8px; font-family: 'Source Sans 3', sans-serif; font-size: 14px; cursor: pointer; transition: border-color 0.15s, background 0.15s; }
+  .choice-btn:hover:not(:disabled) { border-color: var(--teal); background: var(--teal-bg); }
+  .choice-btn.correct { background: var(--correct-bg); border-color: var(--correct); color: var(--correct); font-weight: 700; }
+  .choice-btn.incorrect { background: var(--incorrect-bg); border-color: var(--incorrect); color: var(--incorrect); }
+  .choice-btn:disabled { cursor: default; }
+  .feedback-box { display: none; border-radius: 6px; padding: 12px 14px; margin-top: 10px; font-size: 14px; line-height: 1.5; }
+  .feedback-box.correct { background: var(--correct-bg); border-left: 4px solid var(--correct); color: var(--correct); }
+  .feedback-box.incorrect { background: var(--incorrect-bg); border-left: 4px solid var(--incorrect); color: var(--incorrect); }
+  .feedback-box.show { display: block; }
+  .complete-box { display: none; background: var(--dark); border: 2px solid var(--teal); border-radius: 8px; padding: 20px 24px; text-align: center; margin-top: 20px; }
+  .complete-box.show { display: block; }
+  .complete-icon { font-size: 36px; margin-bottom: 8px; }
+  .complete-title { font-family: 'Oswald', sans-serif; font-size: 20px; color: var(--teal); margin-bottom: 6px; }
+  .complete-text { font-size: 14px; color: #ccc; }
+</style>
+</head>
+<body>
+<div class="lesson-wrap">
+  <div class="lesson-header">
+    <div class="lesson-label">Steering, Suspension &amp; Handling &bull; AUTOA 123</div>
+    <div class="lesson-title">Wheel Alignment Angles</div>
+    <div class="lesson-subtitle">Caster, camber, toe -- what each does and how it affects the vehicle</div>
+  </div>
+  <div class="progress-wrap">
+    <div class="progress-label" id="progress-label">Progress - 0%</div>
+    <div class="progress-track"><div class="progress-fill" id="progress-fill" style="width:0%"></div></div>
+  </div>
+
+  <div class="slide active" id="slide-1">
+    <div class="slide-card">
+      <div class="slide-num">Slide 1 of 3</div>
+      <div class="slide-heading">Caster and Camber</div>
+      <div class="slide-body"><p>Three primary angles define wheel alignment: caster, camber, and toe. Each affects a different aspect of vehicle behavior. Understanding what each angle does -- not just its number -- is what makes you useful during an alignment diagnosis.</p>
+<p><strong>Caster</strong> is the tilt of the steering axis as viewed from the side of the vehicle. Positive caster means the top of the steering axis leans toward the rear of the vehicle. Positive caster creates directional stability (the vehicle tends to track straight) and causes the wheel to return to center after a turn. Most vehicles run 3-8 degrees positive caster. A side-to-side caster split causes pull toward the side with less positive caster.</p>
+<div class="callout-amber"><strong>Caster is usually not adjustable</strong> on most front-wheel-drive vehicles. If caster is out of spec, it typically indicates a bent or shifted component -- subframe, strut tower, or control arm. Caster changes after a collision are a red flag.</div>
+<p><strong>Camber</strong> is the tilt of the wheel as viewed from the front. Zero camber = perfectly vertical. Negative camber = top of the tire tilts inward. Positive camber = top tilts outward. Excessive negative camber causes inner tire wear. Excessive positive causes outer wear. A side-to-side camber split causes pull toward the side with more positive (or less negative) camber.</p></div>
+      <div class="nav-row"><div class="nav-row-inner">
+        <div class="nav-cell"><button class="btn btn-dark" disabled>Back</button></div>
+        <div class="nav-cell right"><button class="btn btn-teal" onclick="goSlide(2)">Next</button></div>
+      </div></div>
+    </div>
+  </div>
+  <div class="slide " id="slide-2">
+    <div class="slide-card">
+      <div class="slide-num">Slide 2 of 3</div>
+      <div class="slide-heading">Toe -- The Most Critical Angle</div>
+      <div class="slide-body"><p>Toe is the most important alignment angle for tire wear. It describes whether the fronts of the tires point inward (toe-in) or outward (toe-out) as viewed from above. Toe is measured in degrees or inches/millimeters.</p>
+<div class="callout-teal"><strong>Why toe is critical:</strong> Even a small toe error causes rapid, feathered tire wear because the tire is constantly scrubbing sideways as it rolls forward. A vehicle with 1/4 inch of toe-out will wear a front tire to the cords in 10,000 miles.</div>
+<p><strong>Feathered wear</strong> (edges of tread blocks worn on one side, sharp on the other) is the signature of a toe problem. Run your hand across the tread to feel it -- like a saw blade in one direction, smooth the other.</p>
+<table class="data-table">
+  <thead><tr><th>Condition</th><th>Tire wear pattern</th><th>Common cause</th></tr></thead>
+  <tbody>
+    <tr><td>Excessive toe-in</td><td>Feathered wear on outer edges of tread blocks</td><td>Tie rod ends adjusted too short, or hit a curb</td></tr>
+    <tr><td>Excessive toe-out</td><td>Feathered wear on inner edges of tread blocks</td><td>Tie rod ends adjusted too long, or bent tie rod</td></tr>
+    <tr><td>Too much negative camber</td><td>Inner edge wear (smooth, rapid)</td><td>Bent strut, worn control arm bushing, collapsed spring</td></tr>
+    <tr><td>Too much positive camber</td><td>Outer edge wear</td><td>Worn ball joint, incorrect ride height, bent knuckle</td></tr>
+  </tbody>
+</table></div>
+      <div class="nav-row"><div class="nav-row-inner">
+        <div class="nav-cell"><button class="btn btn-dark" onclick="goSlide(1)">Back</button></div>
+        <div class="nav-cell right"><button class="btn btn-teal" onclick="goSlide(3)">Next</button></div>
+      </div></div>
+    </div>
+  </div>
+  <div class="slide " id="slide-3">
+    <div class="slide-card">
+      <div class="slide-num">Slide 3 of 3</div>
+      <div class="slide-heading">Thrust Angle and Rear Alignment</div>
+      <div class="slide-body"><p>On a four-wheel alignment, the rear wheels matter as much as the front. The <strong>thrust angle</strong> is the direction the rear axle is actually pointed relative to the vehicle centerline. If the rear axle is not centered, the vehicle will dog-track (crab walk) -- the front and rear tracks are offset from each other.</p>
+<div class="callout-amber"><strong>Dog-track diagnosis:</strong> Look at the vehicle from behind while it drives away from you on a straight road. If the rear of the vehicle is offset to one side, the thrust angle is out. The vehicle will steer with the wheel off-center to compensate, and the driver feels like the car is constantly being pushed sideways.</div>
+<p>On vehicles with adjustable rear toe (most independent rear suspension), the thrust angle is corrected by adjusting rear toe equally left and right. On solid rear axle vehicles, a thrust angle problem usually means the axle housing has shifted or the leaf spring perch has rotated.</p>
+<div class="callout-teal"><strong>Alignment order:</strong> Always set rear alignment before front. The front alignment is referenced to the rear thrust line. Doing the front first and then adjusting the rear will require doing the front again.</div></div>
+      <div class="nav-row"><div class="nav-row-inner">
+        <div class="nav-cell"><button class="btn btn-dark" onclick="goSlide(2)">Back</button></div>
+        <div class="nav-cell right"><button class="btn btn-teal" onclick="goQuiz()">Knowledge Check</button></div>
+      </div></div>
+    </div>
+  </div>
+  <div class="slide" id="slide-quiz">
+    <div class="slide-card">
+      <div class="slide-num">Knowledge Check</div>
+      <div class="slide-heading">Check Your Understanding</div>
+
+      <div class="quiz-section" id="q1-section">
+        <div class="quiz-q-label">Question 1 of 3</div>
+        <div class="quiz-question">A customer says the vehicle pulls to the right. During a four-wheel alignment, the technician finds left caster at 4.2 degrees positive and right caster at 2.1 degrees positive. All other angles are within spec. What causes the pull?</div>
+        <button class="choice-btn" onclick="answer(1,'a')">A. The left side has too much positive caster, pulling the vehicle left and requiring correction to the right</button>
+<button class="choice-btn" onclick="answer(1,'b')">B. The vehicle pulls toward the side with less positive caster -- in this case the right side</button>
+<button class="choice-btn" onclick="answer(1,'c')">C. Caster does not cause pull -- the pull must be from the tire or brake system</button>
+<button class="choice-btn" onclick="answer(1,'d')">D. The right side caster is too positive and is causing the vehicle to resist turning right</button>
+
+        <div class="feedback-box" id="q1-feedback"></div>
+      </div>
+      <div class="quiz-section" id="q2-section" style="display:none;">
+        <div class="quiz-q-label">Question 2 of 3</div>
+        <div class="quiz-question">A customer complains of rapid tire wear on both front tires -- the wear is feathered and feels like a saw blade when you run your hand across the tread in one direction. Which alignment angle is the most likely cause?</div>
+        <button class="choice-btn" onclick="answer(2,'a')">A. Excessive negative camber on both sides</button>
+<button class="choice-btn" onclick="answer(2,'b')">B. Incorrect caster causing the tires to scrub during turns</button>
+<button class="choice-btn" onclick="answer(2,'c')">C. Incorrect toe -- the tires are pointing inward or outward instead of straight ahead</button>
+<button class="choice-btn" onclick="answer(2,'d')">D. Excessive positive camber causing outer edge wear</button>
+
+        <div class="feedback-box" id="q2-feedback"></div>
+      </div>
+      <div class="quiz-section" id="q3-section" style="display:none;">
+        <div class="quiz-q-label">Question 3 of 3</div>
+        <div class="quiz-question">A technician is performing a four-wheel alignment. Which wheels should be aligned first and why?</div>
+        <button class="choice-btn" onclick="answer(3,'a')">A. Front wheels first -- they are the most critical for steering and pull</button>
+<button class="choice-btn" onclick="answer(3,'b')">B. Rear wheels first -- the front alignment is referenced to the rear thrust line</button>
+<button class="choice-btn" onclick="answer(3,'c')">C. It does not matter -- the alignment machine adjusts both simultaneously</button>
+<button class="choice-btn" onclick="answer(3,'d')">D. The wheel with the most out-of-spec angle first, regardless of position</button>
+
+        <div class="feedback-box" id="q3-feedback"></div>
+      </div>
+    </div>
+  </div>
+  <div class="complete-box" id="complete-box">
+    <div class="complete-icon">&#10003;</div>
+    <div class="complete-title">Lesson Complete</div>
+    <div class="complete-text">You covered caster, camber, and toe -- what each angle does, how it affects tire wear and handling, and why thrust angle and alignment sequence matter.</div>
+  </div>
+</div>
+<script>
+  var currentSlide = 1;
+  var totalSteps = 6;
+  var completedSteps = 0;
+  var answered = [false, false, false];
+  var answers = {
+    1: {correct:'b', explanation:'Correct. A caster split causes pull toward the side with less positive caster. The right side has significantly less positive caster (2.1 vs 4.2 degrees), so the vehicle pulls right. The solution is to investigate why the right caster is low -- bent strut, shifted subframe, or a worn component changing the geometry.'},
+    2: {correct:'c', explanation:'Correct. Feathered tire wear (saw-blade feel) is the signature of a toe problem. The tires are scrubbing sideways as the vehicle rolls forward. Camber causes edge wear (smooth, not feathered). Caster causes pull and return-to-center issues, not feathered wear.'},
+    3: {correct:'b', explanation:'Correct. Always set rear alignment before front. The front toe and caster are referenced to the rear thrust line. If you align the front first and then move the rear, the front angles will be off. The correct sequence is: inspect, measure all four corners, correct rear first, then correct front.'}
+  };
+
+  function updateProgress() {
+    var pct = Math.round((completedSteps / totalSteps) * 100);
+    document.getElementById('progress-fill').style.width = pct + '%';
+    document.getElementById('progress-label').textContent = 'Progress - ' + pct + '%';
+  }
+  function goSlide(n) {
+    document.getElementById('slide-' + currentSlide).classList.remove('active');
+    currentSlide = n;
+    document.getElementById('slide-' + n).classList.add('active');
+    if (n > completedSteps) { completedSteps = n; updateProgress(); }
+    window.scrollTo(0, 0);
+  }
+  function goQuiz() {
+    document.getElementById('slide-' + currentSlide).classList.remove('active');
+    currentSlide = 'quiz';
+    document.getElementById('slide-quiz').classList.add('active');
+    window.scrollTo(0, 0);
+  }
+  function answer(qNum, choice) {
+    if (answered[qNum - 1]) return;
+    answered[qNum - 1] = true;
+    var section = document.getElementById('q' + qNum + '-section');
+    var btns = section.querySelectorAll('.choice-btn');
+    var feedback = document.getElementById('q' + qNum + '-feedback');
+    var data = answers[qNum];
+    var isCorrect = (choice === data.correct);
+    for (var i = 0; i < btns.length; i++) {
+      btns[i].disabled = true;
+      var bc = btns[i].getAttribute('onclick').match(/'([a-d])'\)/)[1];
+      if (bc === data.correct) btns[i].classList.add('correct');
+      else if (bc === choice && !isCorrect) btns[i].classList.add('incorrect');
+    }
+    feedback.className = 'feedback-box show ' + (isCorrect ? 'correct' : 'incorrect');
+    feedback.textContent = data.explanation;
+    completedSteps = Math.max(completedSteps, 3 + qNum);
+    updateProgress();
+    if (qNum < 3) {
+      var next = document.getElementById('q' + (qNum + 1) + '-section');
+      if (next) { next.style.display = 'block'; setTimeout(function() { next.scrollIntoView({behavior:'smooth',block:'start'}); }, 200); }
+    }
+    if (qNum === 3) {
+      setTimeout(function() {
+        document.getElementById('complete-box').classList.add('show');
+        document.getElementById('complete-box').scrollIntoView({behavior:'smooth',block:'start'});
+      }, 400);
+    }
+  }
+  updateProgress();
+</script>
+</body>
+</html>

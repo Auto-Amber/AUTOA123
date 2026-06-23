@@ -1,0 +1,241 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Wheel Bearing Diagnosis - AUTOA 123</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Oswald:wght@400;600;700&family=Source+Sans+3:wght@400;600;700&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --dark: #1a1a1a; --teal: #2a9d8f; --tealdk: #1a7a6e; --amber: #e9a825;
+    --amber-bg: #fffbf0; --teal-bg: #f0faf8; --teal-border: #d0ede9;
+    --correct: #1a7a6e; --correct-bg: #e6f4f1;
+    --incorrect: #9b1c1c; --incorrect-bg: #fde8e8;
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body { font-family: 'Source Sans 3', sans-serif; background: transparent; color: var(--dark); font-size: 15px; line-height: 1.5; }
+  .lesson-wrap { max-width: 720px; margin: 0 auto; padding: 16px; }
+  .lesson-header { background: var(--dark); border-radius: 8px 8px 0 0; padding: 16px 20px 12px; border-bottom: 4px solid var(--amber); }
+  .lesson-label { font-family: 'Oswald', sans-serif; font-size: 11px; color: var(--amber); letter-spacing: 1.5px; text-transform: uppercase; margin-bottom: 4px; }
+  .lesson-title { font-family: 'Oswald', sans-serif; font-size: 22px; color: #ffffff; font-weight: 600; }
+  .lesson-subtitle { font-size: 13px; color: #cccccc; margin-top: 4px; }
+  .progress-wrap { background: var(--dark); padding: 10px 20px 14px; }
+  .progress-label { font-size: 11px; color: #888; text-transform: uppercase; letter-spacing: 1px; margin-bottom: 5px; }
+  .progress-track { background: #3a3a3a; border-radius: 4px; height: 6px; width: 100%; }
+  .progress-fill { background: var(--amber); height: 6px; border-radius: 4px; transition: width 0.4s ease; }
+  .slide { display: none; }
+  .slide.active { display: block; }
+  .slide-card { background: #ffffff; border: 1px solid var(--teal-border); border-radius: 0 0 8px 8px; padding: 20px 24px; }
+  .slide-num { font-family: 'Oswald', sans-serif; font-size: 11px; color: var(--teal); text-transform: uppercase; letter-spacing: 1px; margin-bottom: 8px; }
+  .slide-heading { font-family: 'Oswald', sans-serif; font-size: 19px; color: var(--dark); margin-bottom: 12px; border-bottom: 2px solid var(--teal); padding-bottom: 8px; }
+  .slide-body { font-size: 14px; color: var(--dark); line-height: 1.6; }
+  .slide-body p { margin-bottom: 10px; }
+  .callout-teal { background: var(--teal-bg); border-left: 4px solid var(--teal); border-radius: 0 6px 6px 0; padding: 10px 14px; margin: 12px 0; font-size: 13px; }
+  .callout-amber { background: var(--amber-bg); border-left: 4px solid var(--amber); border-radius: 0 6px 6px 0; padding: 10px 14px; margin: 12px 0; font-size: 13px; }
+  .diagram-wrap { background: var(--dark); border-radius: 6px; padding: 16px; margin: 14px 0; text-align: center; }
+  .data-table { width: 100%; border-collapse: collapse; margin: 12px 0; font-size: 13px; }
+  .data-table th { background: var(--dark); color: #fff; font-family: 'Oswald', sans-serif; font-size: 12px; padding: 8px 10px; text-align: left; }
+  .data-table td { padding: 8px 10px; border-bottom: 1px solid var(--teal-border); vertical-align: top; }
+  .data-table tr:nth-child(even) td { background: var(--teal-bg); }
+  .data-table tr:nth-child(odd) td { background: #fff; }
+  .nav-row { display: table; width: 100%; margin-top: 16px; }
+  .nav-row-inner { display: table-row; }
+  .nav-cell { display: table-cell; vertical-align: middle; }
+  .nav-cell.right { text-align: right; }
+  .btn { font-family: 'Oswald', sans-serif; font-size: 13px; letter-spacing: 0.5px; font-weight: 600; padding: 9px 18px; border: none; border-radius: 6px; cursor: pointer; transition: opacity 0.2s; text-transform: uppercase; }
+  .btn:hover { opacity: 0.85; }
+  .btn-teal { background: var(--teal); color: #fff; }
+  .btn-dark { background: var(--dark); color: #ccc; }
+  .btn:disabled { opacity: 0.35; cursor: default; }
+  .quiz-section { margin-top: 20px; }
+  .quiz-q-label { font-family: 'Oswald', sans-serif; font-size: 11px; color: var(--amber); text-transform: uppercase; letter-spacing: 1px; margin-bottom: 6px; }
+  .quiz-question { font-size: 15px; font-weight: 600; color: var(--dark); margin-bottom: 12px; line-height: 1.4; }
+  .choice-btn { display: block; width: 100%; text-align: left; background: #f7f7f7; border: 2px solid #ddd; border-radius: 6px; padding: 10px 14px; margin-bottom: 8px; font-family: 'Source Sans 3', sans-serif; font-size: 14px; cursor: pointer; transition: border-color 0.15s, background 0.15s; }
+  .choice-btn:hover:not(:disabled) { border-color: var(--teal); background: var(--teal-bg); }
+  .choice-btn.correct { background: var(--correct-bg); border-color: var(--correct); color: var(--correct); font-weight: 700; }
+  .choice-btn.incorrect { background: var(--incorrect-bg); border-color: var(--incorrect); color: var(--incorrect); }
+  .choice-btn:disabled { cursor: default; }
+  .feedback-box { display: none; border-radius: 6px; padding: 12px 14px; margin-top: 10px; font-size: 14px; line-height: 1.5; }
+  .feedback-box.correct { background: var(--correct-bg); border-left: 4px solid var(--correct); color: var(--correct); }
+  .feedback-box.incorrect { background: var(--incorrect-bg); border-left: 4px solid var(--incorrect); color: var(--incorrect); }
+  .feedback-box.show { display: block; }
+  .complete-box { display: none; background: var(--dark); border: 2px solid var(--teal); border-radius: 8px; padding: 20px 24px; text-align: center; margin-top: 20px; }
+  .complete-box.show { display: block; }
+  .complete-icon { font-size: 36px; margin-bottom: 8px; }
+  .complete-title { font-family: 'Oswald', sans-serif; font-size: 20px; color: var(--teal); margin-bottom: 6px; }
+  .complete-text { font-size: 14px; color: #ccc; }
+</style>
+</head>
+<body>
+<div class="lesson-wrap">
+  <div class="lesson-header">
+    <div class="lesson-label">Steering, Suspension &amp; Handling &bull; AUTOA 123</div>
+    <div class="lesson-title">Wheel Bearing Diagnosis</div>
+    <div class="lesson-subtitle">Noise patterns, groan test, sealed hub assemblies</div>
+  </div>
+  <div class="progress-wrap">
+    <div class="progress-label" id="progress-label">Progress - 0%</div>
+    <div class="progress-track"><div class="progress-fill" id="progress-fill" style="width:0%"></div></div>
+  </div>
+
+  <div class="slide active" id="slide-1">
+    <div class="slide-card">
+      <div class="slide-num">Slide 1 of 3</div>
+      <div class="slide-heading">Identifying Wheel Bearing Noise</div>
+      <div class="slide-body"><p>A failing wheel bearing produces a grinding, growling, or humming noise that typically changes with vehicle speed and often changes when the vehicle turns. Identifying which corner the noise comes from is the key diagnostic step -- and it is trickier than it sounds because noise transmits through the body.</p>
+<div class="callout-teal"><strong>The turn test:</strong> At highway speed (50-60 mph) with no traffic, make a gentle sweeping turn left, then right. When you turn, weight transfers off one side and onto the other, changing the load on each wheel bearing.<br><br>
+If the noise gets louder turning LEFT, the fault is the LEFT bearing (weight has transferred onto it).<br>
+If the noise gets louder turning RIGHT, the fault is the RIGHT bearing.</div>
+<div class="callout-amber"><strong>Common mistake:</strong> Technicians often pull the wrong bearing because they assume noise on the right means the right bearing. The turn test logic is: noise increases when you LOAD the bearing, not when you unload it. Confirm before ordering parts.</div>
+<p>At low speed in a parking lot, a badly failed bearing will produce a grinding sound that can be localized by placing a chassis stethoscope on each hub area. This should be done as confirmation after the road test -- not as the primary diagnostic step.</p></div>
+      <div class="nav-row"><div class="nav-row-inner">
+        <div class="nav-cell"><button class="btn btn-dark" disabled>Back</button></div>
+        <div class="nav-cell right"><button class="btn btn-teal" onclick="goSlide(2)">Next</button></div>
+      </div></div>
+    </div>
+  </div>
+  <div class="slide " id="slide-2">
+    <div class="slide-card">
+      <div class="slide-num">Slide 2 of 3</div>
+      <div class="slide-heading">Sealed Hub Assembly vs Serviceable Bearing</div>
+      <div class="slide-body"><p>Modern vehicles use one of two bearing designs at the wheel position.</p>
+<p><strong>Sealed hub assembly (Generation 2/3):</strong> The bearing races, rolling elements, and hub flange are all integrated into a single sealed unit. When the bearing fails, the entire assembly is replaced. This is the most common design on modern front-wheel-drive vehicles. No adjustment required.</p>
+<p><strong>Serviceable tapered roller bearing (older/truck applications):</strong> The inner and outer races are separate from the hub and spindle. The bearing must be packed with grease, installed with the correct preload, and adjusted by tightening and backing off the spindle nut to a specific procedure. Not setting preload correctly causes rapid failure -- too tight preheats and fails quickly; too loose allows the hub to rock and damages the race.</p>
+<table class="data-table">
+  <thead><tr><th></th><th>Sealed Hub Assembly</th><th>Tapered Roller (Serviceable)</th></tr></thead>
+  <tbody>
+    <tr><td>Service</td><td>Replace as unit</td><td>Pack, install, adjust preload</td></tr>
+    <tr><td>Adjustment</td><td>None</td><td>Spindle nut torque procedure</td></tr>
+    <tr><td>Application</td><td>Most modern FWD/AWD</td><td>Older RWD, many light trucks</td></tr>
+    <tr><td>TPMS sensor integration</td><td>Common (sensor in hub)</td><td>Rare</td></tr>
+  </tbody>
+</table></div>
+      <div class="nav-row"><div class="nav-row-inner">
+        <div class="nav-cell"><button class="btn btn-dark" onclick="goSlide(1)">Back</button></div>
+        <div class="nav-cell right"><button class="btn btn-teal" onclick="goSlide(3)">Next</button></div>
+      </div></div>
+    </div>
+  </div>
+  <div class="slide " id="slide-3">
+    <div class="slide-card">
+      <div class="slide-num">Slide 3 of 3</div>
+      <div class="slide-heading">Inspection and Replacement Procedure</div>
+      <div class="slide-body"><p>Before pulling a hub assembly, confirm the noise source with both a road test and a raised-vehicle check. Wheel bearing noise and CV axle noise can sound similar -- ruling out the CV joint first saves time.</p>
+<ul style="padding-left:18px; font-size:14px; line-height:1.9;">
+  <li><strong>Raised-vehicle check:</strong> With the vehicle on a lift, grab the tire at 9 and 3 o'clock and push/pull for play (rules out tie rod ends). Then grab at 6 and 12 o'clock and rock for play (rules out ball joints AND checks for bearing play). Spin the wheel by hand and listen for roughness or grinding in the bearing.</li>
+  <li><strong>CV joint check:</strong> Drive the vehicle in tight circles both directions. CV joint noise (clicking) gets louder in tight turns. Bearing noise changes with speed and turn radius, not steering angle.</li>
+  <li><strong>On replacement:</strong> Always torque the axle nut to spec -- it preloads the sealed bearing. Under-torquing causes the bearing to spin in its bore. Never reuse a splined axle nut -- replace it.</li>
+</ul>
+<div class="callout-teal"><strong>ASE task connection:</strong> IV.C.5 -- Inspect, remove, and replace upper and lower ball joints. IV.F.6 (Brakes) -- Remove, reinstall, and/or replace sealed wheel bearing assembly. Wheel bearing work bridges both the suspension and brakes task lists.</div></div>
+      <div class="nav-row"><div class="nav-row-inner">
+        <div class="nav-cell"><button class="btn btn-dark" onclick="goSlide(2)">Back</button></div>
+        <div class="nav-cell right"><button class="btn btn-teal" onclick="goQuiz()">Knowledge Check</button></div>
+      </div></div>
+    </div>
+  </div>
+  <div class="slide" id="slide-quiz">
+    <div class="slide-card">
+      <div class="slide-num">Knowledge Check</div>
+      <div class="slide-heading">Check Your Understanding</div>
+
+      <div class="quiz-section" id="q1-section">
+        <div class="quiz-q-label">Question 1 of 3</div>
+        <div class="quiz-question">A driver reports a grinding noise at highway speed. During the turn test, the noise gets significantly louder when the driver makes a sweeping right turn. Which wheel bearing is most likely faulty?</div>
+        <button class="choice-btn" onclick="answer(1,'a')">A. Right front or right rear -- the noise got louder on the right turn</button>
+<button class="choice-btn" onclick="answer(1,'b')">B. Left front or left rear -- weight transferred left during the right turn, loading the left bearing</button>
+<button class="choice-btn" onclick="answer(1,'c')">C. Both rear bearings -- turn test results are not reliable for isolating which side</button>
+<button class="choice-btn" onclick="answer(1,'d')">D. The front differential bearing -- differential noise changes with turning</button>
+
+        <div class="feedback-box" id="q1-feedback"></div>
+      </div>
+      <div class="quiz-section" id="q2-section" style="display:none;">
+        <div class="quiz-q-label">Question 2 of 3</div>
+        <div class="quiz-question">A technician replaces the right front sealed hub assembly and reinstalls the axle nut but does not look up the torque spec, tightening it by feel to "good and snug." What is the likely result?</div>
+        <button class="choice-btn" onclick="answer(2,'a')">A. No effect -- sealed hub assemblies do not require a specific axle nut torque</button>
+<button class="choice-btn" onclick="answer(2,'b')">B. The hub may spin in its bore or the bearing may fail prematurely if the nut is under-torqued</button>
+<button class="choice-btn" onclick="answer(2,'c')">C. The ABS tone ring will be damaged if the nut is torqued over 150 ft-lb</button>
+<button class="choice-btn" onclick="answer(2,'d')">D. The CV axle will be overloaded and fail at the inner joint</button>
+
+        <div class="feedback-box" id="q2-feedback"></div>
+      </div>
+      <div class="quiz-section" id="q3-section" style="display:none;">
+        <div class="quiz-q-label">Question 3 of 3</div>
+        <div class="quiz-question">A customer reports a clicking noise when making tight turns in a parking lot, but no noise on the highway. Which component is most likely causing this?</div>
+        <button class="choice-btn" onclick="answer(3,'a')">A. Wheel bearing -- bearings always make noise in tight turns</button>
+<button class="choice-btn" onclick="answer(3,'b')">B. CV axle joint -- clicking in tight turns at low speed is the classic CV joint failure symptom</button>
+<button class="choice-btn" onclick="answer(3,'c')">C. Worn ball joint -- ball joints click when the suspension is at full droop during turns</button>
+<button class="choice-btn" onclick="answer(3,'d')">D. Loose lug nuts -- wheel movement causes clicking during parking maneuvers</button>
+
+        <div class="feedback-box" id="q3-feedback"></div>
+      </div>
+    </div>
+  </div>
+  <div class="complete-box" id="complete-box">
+    <div class="complete-icon">&#10003;</div>
+    <div class="complete-title">Lesson Complete</div>
+    <div class="complete-text">You covered the turn test for localizing wheel bearing noise, sealed vs serviceable bearing designs, and the inspection and replacement steps that matter on the job.</div>
+  </div>
+</div>
+<script>
+  var currentSlide = 1;
+  var totalSteps = 6;
+  var completedSteps = 0;
+  var answered = [false, false, false];
+  var answers = {
+    1: {correct:'b', explanation:'Correct. During a right turn, weight transfers to the left side of the vehicle. This loads the left wheel bearings. If noise increases during a right turn, the suspect bearing is on the LEFT. This is the most commonly confused point of bearing diagnosis.'},
+    2: {correct:'b', explanation:'Correct. The axle nut clamps the hub assembly and preloads the bearing correctly. Under-torquing allows the hub to spin in the knuckle bore, fretting the bore and quickly destroying the new bearing. Always look up the spec -- axle nut torque ranges vary widely from 100 to over 280 ft-lb depending on the vehicle.'},
+    3: {correct:'b', explanation:'Correct. Clicking during tight low-speed turns is the classic symptom of a worn outer CV joint. The CV joint is at maximum angle during tight turns and a worn cage allows the balls to click. Wheel bearing noise is speed-dependent and changes with turn radius, not steering lock angle.'}
+  };
+
+  function updateProgress() {
+    var pct = Math.round((completedSteps / totalSteps) * 100);
+    document.getElementById('progress-fill').style.width = pct + '%';
+    document.getElementById('progress-label').textContent = 'Progress - ' + pct + '%';
+  }
+  function goSlide(n) {
+    document.getElementById('slide-' + currentSlide).classList.remove('active');
+    currentSlide = n;
+    document.getElementById('slide-' + n).classList.add('active');
+    if (n > completedSteps) { completedSteps = n; updateProgress(); }
+    window.scrollTo(0, 0);
+  }
+  function goQuiz() {
+    document.getElementById('slide-' + currentSlide).classList.remove('active');
+    currentSlide = 'quiz';
+    document.getElementById('slide-quiz').classList.add('active');
+    window.scrollTo(0, 0);
+  }
+  function answer(qNum, choice) {
+    if (answered[qNum - 1]) return;
+    answered[qNum - 1] = true;
+    var section = document.getElementById('q' + qNum + '-section');
+    var btns = section.querySelectorAll('.choice-btn');
+    var feedback = document.getElementById('q' + qNum + '-feedback');
+    var data = answers[qNum];
+    var isCorrect = (choice === data.correct);
+    for (var i = 0; i < btns.length; i++) {
+      btns[i].disabled = true;
+      var bc = btns[i].getAttribute('onclick').match(/'([a-d])'\)/)[1];
+      if (bc === data.correct) btns[i].classList.add('correct');
+      else if (bc === choice && !isCorrect) btns[i].classList.add('incorrect');
+    }
+    feedback.className = 'feedback-box show ' + (isCorrect ? 'correct' : 'incorrect');
+    feedback.textContent = data.explanation;
+    completedSteps = Math.max(completedSteps, 3 + qNum);
+    updateProgress();
+    if (qNum < 3) {
+      var next = document.getElementById('q' + (qNum + 1) + '-section');
+      if (next) { next.style.display = 'block'; setTimeout(function() { next.scrollIntoView({behavior:'smooth',block:'start'}); }, 200); }
+    }
+    if (qNum === 3) {
+      setTimeout(function() {
+        document.getElementById('complete-box').classList.add('show');
+        document.getElementById('complete-box').scrollIntoView({behavior:'smooth',block:'start'});
+      }, 400);
+    }
+  }
+  updateProgress();
+</script>
+</body>
+</html>

@@ -1,0 +1,246 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Rack and Pinion Steering - AUTOA 123</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Oswald:wght@400;600;700&family=Source+Sans+3:wght@400;600;700&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --dark: #1a1a1a; --teal: #2a9d8f; --tealdk: #1a7a6e; --amber: #e9a825;
+    --amber-bg: #fffbf0; --teal-bg: #f0faf8; --teal-border: #d0ede9;
+    --correct: #1a7a6e; --correct-bg: #e6f4f1;
+    --incorrect: #9b1c1c; --incorrect-bg: #fde8e8;
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body { font-family: 'Source Sans 3', sans-serif; background: transparent; color: var(--dark); font-size: 15px; line-height: 1.5; }
+  .lesson-wrap { max-width: 720px; margin: 0 auto; padding: 16px; }
+  .lesson-header { background: var(--dark); border-radius: 8px 8px 0 0; padding: 16px 20px 12px; border-bottom: 4px solid var(--amber); }
+  .lesson-label { font-family: 'Oswald', sans-serif; font-size: 11px; color: var(--amber); letter-spacing: 1.5px; text-transform: uppercase; margin-bottom: 4px; }
+  .lesson-title { font-family: 'Oswald', sans-serif; font-size: 22px; color: #ffffff; font-weight: 600; }
+  .lesson-subtitle { font-size: 13px; color: #cccccc; margin-top: 4px; }
+  .progress-wrap { background: var(--dark); padding: 10px 20px 14px; }
+  .progress-label { font-size: 11px; color: #888; text-transform: uppercase; letter-spacing: 1px; margin-bottom: 5px; }
+  .progress-track { background: #3a3a3a; border-radius: 4px; height: 6px; width: 100%; }
+  .progress-fill { background: var(--amber); height: 6px; border-radius: 4px; transition: width 0.4s ease; }
+  .slide { display: none; }
+  .slide.active { display: block; }
+  .slide-card { background: #ffffff; border: 1px solid var(--teal-border); border-radius: 0 0 8px 8px; padding: 20px 24px; }
+  .slide-num { font-family: 'Oswald', sans-serif; font-size: 11px; color: var(--teal); text-transform: uppercase; letter-spacing: 1px; margin-bottom: 8px; }
+  .slide-heading { font-family: 'Oswald', sans-serif; font-size: 19px; color: var(--dark); margin-bottom: 12px; border-bottom: 2px solid var(--teal); padding-bottom: 8px; }
+  .slide-body { font-size: 14px; color: var(--dark); line-height: 1.6; }
+  .slide-body p { margin-bottom: 10px; }
+  .callout-teal { background: var(--teal-bg); border-left: 4px solid var(--teal); border-radius: 0 6px 6px 0; padding: 10px 14px; margin: 12px 0; font-size: 13px; }
+  .callout-amber { background: var(--amber-bg); border-left: 4px solid var(--amber); border-radius: 0 6px 6px 0; padding: 10px 14px; margin: 12px 0; font-size: 13px; }
+  .diagram-wrap { background: var(--dark); border-radius: 6px; padding: 16px; margin: 14px 0; text-align: center; }
+  .data-table { width: 100%; border-collapse: collapse; margin: 12px 0; font-size: 13px; }
+  .data-table th { background: var(--dark); color: #fff; font-family: 'Oswald', sans-serif; font-size: 12px; padding: 8px 10px; text-align: left; }
+  .data-table td { padding: 8px 10px; border-bottom: 1px solid var(--teal-border); vertical-align: top; }
+  .data-table tr:nth-child(even) td { background: var(--teal-bg); }
+  .data-table tr:nth-child(odd) td { background: #fff; }
+  .nav-row { display: table; width: 100%; margin-top: 16px; }
+  .nav-row-inner { display: table-row; }
+  .nav-cell { display: table-cell; vertical-align: middle; }
+  .nav-cell.right { text-align: right; }
+  .btn { font-family: 'Oswald', sans-serif; font-size: 13px; letter-spacing: 0.5px; font-weight: 600; padding: 9px 18px; border: none; border-radius: 6px; cursor: pointer; transition: opacity 0.2s; text-transform: uppercase; }
+  .btn:hover { opacity: 0.85; }
+  .btn-teal { background: var(--teal); color: #fff; }
+  .btn-dark { background: var(--dark); color: #ccc; }
+  .btn:disabled { opacity: 0.35; cursor: default; }
+  .quiz-section { margin-top: 20px; }
+  .quiz-q-label { font-family: 'Oswald', sans-serif; font-size: 11px; color: var(--amber); text-transform: uppercase; letter-spacing: 1px; margin-bottom: 6px; }
+  .quiz-question { font-size: 15px; font-weight: 600; color: var(--dark); margin-bottom: 12px; line-height: 1.4; }
+  .choice-btn { display: block; width: 100%; text-align: left; background: #f7f7f7; border: 2px solid #ddd; border-radius: 6px; padding: 10px 14px; margin-bottom: 8px; font-family: 'Source Sans 3', sans-serif; font-size: 14px; cursor: pointer; transition: border-color 0.15s, background 0.15s; }
+  .choice-btn:hover:not(:disabled) { border-color: var(--teal); background: var(--teal-bg); }
+  .choice-btn.correct { background: var(--correct-bg); border-color: var(--correct); color: var(--correct); font-weight: 700; }
+  .choice-btn.incorrect { background: var(--incorrect-bg); border-color: var(--incorrect); color: var(--incorrect); }
+  .choice-btn:disabled { cursor: default; }
+  .feedback-box { display: none; border-radius: 6px; padding: 12px 14px; margin-top: 10px; font-size: 14px; line-height: 1.5; }
+  .feedback-box.correct { background: var(--correct-bg); border-left: 4px solid var(--correct); color: var(--correct); }
+  .feedback-box.incorrect { background: var(--incorrect-bg); border-left: 4px solid var(--incorrect); color: var(--incorrect); }
+  .feedback-box.show { display: block; }
+  .complete-box { display: none; background: var(--dark); border: 2px solid var(--teal); border-radius: 8px; padding: 20px 24px; text-align: center; margin-top: 20px; }
+  .complete-box.show { display: block; }
+  .complete-icon { font-size: 36px; margin-bottom: 8px; }
+  .complete-title { font-family: 'Oswald', sans-serif; font-size: 20px; color: var(--teal); margin-bottom: 6px; }
+  .complete-text { font-size: 14px; color: #ccc; }
+</style>
+</head>
+<body>
+<div class="lesson-wrap">
+  <div class="lesson-header">
+    <div class="lesson-label">Steering, Suspension &amp; Handling &bull; AUTOA 123</div>
+    <div class="lesson-title">Rack and Pinion Steering</div>
+    <div class="lesson-subtitle">Operation, inspection, inner tie rods, and power assist</div>
+  </div>
+  <div class="progress-wrap">
+    <div class="progress-label" id="progress-label">Progress - 0%</div>
+    <div class="progress-track"><div class="progress-fill" id="progress-fill" style="width:0%"></div></div>
+  </div>
+
+  <div class="slide active" id="slide-1">
+    <div class="slide-card">
+      <div class="slide-num">Slide 1 of 3</div>
+      <div class="slide-heading">How Rack and Pinion Works</div>
+      <div class="slide-body"><p>The rack and pinion steering gear is the most common steering gear on modern vehicles. The pinion is a small gear on the end of the steering shaft. The rack is a toothed bar that slides left and right as the pinion turns. Tie rods connect each end of the rack to the steering knuckle.</p>
+<div class="callout-teal"><strong>Advantages over recirculating ball:</strong> Fewer joints, more direct driver feel, lighter weight, and simpler construction. Recirculating ball steering gears are now found mainly on light trucks and older vehicles.</div>
+<p><strong>Inner tie rod ends (sockets)</strong> are threaded into the ends of the rack and connect to the outer tie rod ends. They allow the tie rod to pivot as the suspension moves up and down while still transmitting steering force. Inner tie rod failures cause a clunking noise during steering and steering wander -- the inner socket can be felt moving loosely by grabbing the tie rod while a helper turns the wheel.</p>
+<div class="callout-amber"><strong>Bellows boots:</strong> The accordion boots at each end of the rack protect the inner tie rod sockets and the rack from dirt and moisture. A torn boot quickly leads to socket wear and corrosion of the rack surface. Always inspect boots during any steering service.</div></div>
+      <div class="nav-row"><div class="nav-row-inner">
+        <div class="nav-cell"><button class="btn btn-dark" disabled>Back</button></div>
+        <div class="nav-cell right"><button class="btn btn-teal" onclick="goSlide(2)">Next</button></div>
+      </div></div>
+    </div>
+  </div>
+  <div class="slide " id="slide-2">
+    <div class="slide-card">
+      <div class="slide-num">Slide 2 of 3</div>
+      <div class="slide-heading">Power Steering -- Hydraulic and Electric</div>
+      <div class="slide-body"><p>Manual rack and pinion requires significant steering effort at low speeds. Power assist reduces effort by adding force to the rack movement.</p>
+<p><strong>Hydraulic power steering (HPS):</strong> An engine-driven pump pressurizes power steering fluid. A control valve in the steering gear directs this pressure to assist in the direction the driver is turning. The system is always on -- the pump runs even when driving straight, consuming engine power.</p>
+<p><strong>Electric power steering (EPS):</strong> An electric motor provides assist, either on the column (column-assist), on the rack (rack-assist), or on the pinion. The module decides how much assist to provide based on vehicle speed, steering angle rate, and torque sensor input.</p>
+<table class="data-table">
+  <thead><tr><th></th><th>Hydraulic (HPS)</th><th>Electric (EPS)</th></tr></thead>
+  <tbody>
+    <tr><td>Power source</td><td>Engine-driven pump</td><td>Electric motor (battery/alternator)</td></tr>
+    <tr><td>Fuel economy impact</td><td>Always drawing power</td><td>Only draws power when steering</td></tr>
+    <tr><td>Fluid required</td><td>Yes -- power steering fluid</td><td>No fluid</td></tr>
+    <tr><td>Failure mode</td><td>Leaks, pump noise, hard steering</td><td>DTCs, loss of assist, initialization needed</td></tr>
+  </tbody>
+</table></div>
+      <div class="nav-row"><div class="nav-row-inner">
+        <div class="nav-cell"><button class="btn btn-dark" onclick="goSlide(1)">Back</button></div>
+        <div class="nav-cell right"><button class="btn btn-teal" onclick="goSlide(3)">Next</button></div>
+      </div></div>
+    </div>
+  </div>
+  <div class="slide " id="slide-3">
+    <div class="slide-card">
+      <div class="slide-num">Slide 3 of 3</div>
+      <div class="slide-heading">EPS Initialization and Diagnosis</div>
+      <div class="slide-body"><p>EPS systems require a scan tool for diagnosis and often require an initialization (zero-point calibration) procedure after repairs that disturb the steering angle sensor -- alignment, steering gear replacement, or steering column work.</p>
+<div class="callout-amber"><strong>When initialization is required:</strong><br>
+-- Steering gear replacement<br>
+-- Steering angle sensor replacement<br>
+-- Four-wheel alignment (on vehicles where the steering angle sensor self-zeros on a straight road, this may happen automatically, but confirm with the service info)<br>
+-- Battery disconnect on some vehicles (the module loses its learned center point)</div>
+<p><strong>EPS diagnostic approach:</strong></p>
+<ol style="padding-left:18px; font-size:14px; line-height:1.9;">
+  <li>Retrieve all DTCs first -- EPS DTCs often point directly to the faulty sensor or circuit.</li>
+  <li>Check for power, ground, and CAN bus communication at the EPS module.</li>
+  <li>Look up torque sensor and steering angle sensor data in live data to verify signals.</li>
+  <li>Perform initialization/zero-point calibration procedure from the service manual if required.</li>
+</ol>
+<div class="callout-teal"><strong>ASE task connection:</strong> IV.B.12 -- Diagnose, test, and replace electric power steering (EPS) and electronic variable orifice (EVO) steering system components.</div></div>
+      <div class="nav-row"><div class="nav-row-inner">
+        <div class="nav-cell"><button class="btn btn-dark" onclick="goSlide(2)">Back</button></div>
+        <div class="nav-cell right"><button class="btn btn-teal" onclick="goQuiz()">Knowledge Check</button></div>
+      </div></div>
+    </div>
+  </div>
+  <div class="slide" id="slide-quiz">
+    <div class="slide-card">
+      <div class="slide-num">Knowledge Check</div>
+      <div class="slide-heading">Check Your Understanding</div>
+
+      <div class="quiz-section" id="q1-section">
+        <div class="quiz-q-label">Question 1 of 3</div>
+        <div class="quiz-question">A customer complains of a clunking noise when turning the steering wheel at low speed. The noise seems to come from the center of the vehicle. Which component is the most likely cause?</div>
+        <button class="choice-btn" onclick="answer(1,'a')">A. Worn outer tie rod end -- the ball socket is loose</button>
+<button class="choice-btn" onclick="answer(1,'b')">B. Loose inner tie rod socket -- worn where it threads into the rack</button>
+<button class="choice-btn" onclick="answer(1,'c')">C. Worn strut bearing -- allows the strut to clunk during turns</button>
+<button class="choice-btn" onclick="answer(1,'d')">D. Loose lug nuts -- wheel movement causes steering noise</button>
+
+        <div class="feedback-box" id="q1-feedback"></div>
+      </div>
+      <div class="quiz-section" id="q2-section" style="display:none;">
+        <div class="quiz-q-label">Question 2 of 3</div>
+        <div class="quiz-question">After replacing the rack and pinion steering gear on a vehicle with electric power steering, the technician notes the EPS warning light is on and steering assist is reduced. What is the most likely required next step?</div>
+        <button class="choice-btn" onclick="answer(2,'a')">A. Replace the EPS motor -- it was damaged during the rack replacement</button>
+<button class="choice-btn" onclick="answer(2,'b')">B. Perform the steering angle sensor zero-point calibration/initialization procedure</button>
+<button class="choice-btn" onclick="answer(2,'c')">C. Bleed the power steering system -- air was introduced during the rack replacement</button>
+<button class="choice-btn" onclick="answer(2,'d')">D. Reflash the ECM -- the new rack caused a communication error</button>
+
+        <div class="feedback-box" id="q2-feedback"></div>
+      </div>
+      <div class="quiz-section" id="q3-section" style="display:none;">
+        <div class="quiz-q-label">Question 3 of 3</div>
+        <div class="quiz-question">A hydraulic power steering system has a loud whining noise that increases with engine RPM and gets worse during parking lot turns. What is the most likely cause?</div>
+        <button class="choice-btn" onclick="answer(3,'a')">A. EPS motor overheating from excessive steering demand</button>
+<button class="choice-btn" onclick="answer(3,'b')">B. Air in the power steering system or a failing/low-fluid power steering pump</button>
+<button class="choice-btn" onclick="answer(3,'c')">C. Worn rack bushings allowing the rack to vibrate against the housing</button>
+<button class="choice-btn" onclick="answer(3,'d')">D. Faulty steering angle sensor causing the EPS module to command maximum assist</button>
+
+        <div class="feedback-box" id="q3-feedback"></div>
+      </div>
+    </div>
+  </div>
+  <div class="complete-box" id="complete-box">
+    <div class="complete-icon">&#10003;</div>
+    <div class="complete-title">Lesson Complete</div>
+    <div class="complete-text">You covered rack and pinion construction, inner tie rod inspection, the difference between hydraulic and electric power steering, and EPS initialization.</div>
+  </div>
+</div>
+<script>
+  var currentSlide = 1;
+  var totalSteps = 6;
+  var completedSteps = 0;
+  var answered = [false, false, false];
+  var answers = {
+    1: {correct:'b', explanation:'Correct. Inner tie rod sockets thread into the ends of the rack and wear over time. A worn inner socket clunks during steering input and causes wander. You can diagnose it by grabbing the tie rod with the engine off and having a helper slowly turn the wheel -- you will feel the slack in the socket.'},
+    2: {correct:'b', explanation:'Correct. Any repair that disturbs the steering system on an EPS vehicle typically requires a steering angle sensor initialization (zero-point calibration) procedure. The module lost its learned center position. This is done with a scan tool per the manufacturer procedure -- not a generic reset.'},
+    3: {correct:'b', explanation:'Correct. A whining noise that increases with RPM and gets worse under high-demand steering (parking turns) is classic power steering pump noise. Check the fluid level first -- low fluid causes both noise and pump cavitation. If the fluid is full, the pump is likely worn or air has been introduced through a leak.'}
+  };
+
+  function updateProgress() {
+    var pct = Math.round((completedSteps / totalSteps) * 100);
+    document.getElementById('progress-fill').style.width = pct + '%';
+    document.getElementById('progress-label').textContent = 'Progress - ' + pct + '%';
+  }
+  function goSlide(n) {
+    document.getElementById('slide-' + currentSlide).classList.remove('active');
+    currentSlide = n;
+    document.getElementById('slide-' + n).classList.add('active');
+    if (n > completedSteps) { completedSteps = n; updateProgress(); }
+    window.scrollTo(0, 0);
+  }
+  function goQuiz() {
+    document.getElementById('slide-' + currentSlide).classList.remove('active');
+    currentSlide = 'quiz';
+    document.getElementById('slide-quiz').classList.add('active');
+    window.scrollTo(0, 0);
+  }
+  function answer(qNum, choice) {
+    if (answered[qNum - 1]) return;
+    answered[qNum - 1] = true;
+    var section = document.getElementById('q' + qNum + '-section');
+    var btns = section.querySelectorAll('.choice-btn');
+    var feedback = document.getElementById('q' + qNum + '-feedback');
+    var data = answers[qNum];
+    var isCorrect = (choice === data.correct);
+    for (var i = 0; i < btns.length; i++) {
+      btns[i].disabled = true;
+      var bc = btns[i].getAttribute('onclick').match(/'([a-d])'\)/)[1];
+      if (bc === data.correct) btns[i].classList.add('correct');
+      else if (bc === choice && !isCorrect) btns[i].classList.add('incorrect');
+    }
+    feedback.className = 'feedback-box show ' + (isCorrect ? 'correct' : 'incorrect');
+    feedback.textContent = data.explanation;
+    completedSteps = Math.max(completedSteps, 3 + qNum);
+    updateProgress();
+    if (qNum < 3) {
+      var next = document.getElementById('q' + (qNum + 1) + '-section');
+      if (next) { next.style.display = 'block'; setTimeout(function() { next.scrollIntoView({behavior:'smooth',block:'start'}); }, 200); }
+    }
+    if (qNum === 3) {
+      setTimeout(function() {
+        document.getElementById('complete-box').classList.add('show');
+        document.getElementById('complete-box').scrollIntoView({behavior:'smooth',block:'start'});
+      }, 400);
+    }
+  }
+  updateProgress();
+</script>
+</body>
+</html>

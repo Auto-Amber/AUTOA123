@@ -1,0 +1,245 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Refrigerants and Safety - AUTOA 123</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Oswald:wght@400;600;700&family=Source+Sans+3:wght@400;600;700&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --dark: #1a1a1a; --teal: #2a9d8f; --tealdk: #1a7a6e; --amber: #e9a825;
+    --amber-bg: #fffbf0; --teal-bg: #f0faf8; --teal-border: #d0ede9;
+    --correct: #1a7a6e; --correct-bg: #e6f4f1;
+    --incorrect: #9b1c1c; --incorrect-bg: #fde8e8;
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body { font-family: 'Source Sans 3', sans-serif; background: transparent; color: var(--dark); font-size: 15px; line-height: 1.5; }
+  .lesson-wrap { max-width: 720px; margin: 0 auto; padding: 16px; }
+  .lesson-header { background: var(--dark); border-radius: 8px 8px 0 0; padding: 16px 20px 12px; border-bottom: 4px solid var(--amber); }
+  .lesson-label { font-family: 'Oswald', sans-serif; font-size: 11px; color: var(--amber); letter-spacing: 1.5px; text-transform: uppercase; margin-bottom: 4px; }
+  .lesson-title { font-family: 'Oswald', sans-serif; font-size: 22px; color: #ffffff; font-weight: 600; }
+  .lesson-subtitle { font-size: 13px; color: #cccccc; margin-top: 4px; }
+  .progress-wrap { background: var(--dark); padding: 10px 20px 14px; }
+  .progress-label { font-size: 11px; color: #888; text-transform: uppercase; letter-spacing: 1px; margin-bottom: 5px; }
+  .progress-track { background: #3a3a3a; border-radius: 4px; height: 6px; width: 100%; }
+  .progress-fill { background: var(--amber); height: 6px; border-radius: 4px; transition: width 0.4s ease; }
+  .slide { display: none; }
+  .slide.active { display: block; }
+  .slide-card { background: #ffffff; border: 1px solid var(--teal-border); border-radius: 0 0 8px 8px; padding: 20px 24px; }
+  .slide-num { font-family: 'Oswald', sans-serif; font-size: 11px; color: var(--teal); text-transform: uppercase; letter-spacing: 1px; margin-bottom: 8px; }
+  .slide-heading { font-family: 'Oswald', sans-serif; font-size: 19px; color: var(--dark); margin-bottom: 12px; border-bottom: 2px solid var(--teal); padding-bottom: 8px; }
+  .slide-body { font-size: 14px; color: var(--dark); line-height: 1.6; }
+  .slide-body p { margin-bottom: 10px; }
+  .callout-teal { background: var(--teal-bg); border-left: 4px solid var(--teal); border-radius: 0 6px 6px 0; padding: 10px 14px; margin: 12px 0; font-size: 13px; }
+  .callout-amber { background: var(--amber-bg); border-left: 4px solid var(--amber); border-radius: 0 6px 6px 0; padding: 10px 14px; margin: 12px 0; font-size: 13px; }
+  .diagram-wrap { background: var(--dark); border-radius: 6px; padding: 16px; margin: 14px 0; text-align: center; }
+  .data-table { width: 100%; border-collapse: collapse; margin: 12px 0; font-size: 13px; }
+  .data-table th { background: var(--dark); color: #fff; font-family: 'Oswald', sans-serif; font-size: 12px; padding: 8px 10px; text-align: left; }
+  .data-table td { padding: 8px 10px; border-bottom: 1px solid var(--teal-border); vertical-align: top; }
+  .data-table tr:nth-child(even) td { background: var(--teal-bg); }
+  .data-table tr:nth-child(odd) td { background: #fff; }
+  .nav-row { display: table; width: 100%; margin-top: 16px; }
+  .nav-row-inner { display: table-row; }
+  .nav-cell { display: table-cell; vertical-align: middle; }
+  .nav-cell.right { text-align: right; }
+  .btn { font-family: 'Oswald', sans-serif; font-size: 13px; letter-spacing: 0.5px; font-weight: 600; padding: 9px 18px; border: none; border-radius: 6px; cursor: pointer; transition: opacity 0.2s; text-transform: uppercase; }
+  .btn:hover { opacity: 0.85; }
+  .btn-teal { background: var(--teal); color: #fff; }
+  .btn-dark { background: var(--dark); color: #ccc; }
+  .btn:disabled { opacity: 0.35; cursor: default; }
+  .quiz-section { margin-top: 20px; }
+  .quiz-q-label { font-family: 'Oswald', sans-serif; font-size: 11px; color: var(--amber); text-transform: uppercase; letter-spacing: 1px; margin-bottom: 6px; }
+  .quiz-question { font-size: 15px; font-weight: 600; color: var(--dark); margin-bottom: 12px; line-height: 1.4; }
+  .choice-btn { display: block; width: 100%; text-align: left; background: #f7f7f7; border: 2px solid #ddd; border-radius: 6px; padding: 10px 14px; margin-bottom: 8px; font-family: 'Source Sans 3', sans-serif; font-size: 14px; cursor: pointer; transition: border-color 0.15s, background 0.15s; }
+  .choice-btn:hover:not(:disabled) { border-color: var(--teal); background: var(--teal-bg); }
+  .choice-btn.correct { background: var(--correct-bg); border-color: var(--correct); color: var(--correct); font-weight: 700; }
+  .choice-btn.incorrect { background: var(--incorrect-bg); border-color: var(--incorrect); color: var(--incorrect); }
+  .choice-btn:disabled { cursor: default; }
+  .feedback-box { display: none; border-radius: 6px; padding: 12px 14px; margin-top: 10px; font-size: 14px; line-height: 1.5; }
+  .feedback-box.correct { background: var(--correct-bg); border-left: 4px solid var(--correct); color: var(--correct); }
+  .feedback-box.incorrect { background: var(--incorrect-bg); border-left: 4px solid var(--incorrect); color: var(--incorrect); }
+  .feedback-box.show { display: block; }
+  .complete-box { display: none; background: var(--dark); border: 2px solid var(--teal); border-radius: 8px; padding: 20px 24px; text-align: center; margin-top: 20px; }
+  .complete-box.show { display: block; }
+  .complete-icon { font-size: 36px; margin-bottom: 8px; }
+  .complete-title { font-family: 'Oswald', sans-serif; font-size: 20px; color: var(--teal); margin-bottom: 6px; }
+  .complete-text { font-size: 14px; color: #ccc; }
+</style>
+</head>
+<body>
+<div class="lesson-wrap">
+  <div class="lesson-header">
+    <div class="lesson-label">HVAC &bull; AUTOA 123</div>
+    <div class="lesson-title">Refrigerants and Safety</div>
+    <div class="lesson-subtitle">R-134a vs R-1234yf, EPA Section 609, handling rules</div>
+  </div>
+  <div class="progress-wrap">
+    <div class="progress-label" id="progress-label">Progress - 0%</div>
+    <div class="progress-track"><div class="progress-fill" id="progress-fill" style="width:0%"></div></div>
+  </div>
+
+  <div class="slide active" id="slide-1">
+    <div class="slide-card">
+      <div class="slide-num">Slide 1 of 3</div>
+      <div class="slide-heading">Two Refrigerants in Use Today</div>
+      <div class="slide-body"><p>Modern vehicles use one of two refrigerants. Knowing which one is on the vehicle before you open the system is not optional -- it affects equipment, oil type, fittings, and legal compliance.</p>
+<table class="data-table">
+  <thead><tr><th>Property</th><th>R-134a</th><th>R-1234yf</th></tr></thead>
+  <tbody>
+    <tr><td>GWP (global warming potential)</td><td>1,430</td><td>4</td></tr>
+    <tr><td>Vehicles</td><td>1994-approx. 2014 US, many imports still today</td><td>2014+ most new US vehicles</td></tr>
+    <tr><td>Fittings</td><td>Larger, round low side port</td><td>Smaller, different profile -- not interchangeable</td></tr>
+    <tr><td>Compressor oil</td><td>PAG oil (various viscosities)</td><td>POE or specific PAG -- always check spec</td></tr>
+    <tr><td>Flammability</td><td>Non-flammable</td><td>Mildly flammable (A2L class)</td></tr>
+    <tr><td>Identifier required?</td><td>Yes</td><td>Yes</td></tr>
+  </tbody>
+</table>
+<div class="callout-amber"><strong>Never mix refrigerants.</strong> Cross-contaminating a system destroys the compressor, voids the warranty, and creates a hazardous mixture that cannot be recycled. Always run an identifier first.</div></div>
+      <div class="nav-row"><div class="nav-row-inner">
+        <div class="nav-cell"><button class="btn btn-dark" disabled>Back</button></div>
+        <div class="nav-cell right"><button class="btn btn-teal" onclick="goSlide(2)">Next</button></div>
+      </div></div>
+    </div>
+  </div>
+  <div class="slide " id="slide-2">
+    <div class="slide-card">
+      <div class="slide-num">Slide 2 of 3</div>
+      <div class="slide-heading">EPA Section 609 -- What You Are Required to Know</div>
+      <div class="slide-body"><p>Releasing refrigerant into the atmosphere is a federal violation under the Clean Air Act. Section 609 governs refrigerant handling for motor vehicle A/C systems.</p>
+<div class="callout-teal"><strong>The three key requirements:</strong><br>
+1. <strong>Certification required</strong> -- technicians who buy refrigerant in containers over 2 lbs must hold a valid Section 609 certification (or equivalent).<br>
+2. <strong>Recovery required</strong> -- refrigerant must be recovered before opening the system. Intentional venting is illegal.<br>
+3. <strong>Approved equipment required</strong> -- must use EPA-approved recovery/recycling/recharge (RRR) equipment. Separate machines for R-134a and R-1234yf.</div>
+<p><strong>R-1234yf extra requirements:</strong> Because it is mildly flammable, some states require additional training. The vehicle must be cooled before service in areas with ignition sources. Recovery machines must be approved specifically for R-1234yf.</p>
+<div class="callout-amber"><strong>On the exam and on the job:</strong> "Topping off" without recovering first is not legal or acceptable practice. The correct procedure is recover, evacuate, recharge to spec weight.</div></div>
+      <div class="nav-row"><div class="nav-row-inner">
+        <div class="nav-cell"><button class="btn btn-dark" onclick="goSlide(1)">Back</button></div>
+        <div class="nav-cell right"><button class="btn btn-teal" onclick="goSlide(3)">Next</button></div>
+      </div></div>
+    </div>
+  </div>
+  <div class="slide " id="slide-3">
+    <div class="slide-card">
+      <div class="slide-num">Slide 3 of 3</div>
+      <div class="slide-heading">Safe Handling on the Job</div>
+      <div class="slide-body"><p>Refrigerants are generally low-hazard but require respect. The risks are frostbite from liquid refrigerant, asphyxiation in confined spaces, and fire risk specifically for R-1234yf.</p>
+<ul style="padding-left:18px; font-size:14px; line-height:1.9;">
+  <li>Always wear safety glasses when working with refrigerant lines -- liquid refrigerant released under pressure causes instant frostbite to eyes.</li>
+  <li>Never heat a refrigerant container -- pressure rises rapidly and can rupture the tank.</li>
+  <li>Work in a ventilated area. Refrigerant vapor is heavier than air and displaces oxygen at floor level.</li>
+  <li>For R-1234yf: keep ignition sources away from the work area. The flash point is low (approximately -30 degrees C) but concentration has to be high to ignite.</li>
+  <li>Never transfer refrigerant into a non-approved container. Propane tanks and similar containers are not rated for refrigerant pressure cycles.</li>
+</ul>
+<div class="callout-teal"><strong>Identifying the refrigerant:</strong> Run a refrigerant identifier before connecting service equipment every time. A contaminated system reads as a mixture and the machine will refuse to process it -- that is the correct outcome.</div></div>
+      <div class="nav-row"><div class="nav-row-inner">
+        <div class="nav-cell"><button class="btn btn-dark" onclick="goSlide(2)">Back</button></div>
+        <div class="nav-cell right"><button class="btn btn-teal" onclick="goQuiz()">Knowledge Check</button></div>
+      </div></div>
+    </div>
+  </div>
+  <div class="slide" id="slide-quiz">
+    <div class="slide-card">
+      <div class="slide-num">Knowledge Check</div>
+      <div class="slide-heading">Check Your Understanding</div>
+
+      <div class="quiz-section" id="q1-section">
+        <div class="quiz-q-label">Question 1 of 3</div>
+        <div class="quiz-question">A 2019 vehicle comes in for A/C service. Before connecting the manifold gauge set, what must the technician do first?</div>
+        <button class="choice-btn" onclick="answer(1,'a')">A. Check the sight glass to estimate refrigerant level</button>
+<button class="choice-btn" onclick="answer(1,'b')">B. Run a refrigerant identifier to confirm refrigerant type and check for contamination</button>
+<button class="choice-btn" onclick="answer(1,'c')">C. Connect to the high side port first to verify system pressure</button>
+<button class="choice-btn" onclick="answer(1,'d')">D. Check the compressor clutch operation before connecting any equipment</button>
+
+        <div class="feedback-box" id="q1-feedback"></div>
+      </div>
+      <div class="quiz-section" id="q2-section" style="display:none;">
+        <div class="quiz-q-label">Question 2 of 3</div>
+        <div class="quiz-question">A technician wants to add refrigerant to a low system without recovering first. Which of the following is true?</div>
+        <button class="choice-btn" onclick="answer(2,'a')">A. This is acceptable if less than 1 lb is being added</button>
+<button class="choice-btn" onclick="answer(2,'b')">B. This is acceptable if the system is already low on refrigerant</button>
+<button class="choice-btn" onclick="answer(2,'c')">C. This violates EPA Section 609 -- recovery is required before opening the system</button>
+<button class="choice-btn" onclick="answer(2,'d')">D. This is only a violation if the refrigerant is R-1234yf</button>
+
+        <div class="feedback-box" id="q2-feedback"></div>
+      </div>
+      <div class="quiz-section" id="q3-section" style="display:none;">
+        <div class="quiz-q-label">Question 3 of 3</div>
+        <div class="quiz-question">R-1234yf has a global warming potential (GWP) of 4 compared to R-134a at 1,430. What does this mean for shop procedure?</div>
+        <button class="choice-btn" onclick="answer(3,'a')">A. R-1234yf can be vented in small amounts since its environmental impact is minimal</button>
+<button class="choice-btn" onclick="answer(3,'b')">B. R-1234yf requires a separate approved recovery machine and additional fire precautions due to its A2L flammability classification</button>
+<button class="choice-btn" onclick="answer(3,'c')">C. R-1234yf is interchangeable with R-134a because both are low-GWP alternatives</button>
+<button class="choice-btn" onclick="answer(3,'d')">D. The lower GWP means R-1234yf can be recovered using standard R-134a equipment</button>
+
+        <div class="feedback-box" id="q3-feedback"></div>
+      </div>
+    </div>
+  </div>
+  <div class="complete-box" id="complete-box">
+    <div class="complete-icon">&#10003;</div>
+    <div class="complete-title">Lesson Complete</div>
+    <div class="complete-text">You covered the two refrigerants in use today, EPA Section 609 requirements, and safe handling practices on the job.</div>
+  </div>
+</div>
+<script>
+  var currentSlide = 1;
+  var totalSteps = 6;
+  var completedSteps = 0;
+  var answered = [false, false, false];
+  var answers = {
+    1: {correct:'b', explanation:'Correct. Always run an identifier first. R-134a and R-1234yf use different equipment, different oils, and different fittings. Connecting the wrong machine or adding the wrong refrigerant destroys the system and violates EPA regulations.'},
+    2: {correct:'c', explanation:'Correct. Releasing refrigerant to the atmosphere is illegal under the Clean Air Act regardless of the amount or the refrigerant type. The correct procedure is always recover, evacuate, then recharge to the weight spec on the underhood label.'},
+    3: {correct:'b', explanation:'Correct. Lower GWP does not mean lower caution. R-1234yf is mildly flammable (A2L), requires its own EPA-approved recovery equipment, and the fittings are physically different from R-134a. You cannot use the same machine for both refrigerants.'}
+  };
+
+  function updateProgress() {
+    var pct = Math.round((completedSteps / totalSteps) * 100);
+    document.getElementById('progress-fill').style.width = pct + '%';
+    document.getElementById('progress-label').textContent = 'Progress - ' + pct + '%';
+  }
+  function goSlide(n) {
+    document.getElementById('slide-' + currentSlide).classList.remove('active');
+    currentSlide = n;
+    document.getElementById('slide-' + n).classList.add('active');
+    if (n > completedSteps) { completedSteps = n; updateProgress(); }
+    window.scrollTo(0, 0);
+  }
+  function goQuiz() {
+    document.getElementById('slide-' + currentSlide).classList.remove('active');
+    currentSlide = 'quiz';
+    document.getElementById('slide-quiz').classList.add('active');
+    window.scrollTo(0, 0);
+  }
+  function answer(qNum, choice) {
+    if (answered[qNum - 1]) return;
+    answered[qNum - 1] = true;
+    var section = document.getElementById('q' + qNum + '-section');
+    var btns = section.querySelectorAll('.choice-btn');
+    var feedback = document.getElementById('q' + qNum + '-feedback');
+    var data = answers[qNum];
+    var isCorrect = (choice === data.correct);
+    for (var i = 0; i < btns.length; i++) {
+      btns[i].disabled = true;
+      var bc = btns[i].getAttribute('onclick').match(/'([a-d])'\)/)[1];
+      if (bc === data.correct) btns[i].classList.add('correct');
+      else if (bc === choice && !isCorrect) btns[i].classList.add('incorrect');
+    }
+    feedback.className = 'feedback-box show ' + (isCorrect ? 'correct' : 'incorrect');
+    feedback.textContent = data.explanation;
+    completedSteps = Math.max(completedSteps, 3 + qNum);
+    updateProgress();
+    if (qNum < 3) {
+      var next = document.getElementById('q' + (qNum + 1) + '-section');
+      if (next) { next.style.display = 'block'; setTimeout(function() { next.scrollIntoView({behavior:'smooth',block:'start'}); }, 200); }
+    }
+    if (qNum === 3) {
+      setTimeout(function() {
+        document.getElementById('complete-box').classList.add('show');
+        document.getElementById('complete-box').scrollIntoView({behavior:'smooth',block:'start'});
+      }, 400);
+    }
+  }
+  updateProgress();
+</script>
+</body>
+</html>

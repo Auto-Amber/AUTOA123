@@ -1,0 +1,256 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Torsion Bars and Leaf Springs - AUTOA 123</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Oswald:wght@400;600;700&family=Source+Sans+3:wght@400;600;700&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --dark: #1a1a1a; --teal: #2a9d8f; --tealdk: #1a7a6e; --amber: #e9a825;
+    --amber-bg: #fffbf0; --teal-bg: #f0faf8; --teal-border: #d0ede9;
+    --correct: #1a7a6e; --correct-bg: #e6f4f1;
+    --incorrect: #9b1c1c; --incorrect-bg: #fde8e8;
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body { font-family: 'Source Sans 3', sans-serif; background: transparent; color: var(--dark); font-size: 15px; line-height: 1.5; }
+  .lesson-wrap { max-width: 720px; margin: 0 auto; padding: 16px; }
+  .lesson-header { background: var(--dark); border-radius: 8px 8px 0 0; padding: 16px 20px 12px; border-bottom: 4px solid var(--amber); }
+  .lesson-label { font-family: 'Oswald', sans-serif; font-size: 11px; color: var(--amber); letter-spacing: 1.5px; text-transform: uppercase; margin-bottom: 4px; }
+  .lesson-title { font-family: 'Oswald', sans-serif; font-size: 22px; color: #ffffff; font-weight: 600; }
+  .lesson-subtitle { font-size: 13px; color: #cccccc; margin-top: 4px; }
+  .progress-wrap { background: var(--dark); padding: 10px 20px 14px; }
+  .progress-label { font-size: 11px; color: #888; text-transform: uppercase; letter-spacing: 1px; margin-bottom: 5px; }
+  .progress-track { background: #3a3a3a; border-radius: 4px; height: 6px; width: 100%; }
+  .progress-fill { background: var(--amber); height: 6px; border-radius: 4px; transition: width 0.4s ease; }
+  .slide { display: none; }
+  .slide.active { display: block; }
+  .slide-card { background: #ffffff; border: 1px solid var(--teal-border); border-radius: 0 0 8px 8px; padding: 20px 24px; }
+  .slide-num { font-family: 'Oswald', sans-serif; font-size: 11px; color: var(--teal); text-transform: uppercase; letter-spacing: 1px; margin-bottom: 8px; }
+  .slide-heading { font-family: 'Oswald', sans-serif; font-size: 19px; color: var(--dark); margin-bottom: 12px; border-bottom: 2px solid var(--teal); padding-bottom: 8px; }
+  .slide-body { font-size: 14px; color: var(--dark); line-height: 1.6; }
+  .slide-body p { margin-bottom: 10px; }
+  .callout-teal { background: var(--teal-bg); border-left: 4px solid var(--teal); border-radius: 0 6px 6px 0; padding: 10px 14px; margin: 12px 0; font-size: 13px; }
+  .callout-amber { background: var(--amber-bg); border-left: 4px solid var(--amber); border-radius: 0 6px 6px 0; padding: 10px 14px; margin: 12px 0; font-size: 13px; }
+  .callout-red { background: #fde8e8; border-left: 4px solid #9b1c1c; border-radius: 0 6px 6px 0; padding: 10px 14px; margin: 12px 0; font-size: 13px; color: #7a1010; }
+  .diagram-wrap { background: var(--dark); border-radius: 6px; padding: 16px; margin: 14px 0; text-align: center; }
+  .data-table { width: 100%; border-collapse: collapse; margin: 12px 0; font-size: 13px; }
+  .data-table th { background: var(--dark); color: #fff; font-family: 'Oswald', sans-serif; font-size: 12px; padding: 8px 10px; text-align: left; }
+  .data-table td { padding: 8px 10px; border-bottom: 1px solid var(--teal-border); vertical-align: top; }
+  .data-table tr:nth-child(even) td { background: var(--teal-bg); }
+  .data-table tr:nth-child(odd) td { background: #fff; }
+  .nav-row { display: table; width: 100%; margin-top: 16px; }
+  .nav-row-inner { display: table-row; }
+  .nav-cell { display: table-cell; vertical-align: middle; }
+  .nav-cell.right { text-align: right; }
+  .btn { font-family: 'Oswald', sans-serif; font-size: 13px; letter-spacing: 0.5px; font-weight: 600; padding: 9px 18px; border: none; border-radius: 6px; cursor: pointer; transition: opacity 0.2s; text-transform: uppercase; }
+  .btn:hover { opacity: 0.85; }
+  .btn-teal { background: var(--teal); color: #fff; }
+  .btn-dark { background: var(--dark); color: #ccc; }
+  .btn:disabled { opacity: 0.35; cursor: default; }
+  .quiz-section { margin-top: 20px; }
+  .quiz-q-label { font-family: 'Oswald', sans-serif; font-size: 11px; color: var(--amber); text-transform: uppercase; letter-spacing: 1px; margin-bottom: 6px; }
+  .quiz-question { font-size: 15px; font-weight: 600; color: var(--dark); margin-bottom: 12px; line-height: 1.4; }
+  .choice-btn { display: block; width: 100%; text-align: left; background: #f7f7f7; border: 2px solid #ddd; border-radius: 6px; padding: 10px 14px; margin-bottom: 8px; font-family: 'Source Sans 3', sans-serif; font-size: 14px; cursor: pointer; transition: border-color 0.15s, background 0.15s; }
+  .choice-btn:hover:not(:disabled) { border-color: var(--teal); background: var(--teal-bg); }
+  .choice-btn.correct { background: var(--correct-bg); border-color: var(--correct); color: var(--correct); font-weight: 700; }
+  .choice-btn.incorrect { background: var(--incorrect-bg); border-color: var(--incorrect); color: var(--incorrect); }
+  .choice-btn:disabled { cursor: default; }
+  .feedback-box { display: none; border-radius: 6px; padding: 12px 14px; margin-top: 10px; font-size: 14px; line-height: 1.5; }
+  .feedback-box.correct { background: var(--correct-bg); border-left: 4px solid var(--correct); color: var(--correct); }
+  .feedback-box.incorrect { background: var(--incorrect-bg); border-left: 4px solid var(--incorrect); color: var(--incorrect); }
+  .feedback-box.show { display: block; }
+  .complete-box { display: none; background: var(--dark); border: 2px solid var(--teal); border-radius: 8px; padding: 20px 24px; text-align: center; margin-top: 20px; }
+  .complete-box.show { display: block; }
+  .complete-icon { font-size: 36px; margin-bottom: 8px; }
+  .complete-title { font-family: 'Oswald', sans-serif; font-size: 20px; color: var(--teal); margin-bottom: 6px; }
+  .complete-text { font-size: 14px; color: #ccc; }
+</style>
+</head>
+<body>
+<div class="lesson-wrap">
+  <div class="lesson-header">
+    <div class="lesson-label">Steering, Suspension &amp; Handling &bull; AUTOA 123</div>
+    <div class="lesson-title">Torsion Bars and Leaf Springs</div>
+    <div class="lesson-subtitle">How non-coil springs work, ride height adjustment, and service considerations</div>
+  </div>
+  <div class="progress-wrap">
+    <div class="progress-label" id="progress-label">Progress - 0%</div>
+    <div class="progress-track"><div class="progress-fill" id="progress-fill" style="width:0%"></div></div>
+  </div>
+
+  <div class="slide active" id="slide-1">
+    <div class="slide-card">
+      <div class="slide-num">Slide 1 of 3</div>
+      <div class="slide-heading">Torsion Bars -- Springs That Twist</div>
+      <div class="slide-body"><p>A torsion bar is a straight steel bar that acts as a spring by twisting along its length. One end is anchored to the vehicle frame; the other end connects to the lower control arm. When the wheel hits a bump and the control arm moves up, the bar twists -- and that resistance to twisting is what supports the vehicle's weight.</p>
+<div class="callout-teal"><strong>Key advantage over coil springs:</strong> Torsion bar ride height is adjustable. Most torsion bar vehicles have an adjustment bolt at the frame anchor that increases or decreases preload on the bar, raising or lowering that corner of the vehicle. This makes torsion bar systems popular on 4x4 trucks where leveling for accessory weight is common.</div>
+<p>Common torsion bar applications include the Dodge Ram, GM full-size trucks, and many Chrysler vehicles from the 1980s through 2000s. Some Toyota 4Runner and Tacoma models also used torsion bars front.</p>
+<div class="callout-amber"><strong>Service note:</strong> Torsion bars are under significant preload. Never remove a torsion bar without first relieving the preload using the adjustment bolt -- unwinding it until spring tension is released. Releasing a loaded torsion bar unexpectedly can cause serious injury. Always look up the procedure in ShopKey before beginning.</div></div>
+      <div class="nav-row"><div class="nav-row-inner">
+        <div class="nav-cell"><button class="btn btn-dark" disabled>Back</button></div>
+        <div class="nav-cell right"><button class="btn btn-teal" onclick="goSlide(2)">Next</button></div>
+      </div></div>
+    </div>
+  </div>
+  <div class="slide " id="slide-2">
+    <div class="slide-card">
+      <div class="slide-num">Slide 2 of 3</div>
+      <div class="slide-heading">Leaf Springs -- Layers That Work Together</div>
+      <div class="slide-body"><p>A leaf spring is a stack of progressively shorter steel strips (leaves) clamped together at the center. The spring arches between two mounting points: the front eye is fixed to the frame, and the rear shackle allows the spring to change length as it flattens under load.</p>
+<div class="diagram-wrap">
+  <svg viewBox="0 0 500 130" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="Leaf spring diagram showing front fixed eye, main leaf, additional leaves, center bolt, U-bolt clamp at axle, and rear shackle">
+    <rect x="0" y="0" width="500" height="130" fill="#1a1a1a" rx="6"/>
+    <text x="250" y="18" text-anchor="middle" font-family="Oswald,sans-serif" font-size="12" fill="#e9a825" letter-spacing="1">LEAF SPRING ASSEMBLY</text>
+    <!-- Spring arc (main leaf) -->
+    <path d="M 40 80 Q 250 40 460 80" stroke="#2a9d8f" stroke-width="5" fill="none"/>
+    <path d="M 60 82 Q 250 48 440 82" stroke="#888" stroke-width="4" fill="none"/>
+    <path d="M 80 84 Q 250 54 420 84" stroke="#666" stroke-width="3" fill="none"/>
+    <!-- Front eye -->
+    <circle cx="40" cy="80" r="10" fill="none" stroke="#e9a825" stroke-width="2"/>
+    <text x="40" y="110" text-anchor="middle" font-family="Source Sans 3,sans-serif" font-size="10" fill="#e9a825">Fixed eye</text>
+    <!-- Rear shackle -->
+    <rect x="450" y="68" width="8" height="24" rx="2" fill="#e9a825"/>
+    <text x="460" y="110" text-anchor="middle" font-family="Source Sans 3,sans-serif" font-size="10" fill="#e9a825">Shackle</text>
+    <!-- Center bolt/axle clamp -->
+    <rect x="235" y="58" width="30" height="30" rx="3" fill="#2a2a2a" stroke="#2a9d8f" stroke-width="1.5"/>
+    <text x="250" y="76" text-anchor="middle" font-family="Source Sans 3,sans-serif" font-size="10" fill="#2a9d8f">Axle</text>
+    <text x="250" y="120" text-anchor="middle" font-family="Source Sans 3,sans-serif" font-size="9" fill="#888">U-bolt clamp</text>
+  </svg>
+</div>
+<p>Leaf springs are found primarily on rear axles of trucks and vans, and on some older rear-wheel-drive cars. They are simple, durable, and handle heavy loads well. The shackle is a critical wear point -- a worn or seized shackle bushing causes handling problems and noise.</p>
+<div class="callout-teal"><strong>Multi-leaf vs mono-leaf:</strong> Traditional multi-leaf stacks use inter-leaf friction for damping (adds harshness). Modern mono-leaf or two-leaf composite springs reduce weight and improve ride but cannot be stacked -- replace as a unit.</div></div>
+      <div class="nav-row"><div class="nav-row-inner">
+        <div class="nav-cell"><button class="btn btn-dark" onclick="goSlide(1)">Back</button></div>
+        <div class="nav-cell right"><button class="btn btn-teal" onclick="goSlide(3)">Next</button></div>
+      </div></div>
+    </div>
+  </div>
+  <div class="slide " id="slide-3">
+    <div class="slide-card">
+      <div class="slide-num">Slide 3 of 3</div>
+      <div class="slide-heading">Inspection and Common Failure Points</div>
+      <div class="slide-body"><p>Both spring types share a common failure pattern: fatigue. Springs lose rate and ride height over time and eventually crack. Ride height is the first indicator of spring health.</p>
+<table class="data-table">
+  <thead><tr><th>Component</th><th>What to check</th><th>Failure symptom</th></tr></thead>
+  <tbody>
+    <tr><td>Torsion bar</td><td>Adjustment bolt, anchor bracket, bar for cracks at hex end</td><td>Low ride height one side, clunking at anchor</td></tr>
+    <tr><td>Leaf spring leaves</td><td>Cracked or broken leaves (esp. main leaf), center bolt shear, leaf separation</td><td>Axle shift, vehicle leans, clunk over bumps</td></tr>
+    <tr><td>Leaf spring eye bushings</td><td>Rubber cracked, collapsed, or extruded</td><td>Clunking, wandering, tire wear</td></tr>
+    <tr><td>Rear shackle bushings</td><td>Play in shackle, bushing condition</td><td>Clunking, spring angle change affecting handling</td></tr>
+    <tr><td>U-bolt clamps</td><td>Torque, corrosion, axle centered on spring pad</td><td>Axle wrap, vibration under acceleration</td></tr>
+  </tbody>
+</table>
+<div class="callout-amber"><strong>A broken main leaf is a safety failure -- do not drive the vehicle.</strong> The main leaf is what retains the axle in position. If it fractures, the axle can rotate under the vehicle and cause loss of control.<br><br>
+<strong>ASE task connection:</strong> IV.C.11 -- Inspect, remove, and replace rear suspension system leaf springs, shackles, brackets, bushings, center pins/bolts, and U-bolts.</div></div>
+      <div class="nav-row"><div class="nav-row-inner">
+        <div class="nav-cell"><button class="btn btn-dark" onclick="goSlide(2)">Back</button></div>
+        <div class="nav-cell right"><button class="btn btn-teal" onclick="goQuiz()">Knowledge Check</button></div>
+      </div></div>
+    </div>
+  </div>
+  <div class="slide" id="slide-quiz">
+    <div class="slide-card">
+      <div class="slide-num">Knowledge Check</div>
+      <div class="slide-heading">Check Your Understanding</div>
+
+      <div class="quiz-section" id="q1-section">
+        <div class="quiz-q-label">Question 1 of 3</div>
+        <div class="quiz-question">A driver's side front corner of a truck is sitting lower than the passenger side. The truck has torsion bar front suspension. What is the most likely cause and the first thing to check?</div>
+        <button class="choice-btn" onclick="answer(1,'a')">A. Broken coil spring -- check for spring contact with the bump stop</button>
+<button class="choice-btn" onclick="answer(1,'b')">B. Torsion bar preload adjustment bolt -- check if it has backed off or if the bar or anchor is damaged</button>
+<button class="choice-btn" onclick="answer(1,'c')">C. Worn shock absorber -- a fully collapsed shock causes ride height loss</button>
+<button class="choice-btn" onclick="answer(1,'d')">D. Collapsed control arm bushing allowing the arm to drop under load</button>
+
+        <div class="feedback-box" id="q1-feedback"></div>
+      </div>
+      <div class="quiz-section" id="q2-section" style="display:none;">
+        <div class="quiz-q-label">Question 2 of 3</div>
+        <div class="quiz-question">A leaf spring rear suspension has a sheared center bolt. What is the primary concern with this failure?</div>
+        <button class="choice-btn" onclick="answer(2,'a')">A. The spring will separate into individual leaves and fall onto the road</button>
+<button class="choice-btn" onclick="answer(2,'b')">B. The axle housing can shift laterally or rotate because the center bolt locates the axle on the spring pad</button>
+<button class="choice-btn" onclick="answer(2,'c')">C. The spring rate increases without the center bolt clamping the leaves together</button>
+<button class="choice-btn" onclick="answer(2,'d')">D. The U-bolts will loosen because the center bolt holds U-bolt preload</button>
+
+        <div class="feedback-box" id="q2-feedback"></div>
+      </div>
+      <div class="quiz-section" id="q3-section" style="display:none;">
+        <div class="quiz-q-label">Question 3 of 3</div>
+        <div class="quiz-question">During inspection of a leaf spring, the technician finds the rubber bushings in the front spring eye are cracked and partially extruded. The vehicle has a clunking noise over bumps. What is the correct action?</div>
+        <button class="choice-btn" onclick="answer(3,'a')">A. Lubricate the bushings with chassis grease to quiet the noise</button>
+<button class="choice-btn" onclick="answer(3,'b')">B. Replace the front spring eye bushings -- worn bushings cause clunking and allow spring movement that affects alignment</button>
+<button class="choice-btn" onclick="answer(3,'c')">C. Replace the entire spring assembly -- individual bushing replacement is not possible on leaf springs</button>
+<button class="choice-btn" onclick="answer(3,'d')">D. Tighten the spring eye bolt -- the noise is from the bolt backing out, not the bushing</button>
+
+        <div class="feedback-box" id="q3-feedback"></div>
+      </div>
+    </div>
+  </div>
+  <div class="complete-box" id="complete-box">
+    <div class="complete-icon">&#10003;</div>
+    <div class="complete-title">Lesson Complete</div>
+    <div class="complete-text">You covered how torsion bars and leaf springs work, ride height adjustment on torsion bar systems, and the key inspection points and failure modes for both spring types.</div>
+  </div>
+</div>
+<script>
+  var currentSlide = 1;
+  var totalSteps = 6;
+  var completedSteps = 0;
+  var answered = [false, false, false];
+  var answers = {
+    1:{correct:'b',explanation:'Correct. Torsion bar ride height is controlled by the adjustment bolt preload. If a side is low, the bolt may have backed out, the bar may be fatigued, or the anchor bracket may be damaged. This is also adjustable -- you can raise or lower a corner with the adjustment bolt within the specified range.'},
+    2:{correct:'b',explanation:'Correct. The center bolt locates the axle precisely on the spring pad. When it shears, the axle can slip sideways (affecting tracking and toe) or rotate on the pad under hard acceleration or braking. This is a safety issue -- the vehicle should not be driven until repaired.'},
+    3:{correct:'b',explanation:'Correct. Leaf spring eye bushings are serviceable and should be replaced when cracked or extruded. Worn bushings allow the spring to move on the pivot point, causing clunking and potentially changing pinion angle and axle alignment. Lubrication does not restore a failed rubber bushing.'}
+  };
+  function updateProgress() {
+    var pct = Math.round((completedSteps / totalSteps) * 100);
+    document.getElementById('progress-fill').style.width = pct + '%';
+    document.getElementById('progress-label').textContent = 'Progress - ' + pct + '%';
+  }
+  function goSlide(n) {
+    document.getElementById('slide-' + currentSlide).classList.remove('active');
+    currentSlide = n;
+    document.getElementById('slide-' + n).classList.add('active');
+    if (n > completedSteps) { completedSteps = n; updateProgress(); }
+    window.scrollTo(0, 0);
+  }
+  function goQuiz() {
+    document.getElementById('slide-' + currentSlide).classList.remove('active');
+    currentSlide = 'quiz';
+    document.getElementById('slide-quiz').classList.add('active');
+    window.scrollTo(0, 0);
+  }
+  function answer(qNum, choice) {
+    if (answered[qNum - 1]) return;
+    answered[qNum - 1] = true;
+    var section = document.getElementById('q' + qNum + '-section');
+    var btns = section.querySelectorAll('.choice-btn');
+    var feedback = document.getElementById('q' + qNum + '-feedback');
+    var data = answers[qNum];
+    var isCorrect = (choice === data.correct);
+    for (var i = 0; i < btns.length; i++) {
+      btns[i].disabled = true;
+      var bc = btns[i].getAttribute('onclick').match(/'([a-d])'\)/)[1];
+      if (bc === data.correct) btns[i].classList.add('correct');
+      else if (bc === choice && !isCorrect) btns[i].classList.add('incorrect');
+    }
+    feedback.className = 'feedback-box show ' + (isCorrect ? 'correct' : 'incorrect');
+    feedback.textContent = data.explanation;
+    completedSteps = Math.max(completedSteps, 3 + qNum);
+    updateProgress();
+    if (qNum < 3) {
+      var next = document.getElementById('q' + (qNum + 1) + '-section');
+      if (next) { next.style.display = 'block'; setTimeout(function() { next.scrollIntoView({behavior:'smooth',block:'start'}); }, 200); }
+    }
+    if (qNum === 3) {
+      setTimeout(function() {
+        document.getElementById('complete-box').classList.add('show');
+        document.getElementById('complete-box').scrollIntoView({behavior:'smooth',block:'start'});
+      }, 400);
+    }
+  }
+  updateProgress();
+</script>
+</body>
+</html>

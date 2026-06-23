@@ -1,0 +1,255 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Power Steering Service - AUTOA 123</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Oswald:wght@400;600;700&family=Source+Sans+3:wght@400;600;700&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --dark: #1a1a1a; --teal: #2a9d8f; --tealdk: #1a7a6e; --amber: #e9a825;
+    --amber-bg: #fffbf0; --teal-bg: #f0faf8; --teal-border: #d0ede9;
+    --correct: #1a7a6e; --correct-bg: #e6f4f1;
+    --incorrect: #9b1c1c; --incorrect-bg: #fde8e8;
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body { font-family: 'Source Sans 3', sans-serif; background: transparent; color: var(--dark); font-size: 15px; line-height: 1.5; }
+  .lesson-wrap { max-width: 720px; margin: 0 auto; padding: 16px; }
+  .lesson-header { background: var(--dark); border-radius: 8px 8px 0 0; padding: 16px 20px 12px; border-bottom: 4px solid var(--amber); }
+  .lesson-label { font-family: 'Oswald', sans-serif; font-size: 11px; color: var(--amber); letter-spacing: 1.5px; text-transform: uppercase; margin-bottom: 4px; }
+  .lesson-title { font-family: 'Oswald', sans-serif; font-size: 22px; color: #ffffff; font-weight: 600; }
+  .lesson-subtitle { font-size: 13px; color: #cccccc; margin-top: 4px; }
+  .progress-wrap { background: var(--dark); padding: 10px 20px 14px; }
+  .progress-label { font-size: 11px; color: #888; text-transform: uppercase; letter-spacing: 1px; margin-bottom: 5px; }
+  .progress-track { background: #3a3a3a; border-radius: 4px; height: 6px; width: 100%; }
+  .progress-fill { background: var(--amber); height: 6px; border-radius: 4px; transition: width 0.4s ease; }
+  .slide { display: none; }
+  .slide.active { display: block; }
+  .slide-card { background: #ffffff; border: 1px solid var(--teal-border); border-radius: 0 0 8px 8px; padding: 20px 24px; }
+  .slide-num { font-family: 'Oswald', sans-serif; font-size: 11px; color: var(--teal); text-transform: uppercase; letter-spacing: 1px; margin-bottom: 8px; }
+  .slide-heading { font-family: 'Oswald', sans-serif; font-size: 19px; color: var(--dark); margin-bottom: 12px; border-bottom: 2px solid var(--teal); padding-bottom: 8px; }
+  .slide-body { font-size: 14px; color: var(--dark); line-height: 1.6; }
+  .slide-body p { margin-bottom: 10px; }
+  .callout-teal { background: var(--teal-bg); border-left: 4px solid var(--teal); border-radius: 0 6px 6px 0; padding: 10px 14px; margin: 12px 0; font-size: 13px; }
+  .callout-amber { background: var(--amber-bg); border-left: 4px solid var(--amber); border-radius: 0 6px 6px 0; padding: 10px 14px; margin: 12px 0; font-size: 13px; }
+  .callout-red { background: #fde8e8; border-left: 4px solid #9b1c1c; border-radius: 0 6px 6px 0; padding: 10px 14px; margin: 12px 0; font-size: 13px; color: #7a1010; }
+  .diagram-wrap { background: var(--dark); border-radius: 6px; padding: 16px; margin: 14px 0; text-align: center; }
+  .data-table { width: 100%; border-collapse: collapse; margin: 12px 0; font-size: 13px; }
+  .data-table th { background: var(--dark); color: #fff; font-family: 'Oswald', sans-serif; font-size: 12px; padding: 8px 10px; text-align: left; }
+  .data-table td { padding: 8px 10px; border-bottom: 1px solid var(--teal-border); vertical-align: top; }
+  .data-table tr:nth-child(even) td { background: var(--teal-bg); }
+  .data-table tr:nth-child(odd) td { background: #fff; }
+  .nav-row { display: table; width: 100%; margin-top: 16px; }
+  .nav-row-inner { display: table-row; }
+  .nav-cell { display: table-cell; vertical-align: middle; }
+  .nav-cell.right { text-align: right; }
+  .btn { font-family: 'Oswald', sans-serif; font-size: 13px; letter-spacing: 0.5px; font-weight: 600; padding: 9px 18px; border: none; border-radius: 6px; cursor: pointer; transition: opacity 0.2s; text-transform: uppercase; }
+  .btn:hover { opacity: 0.85; }
+  .btn-teal { background: var(--teal); color: #fff; }
+  .btn-dark { background: var(--dark); color: #ccc; }
+  .btn:disabled { opacity: 0.35; cursor: default; }
+  .quiz-section { margin-top: 20px; }
+  .quiz-q-label { font-family: 'Oswald', sans-serif; font-size: 11px; color: var(--amber); text-transform: uppercase; letter-spacing: 1px; margin-bottom: 6px; }
+  .quiz-question { font-size: 15px; font-weight: 600; color: var(--dark); margin-bottom: 12px; line-height: 1.4; }
+  .choice-btn { display: block; width: 100%; text-align: left; background: #f7f7f7; border: 2px solid #ddd; border-radius: 6px; padding: 10px 14px; margin-bottom: 8px; font-family: 'Source Sans 3', sans-serif; font-size: 14px; cursor: pointer; transition: border-color 0.15s, background 0.15s; }
+  .choice-btn:hover:not(:disabled) { border-color: var(--teal); background: var(--teal-bg); }
+  .choice-btn.correct { background: var(--correct-bg); border-color: var(--correct); color: var(--correct); font-weight: 700; }
+  .choice-btn.incorrect { background: var(--incorrect-bg); border-color: var(--incorrect); color: var(--incorrect); }
+  .choice-btn:disabled { cursor: default; }
+  .feedback-box { display: none; border-radius: 6px; padding: 12px 14px; margin-top: 10px; font-size: 14px; line-height: 1.5; }
+  .feedback-box.correct { background: var(--correct-bg); border-left: 4px solid var(--correct); color: var(--correct); }
+  .feedback-box.incorrect { background: var(--incorrect-bg); border-left: 4px solid var(--incorrect); color: var(--incorrect); }
+  .feedback-box.show { display: block; }
+  .complete-box { display: none; background: var(--dark); border: 2px solid var(--teal); border-radius: 8px; padding: 20px 24px; text-align: center; margin-top: 20px; }
+  .complete-box.show { display: block; }
+  .complete-icon { font-size: 36px; margin-bottom: 8px; }
+  .complete-title { font-family: 'Oswald', sans-serif; font-size: 20px; color: var(--teal); margin-bottom: 6px; }
+  .complete-text { font-size: 14px; color: #ccc; }
+</style>
+</head>
+<body>
+<div class="lesson-wrap">
+  <div class="lesson-header">
+    <div class="lesson-label">Steering, Suspension &amp; Handling &bull; AUTOA 123</div>
+    <div class="lesson-title">Power Steering Service</div>
+    <div class="lesson-subtitle">Fluid types, flush procedure, leak diagnosis, and pump testing</div>
+  </div>
+  <div class="progress-wrap">
+    <div class="progress-label" id="progress-label">Progress - 0%</div>
+    <div class="progress-track"><div class="progress-fill" id="progress-fill" style="width:0%"></div></div>
+  </div>
+
+  <div class="slide active" id="slide-1">
+    <div class="slide-card">
+      <div class="slide-num">Slide 1 of 3</div>
+      <div class="slide-heading">Power Steering Fluids and Why They Matter</div>
+      <div class="slide-body"><p>Power steering fluid is a hydraulic fluid that also lubricates the pump, seals, and valve in the steering gear. Using the wrong fluid is one of the most common causes of premature pump and seal failure in the field.</p>
+<div class="callout-amber"><strong>Never use ATF as a universal substitute.</strong> Some older vehicles specified ATF; many modern systems require a specific OEM power steering fluid or a vehicle-specific synthetic. ATF in the wrong system damages seals within weeks. Always check the reservoir cap or ShopKey for the exact specification.</div>
+<table class="data-table">
+  <thead><tr><th>Fluid type</th><th>Application</th><th>Key distinction</th></tr></thead>
+  <tbody>
+    <tr><td>OEM-specific PS fluid</td><td>Most modern vehicles</td><td>Formulated for that vehicle's seals and pump -- check the reservoir cap marking</td></tr>
+    <tr><td>ATF (Dexron/Mercon)</td><td>Some older domestic vehicles</td><td>Only where specifically called for -- mixing with modern systems damages seals</td></tr>
+    <tr><td>Synthetic PS fluid</td><td>European vehicles, some import</td><td>Often CHF 11S (BMW, Mercedes, VW/Audi) -- not interchangeable with standard PS fluid</td></tr>
+    <tr><td>EPS vehicles</td><td>Electric power steering</td><td>No hydraulic fluid at all -- do not add fluid to an EPS reservoir (there is none)</td></tr>
+  </tbody>
+</table>
+<div class="callout-teal"><strong>Fluid condition:</strong> Dark brown or black fluid, foam, milky appearance, or a burnt smell all indicate the fluid needs replacement. Normal PS fluid is clear, amber, or light red depending on type.</div></div>
+      <div class="nav-row"><div class="nav-row-inner">
+        <div class="nav-cell"><button class="btn btn-dark" disabled>Back</button></div>
+        <div class="nav-cell right"><button class="btn btn-teal" onclick="goSlide(2)">Next</button></div>
+      </div></div>
+    </div>
+  </div>
+  <div class="slide " id="slide-2">
+    <div class="slide-card">
+      <div class="slide-num">Slide 2 of 3</div>
+      <div class="slide-heading">Power Steering Flush and Bleed Procedure</div>
+      <div class="slide-body"><p>Power steering fluid degrades over time -- it absorbs moisture, breaks down chemically, and picks up metal particles from pump and valve wear. Flushing the system is recommended at manufacturer-specified intervals and any time the pump, gear, or hoses are replaced.</p>
+<div class="callout-teal"><strong>Flush procedure (turkey baster/drain method):</strong><br>
+1. Remove as much old fluid from the reservoir as possible using a turkey baster or fluid evacuator.<br>
+2. Refill with fresh fluid of the correct type.<br>
+3. Start the engine and cycle the steering lock to lock several times to circulate the new fluid.<br>
+4. Repeat the evacuate-and-refill process 2-3 times until the fluid coming out matches the fluid going in.<br>
+5. Top off to the correct level and verify no air in the system (foamy fluid = air).</div>
+<p><strong>Bleeding after repair (component replacement):</strong></p>
+<ul style="padding-left:18px; font-size:14px; line-height:1.9;">
+  <li>Fill the reservoir, start the engine, and cycle the wheel lock to lock slowly several times.</li>
+  <li>Check and refill the reservoir frequently -- air pockets come out and the level drops.</li>
+  <li>A groaning or whining noise that goes away after cycling indicates air that is still being purged.</li>
+  <li>Check under the vehicle for leaks during and after the bleed procedure.</li>
+</ul></div>
+      <div class="nav-row"><div class="nav-row-inner">
+        <div class="nav-cell"><button class="btn btn-dark" onclick="goSlide(1)">Back</button></div>
+        <div class="nav-cell right"><button class="btn btn-teal" onclick="goSlide(3)">Next</button></div>
+      </div></div>
+    </div>
+  </div>
+  <div class="slide " id="slide-3">
+    <div class="slide-card">
+      <div class="slide-num">Slide 3 of 3</div>
+      <div class="slide-heading">Leak Diagnosis and Pump Testing</div>
+      <div class="slide-body"><p>Power steering leaks are common and easy to misdiagnose -- fluid can travel along hoses and drip far from the actual source. Always clean the area thoroughly and use UV dye or chalk powder to pinpoint the origin.</p>
+<table class="data-table">
+  <thead><tr><th>Leak location</th><th>Likely source</th></tr></thead>
+  <tbody>
+    <tr><td>Near the pump pulley</td><td>Pump front shaft seal</td></tr>
+    <tr><td>At high/low pressure hose connections</td><td>O-rings, flare fittings, or crimped hose end failures</td></tr>
+    <tr><td>At the steering gear/rack</td><td>Input shaft seal, rack seals (inner), or output shaft seal</td></tr>
+    <tr><td>At the reservoir</td><td>Return line O-ring, reservoir cap seal, or cracked reservoir</td></tr>
+  </tbody>
+</table>
+<p><strong>Pump pressure test:</strong> A power steering pressure test uses a gauge set with a shutoff valve in series with the high-pressure hose. With the engine running, closing the valve momentarily measures relief pressure (should reach 1,000-1,500 psi depending on spec). Opening the valve and turning lock to lock measures assist pressure. A pump that cannot reach spec is worn and should be replaced.</p>
+<div class="callout-amber"><strong>Never close the test valve for more than 5 seconds</strong> -- the fluid heats rapidly with no place to flow and can damage pump seals.<br><br>
+<strong>ASE task connection:</strong> IV.A.3 -- Inspect, remove, and replace power steering fluid. IV.B.8 -- Test and diagnose power steering pump; determine needed action. IV.B.13 -- Flush, fill, and bleed power steering system.</div></div>
+      <div class="nav-row"><div class="nav-row-inner">
+        <div class="nav-cell"><button class="btn btn-dark" onclick="goSlide(2)">Back</button></div>
+        <div class="nav-cell right"><button class="btn btn-teal" onclick="goQuiz()">Knowledge Check</button></div>
+      </div></div>
+    </div>
+  </div>
+  <div class="slide" id="slide-quiz">
+    <div class="slide-card">
+      <div class="slide-num">Knowledge Check</div>
+      <div class="slide-heading">Check Your Understanding</div>
+
+      <div class="quiz-section" id="q1-section">
+        <div class="quiz-q-label">Question 1 of 3</div>
+        <div class="quiz-question">A customer's 2019 BMW 3-series has a power steering fluid leak. The technician tops off the reservoir with standard domestic power steering fluid because it is the only fluid available. What is the likely result?</div>
+        <button class="choice-btn" onclick="answer(1,'a')">A. No harm -- all power steering fluids are interchangeable in modern vehicles</button>
+<button class="choice-btn" onclick="answer(1,'b')">B. The incorrect fluid will damage the seals and O-rings in the BMW steering system, likely worsening the leak</button>
+<button class="choice-btn" onclick="answer(1,'c')">C. The fluid will mix with the existing CHF fluid and lower the viscosity, reducing assist</button>
+<button class="choice-btn" onclick="answer(1,'d')">D. The pump relief valve will open and dump the mismatched fluid back into the reservoir</button>
+
+        <div class="feedback-box" id="q1-feedback"></div>
+      </div>
+      <div class="quiz-section" id="q2-section" style="display:none;">
+        <div class="quiz-q-label">Question 2 of 3</div>
+        <div class="quiz-question">After replacing the power steering rack on a front-wheel-drive vehicle, the technician starts the engine and hears a loud groaning noise when turning the wheel. What is the most likely cause and correct action?</div>
+        <button class="choice-btn" onclick="answer(2,'a')">A. The new rack is defective -- a grinding noise means internal damage during installation</button>
+<button class="choice-btn" onclick="answer(2,'b')">B. Air is trapped in the system -- slowly cycle the wheel lock to lock several times while checking and refilling the reservoir to purge the air</button>
+<button class="choice-btn" onclick="answer(2,'c')">C. The pump relief valve pressure is too high for the new rack -- adjust the pressure setting</button>
+<button class="choice-btn" onclick="answer(2,'d')">D. The fluid type is wrong for this rack -- drain and refill before cycling the wheel</button>
+
+        <div class="feedback-box" id="q2-feedback"></div>
+      </div>
+      <div class="quiz-section" id="q3-section" style="display:none;">
+        <div class="quiz-q-label">Question 3 of 3</div>
+        <div class="quiz-question">During a power steering pressure test, the technician closes the shutoff valve and the pressure only reaches 600 psi. The specification is 1,200 psi minimum. What does this indicate?</div>
+        <button class="choice-btn" onclick="answer(3,'a')">A. The steering gear has an internal bypass -- the pressure is leaking across the rack seals</button>
+<button class="choice-btn" onclick="answer(3,'b')">B. The pump is worn and cannot produce adequate pressure -- pump replacement is needed</button>
+<button class="choice-btn" onclick="answer(3,'c')">C. The pressure test valve is partially open -- close it fully and retest</button>
+<button class="choice-btn" onclick="answer(3,'d')">D. The fluid is low -- low fluid prevents the pump from building full pressure</button>
+
+        <div class="feedback-box" id="q3-feedback"></div>
+      </div>
+    </div>
+  </div>
+  <div class="complete-box" id="complete-box">
+    <div class="complete-icon">&#10003;</div>
+    <div class="complete-title">Lesson Complete</div>
+    <div class="complete-text">You covered power steering fluid types and why using the wrong fluid causes damage, flush and bleed procedures, leak diagnosis by location, and how to interpret a pump pressure test.</div>
+  </div>
+</div>
+<script>
+  var currentSlide = 1;
+  var totalSteps = 6;
+  var completedSteps = 0;
+  var answered = [false, false, false];
+  var answers = {
+    1:{correct:'b',explanation:'Correct. European vehicles (BMW, Mercedes, VW/Audi) typically specify CHF 11S or an OEM equivalent. Using incompatible fluid degrades the seals, often turning a small leak into a major one quickly. Always identify the correct fluid from the reservoir cap or ShopKey before adding anything.'},
+    2:{correct:'b',explanation:'Correct. Groaning during steering after component replacement is almost always trapped air. The system needs to be cycled slowly lock to lock while topping off the reservoir repeatedly. The noise will go away as air is purged. If it does not improve after several cycles, check for a leak introducing air back into the system.'},
+    3:{correct:'b',explanation:'Correct. The shutoff valve isolates the pump from the gear. Pressure measured with the valve closed is the pump output pressure only -- it has nothing to do with the gear. Low pressure with the valve closed means the pump is worn and cannot reach relief pressure. Verify the fluid level is correct first, but if it is, the pump needs replacement.'}
+  };
+  function updateProgress() {
+    var pct = Math.round((completedSteps / totalSteps) * 100);
+    document.getElementById('progress-fill').style.width = pct + '%';
+    document.getElementById('progress-label').textContent = 'Progress - ' + pct + '%';
+  }
+  function goSlide(n) {
+    document.getElementById('slide-' + currentSlide).classList.remove('active');
+    currentSlide = n;
+    document.getElementById('slide-' + n).classList.add('active');
+    if (n > completedSteps) { completedSteps = n; updateProgress(); }
+    window.scrollTo(0, 0);
+  }
+  function goQuiz() {
+    document.getElementById('slide-' + currentSlide).classList.remove('active');
+    currentSlide = 'quiz';
+    document.getElementById('slide-quiz').classList.add('active');
+    window.scrollTo(0, 0);
+  }
+  function answer(qNum, choice) {
+    if (answered[qNum - 1]) return;
+    answered[qNum - 1] = true;
+    var section = document.getElementById('q' + qNum + '-section');
+    var btns = section.querySelectorAll('.choice-btn');
+    var feedback = document.getElementById('q' + qNum + '-feedback');
+    var data = answers[qNum];
+    var isCorrect = (choice === data.correct);
+    for (var i = 0; i < btns.length; i++) {
+      btns[i].disabled = true;
+      var bc = btns[i].getAttribute('onclick').match(/'([a-d])'\)/)[1];
+      if (bc === data.correct) btns[i].classList.add('correct');
+      else if (bc === choice && !isCorrect) btns[i].classList.add('incorrect');
+    }
+    feedback.className = 'feedback-box show ' + (isCorrect ? 'correct' : 'incorrect');
+    feedback.textContent = data.explanation;
+    completedSteps = Math.max(completedSteps, 3 + qNum);
+    updateProgress();
+    if (qNum < 3) {
+      var next = document.getElementById('q' + (qNum + 1) + '-section');
+      if (next) { next.style.display = 'block'; setTimeout(function() { next.scrollIntoView({behavior:'smooth',block:'start'}); }, 200); }
+    }
+    if (qNum === 3) {
+      setTimeout(function() {
+        document.getElementById('complete-box').classList.add('show');
+        document.getElementById('complete-box').scrollIntoView({behavior:'smooth',block:'start'});
+      }, 400);
+    }
+  }
+  updateProgress();
+</script>
+</body>
+</html>
