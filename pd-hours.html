@@ -1,0 +1,359 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>PD Hours Log</title>
+<style>
+* { box-sizing: border-box; margin: 0; padding: 0; }
+body { font-family: Arial, sans-serif; background: #f5f5f5; color: #1a1a1a; min-height: 100vh; }
+header { background: #1a1a1a; border-top: 5px solid #2a9d8f; border-bottom: 5px solid #2a9d8f; padding: 14px 24px; display: flex; align-items: center; justify-content: space-between; }
+header h1 { color: #fff; font-size: 18px; font-weight: bold; }
+header span { color: #2a9d8f; font-size: 13px; }
+.container { max-width: 860px; margin: 0 auto; padding: 24px 16px; }
+.card { background: #fff; border: 2px solid #2a9d8f; border-radius: 8px; margin-bottom: 24px; overflow: hidden; }
+.card-header { background: #2a9d8f; color: #fff; padding: 10px 16px; font-size: 13px; font-weight: bold; letter-spacing: 1px; text-transform: uppercase; }
+.card-body { padding: 16px; }
+.form-row { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-bottom: 12px; }
+.form-row-3 { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 12px; margin-bottom: 12px; }
+.form-group { display: flex; flex-direction: column; gap: 4px; }
+label { font-size: 11px; font-weight: bold; color: #007a6e; letter-spacing: 1.5px; text-transform: uppercase; }
+input, select, textarea { font-family: Arial, sans-serif; font-size: 14px; padding: 8px 10px; border: 1px solid #ccc; border-radius: 5px; background: #fff; color: #1a1a1a; width: 100%; }
+input:focus, select:focus, textarea:focus { outline: none; border-color: #2a9d8f; box-shadow: 0 0 0 2px rgba(42,157,143,0.15); }
+textarea { resize: vertical; min-height: 64px; }
+.billed-display { background: #f0faf7; border: 1px solid #2a9d8f; color: #007a6e; font-weight: bold; }
+.btn { font-family: Arial, sans-serif; font-size: 14px; font-weight: bold; padding: 10px 18px; border: none; border-radius: 5px; cursor: pointer; transition: background 0.15s; }
+.btn-primary { background: #2a9d8f; color: #fff; width: 100%; margin-top: 4px; }
+.btn-primary:hover { background: #21867a; }
+.btn-export { background: #e9a825; color: #1a1a1a; font-size: 13px; padding: 7px 14px; }
+.btn-export:hover { background: #d4941f; }
+.btn-delete { background: none; border: none; cursor: pointer; color: #aaa; font-size: 18px; padding: 0 4px; line-height: 1; }
+.btn-delete:hover { color: #c0392b; }
+.summary-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 12px; margin-bottom: 20px; }
+.metric { background: #f0faf7; border: 1px solid #2a9d8f; border-radius: 8px; padding: 12px 14px; }
+.metric-label { font-size: 11px; color: #007a6e; font-weight: bold; letter-spacing: 1px; text-transform: uppercase; margin-bottom: 4px; }
+.metric-val { font-size: 22px; font-weight: bold; color: #1a1a1a; }
+.metric-val.accent { color: #2a9d8f; }
+.week-bar { display: flex; align-items: center; gap: 12px; margin-bottom: 12px; flex-wrap: wrap; }
+.week-bar select { width: auto; font-size: 13px; }
+.week-bar label { text-transform: none; letter-spacing: 0; color: #555; font-size: 13px; font-weight: normal; }
+table { width: 100%; border-collapse: collapse; font-size: 13px; }
+th { text-align: left; font-size: 11px; font-weight: bold; color: #007a6e; text-transform: uppercase; letter-spacing: 1px; padding: 8px 10px; border-bottom: 2px solid #2a9d8f; }
+td { padding: 9px 10px; border-bottom: 1px solid #e8f5f3; color: #1a1a1a; vertical-align: top; }
+tr:last-child td { border-bottom: none; }
+tr:hover td { background: #f0faf7; }
+.badge { display: inline-block; font-size: 11px; padding: 3px 8px; border-radius: 20px; font-weight: bold; white-space: nowrap; }
+.badge-comm { background: #e6f4f1; color: #007a6e; border: 1px solid #2a9d8f; }
+.badge-tour { background: #e8f5e0; color: #2d6a1a; border: 1px solid #5aa832; }
+.badge-pipeline { background: #f0ecfa; color: #5a3d99; border: 1px solid #8b6dcf; }
+.badge-admin { background: #fff3cc; color: #7a5c00; border: 1px solid #e9a825; }
+.badge-other { background: #f0f0f0; color: #555; border: 1px solid #ccc; }
+.note-cell { max-width: 200px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; color: #555; }
+.empty { text-align: center; padding: 2rem; color: #aaa; font-size: 14px; }
+.status { font-size: 12px; color: #888; padding: 4px 0; }
+.status.ok { color: #2a9d8f; }
+.status.err { color: #c0392b; }
+@media (max-width: 600px) {
+  .form-row, .form-row-3 { grid-template-columns: 1fr; }
+  .summary-grid { grid-template-columns: 1fr 1fr; }
+}
+</style>
+</head>
+<body>
+
+<header>
+  <h1>Program Director Hours Log</h1>
+  <span id="statusMsg" class="status">Connecting...</span>
+</header>
+
+<div class="container">
+
+  <div class="card">
+    <div class="card-header">Log an entry</div>
+    <div class="card-body">
+      <div class="form-row">
+        <div class="form-group">
+          <label>Date</label>
+          <input type="date" id="entryDate" />
+        </div>
+        <div class="form-group">
+          <label>Category</label>
+          <select id="entryCategory">
+            <option value="comm">Communication & intake</option>
+            <option value="tour">Tour & facility access</option>
+            <option value="pipeline">Student pipeline</option>
+            <option value="admin">Program administration</option>
+            <option value="other">Other</option>
+          </select>
+        </div>
+      </div>
+      <div class="form-row-3">
+        <div class="form-group">
+          <label>Start time</label>
+          <input type="time" id="startTime" />
+        </div>
+        <div class="form-group">
+          <label>End time</label>
+          <input type="time" id="endTime" />
+        </div>
+        <div class="form-group">
+          <label>Billed hrs</label>
+          <input type="text" id="billedDisplay" class="billed-display" readonly placeholder="—" />
+        </div>
+      </div>
+      <div class="form-group" style="margin-bottom:12px;">
+        <label>Notes</label>
+        <textarea id="entryNote" placeholder="Brief description — task handled, tour details, student name, etc."></textarea>
+      </div>
+      <button class="btn btn-primary" onclick="addEntry()">+ Add Entry</button>
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="card-header">This week summary</div>
+    <div class="card-body">
+      <div class="summary-grid" id="summaryGrid">
+        <div class="metric"><div class="metric-label">Total hrs</div><div class="metric-val accent" id="sumTotal">—</div></div>
+        <div class="metric"><div class="metric-label">Entries</div><div class="metric-val" id="sumEntries">—</div></div>
+        <div class="metric"><div class="metric-label">Most time in</div><div class="metric-val" id="sumTop" style="font-size:13px;padding-top:6px;">—</div></div>
+        <div class="metric"><div class="metric-label">All-time hrs</div><div class="metric-val" id="sumAllTime">—</div></div>
+      </div>
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="card-header">Entry log</div>
+    <div class="card-body">
+      <div class="week-bar">
+        <label>Week of</label>
+        <select id="weekFilter" onchange="renderLog()"></select>
+        <button class="btn btn-export" onclick="exportReport()">&#8681; Copy T&amp;E Report</button>
+      </div>
+      <table>
+        <thead>
+          <tr>
+            <th>Date</th>
+            <th>Category</th>
+            <th>Time</th>
+            <th>Hrs</th>
+            <th>Notes</th>
+            <th></th>
+          </tr>
+        </thead>
+        <tbody id="logBody"></tbody>
+      </table>
+      <div class="empty" id="emptyMsg" style="display:none;">No entries for this week yet.</div>
+    </div>
+  </div>
+
+</div>
+
+<script type="module">
+import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
+import { getDatabase, ref, push, remove, onValue } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-database.js";
+
+const firebaseConfig = {
+  apiKey: "AIzaSyAahtX4JfrJxPOfqhbab7TDeR84c0ypE6w",
+  authDomain: "ast-queue.firebaseapp.com",
+  databaseURL: "https://ast-queue-default-rtdb.firebaseio.com",
+  projectId: "ast-queue",
+  storageBucket: "ast-queue.firebasestorage.app",
+  messagingSenderId: "777240902353",
+  appId: "1:777240902353:web:96d7a50afc9d186ae623f0"
+};
+
+const app = initializeApp(firebaseConfig);
+const db = getDatabase(app);
+const entriesRef = ref(db, 'pd-hours');
+
+const CATS = {
+  comm: { label: 'Communication & intake', badge: 'badge-comm' },
+  tour: { label: 'Tour & facility access', badge: 'badge-tour' },
+  pipeline: { label: 'Student pipeline', badge: 'badge-pipeline' },
+  admin: { label: 'Program administration', badge: 'badge-admin' },
+  other: { label: 'Other', badge: 'badge-other' }
+};
+
+let entries = {};
+
+const statusMsg = document.getElementById('statusMsg');
+
+onValue(entriesRef, (snapshot) => {
+  entries = snapshot.val() || {};
+  statusMsg.textContent = 'Connected';
+  statusMsg.className = 'status ok';
+  populateWeekFilter();
+  renderLog();
+  renderSummary();
+}, (error) => {
+  statusMsg.textContent = 'Connection error';
+  statusMsg.className = 'status err';
+});
+
+function roundUp15(mins) { return Math.ceil(mins / 15) * 15; }
+
+function calcBilled(start, end) {
+  if (!start || !end) return null;
+  const [sh, sm] = start.split(':').map(Number);
+  const [eh, em] = end.split(':').map(Number);
+  const diff = (eh * 60 + em) - (sh * 60 + sm);
+  if (diff <= 0) return null;
+  return roundUp15(diff) / 60;
+}
+
+function fmtTime(t) {
+  const [h, m] = t.split(':');
+  const hr = +h;
+  return (hr > 12 ? hr - 12 : hr || 12) + ':' + m + (hr >= 12 ? 'pm' : 'am');
+}
+
+function fmtDate(s) {
+  return new Date(s + 'T00:00:00').toLocaleDateString('en-US', { weekday: 'short', month: 'short', day: 'numeric' });
+}
+
+function getWeekStart(dateStr) {
+  const d = new Date(dateStr + 'T00:00:00');
+  const day = d.getDay();
+  const diff = d.getDate() - day + (day === 0 ? -6 : 1);
+  d.setDate(diff);
+  return d.toISOString().slice(0, 10);
+}
+
+function fmtWeek(ws) {
+  const d = new Date(ws + 'T00:00:00');
+  const end = new Date(d); end.setDate(d.getDate() + 6);
+  const opts = { month: 'short', day: 'numeric' };
+  return d.toLocaleDateString('en-US', opts) + ' – ' + end.toLocaleDateString('en-US', opts);
+}
+
+document.getElementById('startTime').addEventListener('change', updateBilled);
+document.getElementById('endTime').addEventListener('change', updateBilled);
+
+function updateBilled() {
+  const s = document.getElementById('startTime').value;
+  const e = document.getElementById('endTime').value;
+  const h = calcBilled(s, e);
+  document.getElementById('billedDisplay').value = h !== null ? h.toFixed(2) + ' hrs' : '—';
+}
+
+window.addEntry = function() {
+  const date = document.getElementById('entryDate').value;
+  const cat = document.getElementById('entryCategory').value;
+  const start = document.getElementById('startTime').value;
+  const end = document.getElementById('endTime').value;
+  const note = document.getElementById('entryNote').value.trim();
+  if (!date) { alert('Please enter a date.'); return; }
+  if (!start || !end) { alert('Please enter start and end times.'); return; }
+  const hrs = calcBilled(start, end);
+  if (!hrs) { alert('End time must be after start time.'); return; }
+  push(entriesRef, { date, cat, start, end, hrs, note, created: Date.now() });
+  document.getElementById('entryNote').value = '';
+  document.getElementById('startTime').value = '';
+  document.getElementById('endTime').value = '';
+  document.getElementById('billedDisplay').value = '—';
+};
+
+window.deleteEntry = function(key) {
+  if (confirm('Remove this entry?')) remove(ref(db, 'pd-hours/' + key));
+};
+
+function getEntriesArray() {
+  return Object.entries(entries).map(([key, val]) => ({ key, ...val }))
+    .sort((a, b) => a.date.localeCompare(b.date) || a.start.localeCompare(b.start));
+}
+
+function populateWeekFilter() {
+  const sel = document.getElementById('weekFilter');
+  const current = sel.value;
+  const arr = getEntriesArray();
+  const weeks = [...new Set(arr.map(e => getWeekStart(e.date)))].sort().reverse();
+  const today = new Date().toISOString().slice(0, 10);
+  const thisWeek = getWeekStart(today);
+  if (!weeks.includes(thisWeek)) weeks.unshift(thisWeek);
+  sel.innerHTML = weeks.map(w => `<option value="${w}">${fmtWeek(w)}</option>`).join('');
+  if (current && weeks.includes(current)) sel.value = current;
+}
+
+function renderLog() {
+  const week = document.getElementById('weekFilter').value;
+  if (!week) return;
+  const ws = new Date(week + 'T00:00:00');
+  const we = new Date(ws); we.setDate(ws.getDate() + 6);
+  const filtered = getEntriesArray().filter(e => {
+    const d = new Date(e.date + 'T00:00:00');
+    return d >= ws && d <= we;
+  });
+  const body = document.getElementById('logBody');
+  const empty = document.getElementById('emptyMsg');
+  if (filtered.length === 0) { body.innerHTML = ''; empty.style.display = 'block'; return; }
+  empty.style.display = 'none';
+  body.innerHTML = filtered.map(e => {
+    const cat = CATS[e.cat] || CATS.other;
+    return `<tr>
+      <td style="white-space:nowrap">${fmtDate(e.date)}</td>
+      <td><span class="badge ${cat.badge}">${cat.label}</span></td>
+      <td style="white-space:nowrap;color:#555">${fmtTime(e.start)}–${fmtTime(e.end)}</td>
+      <td style="font-weight:bold">${e.hrs.toFixed(2)}</td>
+      <td class="note-cell" title="${e.note || ''}">${e.note || '—'}</td>
+      <td><button class="btn-delete" onclick="deleteEntry('${e.key}')" title="Remove">&#x2715;</button></td>
+    </tr>`;
+  }).join('');
+}
+
+function renderSummary() {
+  const today = new Date().toISOString().slice(0, 10);
+  const ws = new Date(getWeekStart(today) + 'T00:00:00');
+  const we = new Date(ws); we.setDate(ws.getDate() + 6);
+  const arr = getEntriesArray();
+  const thisWeek = arr.filter(e => {
+    const d = new Date(e.date + 'T00:00:00');
+    return d >= ws && d <= we;
+  });
+  const total = thisWeek.reduce((s, e) => s + e.hrs, 0);
+  const allTime = arr.reduce((s, e) => s + e.hrs, 0);
+  const byCat = {};
+  thisWeek.forEach(e => { byCat[e.cat] = (byCat[e.cat] || 0) + e.hrs; });
+  const topCat = Object.entries(byCat).sort((a, b) => b[1] - a[1])[0];
+  document.getElementById('sumTotal').textContent = total.toFixed(2);
+  document.getElementById('sumEntries').textContent = thisWeek.length;
+  document.getElementById('sumTop').textContent = topCat ? CATS[topCat[0]].label : '—';
+  document.getElementById('sumAllTime').textContent = allTime.toFixed(2);
+}
+
+window.exportReport = function() {
+  const week = document.getElementById('weekFilter').value;
+  if (!week) return;
+  const ws = new Date(week + 'T00:00:00');
+  const we = new Date(ws); we.setDate(ws.getDate() + 6);
+  const filtered = getEntriesArray().filter(e => {
+    const d = new Date(e.date + 'T00:00:00');
+    return d >= ws && d <= we;
+  });
+  if (filtered.length === 0) { alert('No entries for this week.'); return; }
+  const total = filtered.reduce((s, e) => s + e.hrs, 0);
+  const byCat = {};
+  filtered.forEach(e => { byCat[e.cat] = (byCat[e.cat] || 0) + e.hrs; });
+  let report = `T&E HOURS REPORT\nWeek of ${fmtWeek(week)}\n${'='.repeat(42)}\n\nDETAIL\n${'-'.repeat(42)}\n`;
+  filtered.forEach(e => {
+    report += `${fmtDate(e.date)}  ${fmtTime(e.start)}–${fmtTime(e.end)}  (${e.hrs.toFixed(2)} hrs)\n`;
+    report += `  Category: ${CATS[e.cat]?.label || 'Other'}\n`;
+    if (e.note) report += `  Notes: ${e.note}\n`;
+    report += '\n';
+  });
+  report += `SUMMARY BY CATEGORY\n${'-'.repeat(42)}\n`;
+  Object.entries(byCat).sort((a, b) => b[1] - a[1]).forEach(([cat, hrs]) => {
+    report += `${CATS[cat]?.label || 'Other'}: ${hrs.toFixed(2)} hrs\n`;
+  });
+  report += `\nTOTAL: ${total.toFixed(2)} hrs\n`;
+  navigator.clipboard.writeText(report).then(() => {
+    const btn = document.querySelector('.btn-export');
+    btn.textContent = 'Copied!';
+    setTimeout(() => { btn.textContent = '⬇ Copy T&E Report'; }, 2000);
+  });
+};
+
+const today = new Date().toISOString().slice(0, 10);
+document.getElementById('entryDate').value = today;
+</script>
+</body>
+</html>
